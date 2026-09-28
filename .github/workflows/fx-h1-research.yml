@@ -10,7 +10,7 @@ permissions:
   contents: write
 jobs:
   research:
-    if: !contains(github.event.head_commit.message, 'h1bot:')
+    if: ${{ !contains(github.event.head_commit.message, 'h1bot:') }}
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
