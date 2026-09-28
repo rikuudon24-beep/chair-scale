@@ -32,7 +32,9 @@ def simulate(x,signal,long,sl,tp,H,spread=1.5,pair=None):
     rows=[]
     hi=x.high.to_numpy(); lo=x.low.to_numpy(); op=x.open.to_numpy(); cl=x.close.to_numpy(); times=x.index
     ps=PIP(pair) if pair else 0.0001
+    next_allowed = -1
     for i in idx:
+        if i < next_allowed: continue
         if i+1>=len(x) or i+H>=len(x): continue
         entry=op[i+1]
         if long: stop=entry-sl*ps; target=entry+tp*ps
@@ -49,6 +51,7 @@ def simulate(x,signal,long,sl,tp,H,spread=1.5,pair=None):
             exit_i=min(len(x)-1,i+H); exit_price=cl[exit_i]; outcome="time"
         pips=((exit_price-entry)/ps if long else (entry-exit_price)/ps)-spread
         rows.append((times[i],times[exit_i],pips,outcome))
+        next_allowed = exit_i + 1
     return pd.DataFrame(rows,columns=["signal_time","exit_time","pips","outcome"])
 
 def stats(t):
@@ -58,7 +61,7 @@ def stats(t):
     return {"trades":int(len(t)),"win_rate":float(wins.mean()),"profit_factor":float(gross_win/gross_loss) if gross_loss>0 else None,"expectancy_pips":float(t.pips.mean()),"total_pips":float(t.pips.sum()),"max_drawdown_pips":float(-dd)}
 
 def main():
-    records=[]; trade_store={}
+    records=[]
     for fp in sorted(DATA.glob("*.parquet")):
         pair=fp.stem
         x=pd.read_parquet(fp).sort_index()
