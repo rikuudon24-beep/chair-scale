@@ -11,14 +11,14 @@ PIP=lambda p:0.01 if "jpy" in p else 0.0001
 
 def candidates(x):
     return {
-      "trend_pullback_long": x.trend_up & x.rsi14.between(45,65) & x.dist_ema20_atr.between(-0.75,0.25) & (x.body>0),
-      "trend_pullback_short": x.trend_down & x.rsi14.between(35,55) & x.dist_ema20_atr.between(-0.25,0.75) & (x.body<0),
+      "trend_pullback_long": x.trend_up & (x.adx14>=20) & x.rsi14.between(45,65) & x.dist_ema20_atr.between(-0.75,0.25) & (x.macd_hist>0) & (x.body>0),
+      "trend_pullback_short": x.trend_down & (x.adx14>=20) & x.rsi14.between(35,55) & x.dist_ema20_atr.between(-0.25,0.75) & (x.macd_hist<0) & (x.body<0),
       "trend_breakout_long": x.trend_up & x.break20_up & (x.body_range>=0.55) & (x.atr_pct>x.atr_pct.rolling(200).median()),
       "trend_breakout_short": x.trend_down & x.break20_down & (x.body_range>=0.55) & (x.atr_pct>x.atr_pct.rolling(200).median()),
-      "momentum_long": (x.ema20>x.ema50)&(x.ema50>x.ema200)&x.rsi14.between(55,72)&(x.roc12>0),
-      "momentum_short": (x.ema20<x.ema50)&(x.ema50<x.ema200)&x.rsi14.between(28,45)&(x.roc12<0),
-      "meanrev_long": (x.rsi14<30)&(x.close<x.bb_lower)&(x.dist_ema20_atr<-1.0),
-      "meanrev_short": (x.rsi14>70)&(x.close>x.bb_upper)&(x.dist_ema20_atr>1.0),
+      "momentum_long": (x.ema20>x.ema50)&(x.ema50>x.ema200)&(x.adx14>=20)&x.rsi14.between(55,72)&(x.macd_hist>0)&(x.roc12>0),
+      "momentum_short": (x.ema20<x.ema50)&(x.ema50<x.ema200)&(x.adx14>=20)&x.rsi14.between(28,45)&(x.macd_hist<0)&(x.roc12<0),
+      "meanrev_long": (x.rsi14<30)&(x.close<x.bb_lower)&(x.bb_pct<0)&(x.dist_ema20_atr<-1.0)&(x.adx14<25),
+      "meanrev_short": (x.rsi14>70)&(x.close>x.bb_upper)&(x.bb_pct>1)&(x.dist_ema20_atr>1.0)&(x.adx14<25),
       "h4_aligned_long": (x.h4_close>x.h4_open)&x.trend_up&(x.d1_close>x.d1_open),
       "h4_aligned_short": (x.h4_close<x.h4_open)&x.trend_down&(x.d1_close<x.d1_open)
     }
