@@ -67,7 +67,7 @@ def main():
             long=name.endswith("long")
             # Discover a compact TP/SL grid; do not select by win rate alone.
             for tp,sl,H in [(50,25,24),(75,35,48),(100,50,72),(150,75,120)]:
-                tr=simulate(x,s,long,sl,tp,H,1.5); tr["pair"]=pair; tr["rule"]=name; tr["tp"]=tp; tr["sl"]=sl; tr["H"]=H
+                tr=simulate(x,s,long,sl,tp,H,1.5,pair); tr["pair"]=pair; tr["rule"]=name; tr["tp"]=tp; tr["sl"]=sl; tr["H"]=H
                 for split_name,part in zip(["discovery","validation","oos"],split(tr)):
                     st=stats(part); st.update({"pair":pair,"rule":name,"tp":tp,"sl":sl,"H":H,"split":split_name}); records.append(st)
     res=pd.DataFrame(records)
