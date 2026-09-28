@@ -42,11 +42,19 @@ def features(df,pair):
     x["atr14"]=tr.ewm(alpha=1/14,adjust=False).mean()
     x["atr_pct"]=x["atr14"]/c
     x["roc12"]=c.pct_change(12)
+    ema12=c.ewm(span=12,adjust=False).mean(); ema26=c.ewm(span=26,adjust=False).mean()
+    x["macd"]=ema12-ema26; x["macd_signal"]=x["macd"].ewm(span=9,adjust=False).mean(); x["macd_hist"]=x["macd"]-x["macd_signal"]
     mid=c.rolling(20).mean(); sd=c.rolling(20).std()
     x["bb_mid"]=mid; x["bb_upper"]=mid+2*sd; x["bb_lower"]=mid-2*sd
     x["bb_width"]=(x["bb_upper"]-x["bb_lower"])/mid
+    x["bb_pct"]=(c-x["bb_lower"])/(x["bb_upper"]-x["bb_lower"]).replace(0,np.nan)
     x["ema20_slope"]=x["ema20"].pct_change(6)
     x["ema50_slope"]=x["ema50"].pct_change(12)
+    # Wilder-style ADX(14), computed only from current/past bars.
+    plus_dm=h.diff(); minus_dm=-l.diff(); plus_dm=plus_dm.where((plus_dm>minus_dm)&(plus_dm>0),0.0); minus_dm=minus_dm.where((minus_dm>plus_dm)&(minus_dm>0),0.0)
+    atr=x["atr14"].replace(0,np.nan)
+    plus_di=100*plus_dm.ewm(alpha=1/14,adjust=False).mean()/atr; minus_di=100*minus_dm.ewm(alpha=1/14,adjust=False).mean()/atr
+    dx=100*(plus_di-minus_di).abs()/(plus_di+minus_di).replace(0,np.nan); x["adx14"]=dx.ewm(alpha=1/14,adjust=False).mean()
     x["range20"]=h.rolling(20).max()-l.rolling(20).min()
     x["body"]=c-o; x["body_pct"]=x["body"]/c; x["range"]=h-l
     x["body_range"]=x["body"].abs()/x["range"].replace(0,np.nan)
