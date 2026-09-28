@@ -1,0 +1,35 @@
+name: FX H1 Research
+on:
+  push:
+    branches: [fx-h1-research]
+    paths:
+      - "research/h1/**"
+      - ".github/workflows/fx-h1-research.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    if: !contains(github.event.head_commit.message, 'h1bot:')
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fx-h1-research
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r research/h1/requirements.txt
+      - run: python research/h1/scripts/download_h1.py --start "2021-01-01" --end "$(date -u -d '+1 day' +%Y-%m-%d)"
+      - run: python research/h1/scripts/run_research.py
+      - name: Commit H1 data and results
+        run: |
+          git config user.name "fx-research-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/market/h1 research/h1/results
+          git diff --cached --quiet || git commit -m "h1bot: update H1 research data and results"
+          git push
