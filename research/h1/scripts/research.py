@@ -27,11 +27,11 @@ def split(df):
     n=len(df); a=int(n*0.60); b=int(n*0.20)
     return df.iloc[:a],df.iloc[a:a+b],df.iloc[a+b:]
 
-def simulate(x,signal,long,sl,tp,H,spread=1.5):
+def simulate(x,signal,long,sl,tp,H,spread=1.5,pair=None):
     idx=np.flatnonzero(signal.to_numpy())
     rows=[]
     hi=x.high.to_numpy(); lo=x.low.to_numpy(); op=x.open.to_numpy(); cl=x.close.to_numpy(); times=x.index
-    ps=PIP
+    ps=PIP(pair) if pair else 0.0001
     for i in idx:
         if i+1>=len(x) or i+H>=len(x): continue
         entry=op[i+1]
