@@ -1,0 +1,21 @@
+{
+  "symbols": ["usdjpy","eurjpy","gbpjpy","audjpy","eurusd","gbpusd","audusd","nzdusd","usdcad","usdchf","eurgbp","audnzd"],
+  "primary_timeframe": "h1",
+  "mtf_timeframes": ["h4","d1","w1"],
+  "history_start": "2021-01-01",
+  "price_type": "bid",
+  "source": "Dukascopy via dukascopy-node",
+  "targets_pips": [50,100,150,200,300],
+  "closed_candles_only": true,
+  "raw_source_paths": {
+    "h4": "data/market/h4",
+    "d1": "data/market/d1"
+  },
+  "h1_path": "data/market/h1",
+  "research_split": {
+    "method": "time_separated",
+    "discovery": "to_be_frozen_after_data_audit",
+    "validation": "to_be_frozen_after_discovery",
+    "oos": "untouched_after_rule_freeze"
+  }
+}
