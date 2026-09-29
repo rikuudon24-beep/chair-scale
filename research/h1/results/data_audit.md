@@ -1,6 +1,6 @@
 # H1 Data Audit
 
-- generated: 2026-09-29T14:39:41.925384+00:00
+- generated: 2026-09-29T14:55:59.343194+00:00
 
 |TF|Pair|Status|Rows|Details|
 |---|---|---|---:|---|
@@ -9,9 +9,9 @@
 |h1|gbpjpy|OK|35310|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audjpy|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurusd|OK|35806|2021-01-03T22:00:00+00:00 -> 2026-09-29T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|gbpusd|OK|35791|2021-01-03T22:00:00+00:00 -> 2026-09-29T00:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|audusd|OK|35791|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|nzdusd|OK|35304|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|gbpusd|OK|35804|2021-01-03T22:00:00+00:00 -> 2026-09-29T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|audusd|OK|35805|2021-01-03T22:00:00+00:00 -> 2026-09-29T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|nzdusd|OK|35798|2021-01-03T22:00:00+00:00 -> 2026-09-29T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|usdcad|OK|35804|2021-01-03T22:00:00+00:00 -> 2026-09-29T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|usdchf|OK|35798|2021-01-03T22:00:00+00:00 -> 2026-09-29T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurgbp|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
