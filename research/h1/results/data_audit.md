@@ -1,6 +1,6 @@
 # H1 Data Audit
 
-- generated: 2026-09-29T00:19:06.934964+00:00
+- generated: 2026-09-29T00:28:31.844497+00:00
 
 |TF|Pair|Status|Rows|Details|
 |---|---|---|---:|---|
@@ -10,7 +10,7 @@
 |h1|audjpy|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurusd|OK|35792|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|gbpusd|OK|35790|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|audusd|OK|35790|2021-01-03T22:00:00+00:00 -> 2026-09-28T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|audusd|OK|35791|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|nzdusd|OK|35304|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|usdcad|OK|35310|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|usdchf|OK|35304|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|

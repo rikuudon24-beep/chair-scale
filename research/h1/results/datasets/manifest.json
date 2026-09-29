@@ -43,9 +43,9 @@
   },
   {
     "pair": "audusd",
-    "rows": 35788,
+    "rows": 35789,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 22:00:00+00:00",
+    "end": "2026-09-28 23:00:00+00:00",
     "file": "research/h1/results/datasets/audusd.parquet"
   },
   {
