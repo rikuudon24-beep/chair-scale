@@ -1,9 +1,9 @@
 [
   {
     "pair": "usdjpy",
-    "rows": 35790,
+    "rows": 35791,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 23:00:00+00:00",
+    "end": "2026-09-29 00:00:00+00:00",
     "file": "research/h1/results/datasets/usdjpy.parquet"
   },
   {
@@ -29,16 +29,16 @@
   },
   {
     "pair": "eurusd",
-    "rows": 35790,
+    "rows": 35791,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 23:00:00+00:00",
+    "end": "2026-09-29 00:00:00+00:00",
     "file": "research/h1/results/datasets/eurusd.parquet"
   },
   {
     "pair": "gbpusd",
-    "rows": 35788,
+    "rows": 35789,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 23:00:00+00:00",
+    "end": "2026-09-29 00:00:00+00:00",
     "file": "research/h1/results/datasets/gbpusd.parquet"
   },
   {
