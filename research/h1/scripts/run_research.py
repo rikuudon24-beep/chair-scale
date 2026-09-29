@@ -8,6 +8,7 @@ steps=[
  ["python","research/h1/scripts/research.py"],
  ["python","research/h1/scripts/mine_conditions.py"],
  ["python","research/h1/scripts/precursor_study.py"],
+ ["python","research/h1/scripts/precursor_candidates.py"],
 ]
 for cmd in steps:
     print("[RUN]"," ".join(cmd),flush=True)
