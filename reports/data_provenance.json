@@ -1,173 +1,173 @@
 {
-  "generated_at_utc": "2026-09-28T21:27:18.500275+00:00",
+  "generated_at_utc": "2026-09-29T21:28:33.763358+00:00",
   "items": [
     {
       "file": "data/market/d1/audjpy.csv",
-      "rows": 1847,
-      "first_timestamp": "1609459200000",
-      "last_timestamp": "1790467200000",
-      "sha256": "b458ac861ef2699f64e0d0c31179e3b1531921ebe06f3948ceb313dd424ecebd"
-    },
-    {
-      "file": "data/market/d1/audnzd.csv",
       "rows": 1848,
       "first_timestamp": "1609459200000",
       "last_timestamp": "1790553600000",
-      "sha256": "9f453f00ce5ffa5517c586b17916a9c693872341e0a34bc95b4c24db45b224bf"
+      "sha256": "a457ce6b110116679f6c5b1b65b9ccce9189573243eb769eb61b079d8a99afda"
+    },
+    {
+      "file": "data/market/d1/audnzd.csv",
+      "rows": 1849,
+      "first_timestamp": "1609459200000",
+      "last_timestamp": "1790553600000",
+      "sha256": "304df1862f1ecf245af37107ab673aeb9813022281adac988ee3cbbdba8df6ee"
     },
     {
       "file": "data/market/d1/audusd.csv",
-      "rows": 1847,
+      "rows": 1848,
       "first_timestamp": "1609632000000",
-      "last_timestamp": "1790467200000",
-      "sha256": "f36524b4112e7883790b9d5e1c34150e3a2d09f623653d00f094c06d4e24a48b"
+      "last_timestamp": "1790553600000",
+      "sha256": "2e3eef6903db94638ae85d56d65f672aca8822ec0b2f9fe5d1a5b91bc0d06c71"
     },
     {
       "file": "data/market/d1/eurgbp.csv",
       "rows": 1848,
       "first_timestamp": "1609632000000",
       "last_timestamp": "1790553600000",
-      "sha256": "9bdb215fbcb8513d785ba42e8a3c1e347141784ffea8ad3ea391402fbd766304"
+      "sha256": "969b7ea509da44fc3655ff54889165b4e52e6ac2868a461ef5b2bd82c7fefd3d"
     },
     {
       "file": "data/market/d1/eurjpy.csv",
-      "rows": 1794,
+      "rows": 1795,
       "first_timestamp": "1609632000000",
       "last_timestamp": "1790553600000",
-      "sha256": "b277d0cdf10e479c10181b341e869d4efb2ec45ea034fab8fc4e7594a765d3a5"
+      "sha256": "d76381398374fc34121e9d424ef12d08fb6a4d1409aff852997c5c9f52e829e5"
     },
     {
       "file": "data/market/d1/eurusd.csv",
-      "rows": 1794,
+      "rows": 1795,
       "first_timestamp": "1609632000000",
-      "last_timestamp": "1790467200000",
-      "sha256": "7ed98224743198cd6b7944805826c58b19bb46eff17cc346fd5825710cc81596"
+      "last_timestamp": "1790553600000",
+      "sha256": "605a063fb2040cf17504d1ad9b8c1e25c71a0698a97e288ae89f83ae852d4e2a"
     },
     {
       "file": "data/market/d1/gbpjpy.csv",
-      "rows": 1793,
-      "first_timestamp": "1609632000000",
-      "last_timestamp": "1790553600000",
-      "sha256": "a8950f0006d922ea83e57389f2cca22326711e6168396559f51f113879ff28a1"
-    },
-    {
-      "file": "data/market/d1/gbpusd.csv",
-      "rows": 1831,
-      "first_timestamp": "1609632000000",
-      "last_timestamp": "1790467200000",
-      "sha256": "30d1201d64809e86219486df4fe3ec319249d12d8b7700c4b75e21c050d0a4b2"
-    },
-    {
-      "file": "data/market/d1/nzdusd.csv",
-      "rows": 1792,
-      "first_timestamp": "1609632000000",
-      "last_timestamp": "1790467200000",
-      "sha256": "cb3932a1f512b9962909da9d243616a897ef2a81518c759f4f93d98d4d626e89"
-    },
-    {
-      "file": "data/market/d1/usdcad.csv",
-      "rows": 1848,
-      "first_timestamp": "1609632000000",
-      "last_timestamp": "1790467200000",
-      "sha256": "354018af4bfd03b3a827719ae8ea85f0b878ce60b4a7a9c323110d32d1e7b4c1"
-    },
-    {
-      "file": "data/market/d1/usdchf.csv",
-      "rows": 1848,
-      "first_timestamp": "1609632000000",
-      "last_timestamp": "1790467200000",
-      "sha256": "a075da095f6e0780f4844563eeba1045b402cab9e62721c695c305c58e63d8bf"
-    },
-    {
-      "file": "data/market/d1/usdjpy.csv",
       "rows": 1794,
       "first_timestamp": "1609632000000",
       "last_timestamp": "1790553600000",
-      "sha256": "674a82aa0f4bcf8d6b14a28631ea5c46a85907060ac10e25e7604c026d4499b1"
+      "sha256": "83b6702130eabf128a6d4eb9def3cee98945c1358d630ed41b7ee9ee13064d54"
+    },
+    {
+      "file": "data/market/d1/gbpusd.csv",
+      "rows": 1832,
+      "first_timestamp": "1609632000000",
+      "last_timestamp": "1790553600000",
+      "sha256": "d9c2419c3a93695dab4765e0755a05d3b7817b9aaae552cea41fd3e56bb6911a"
+    },
+    {
+      "file": "data/market/d1/nzdusd.csv",
+      "rows": 1793,
+      "first_timestamp": "1609632000000",
+      "last_timestamp": "1790553600000",
+      "sha256": "48f51fe9c6bfb12746eb276af49082cd923c06eb0b681566b2eb1db5812d2da7"
+    },
+    {
+      "file": "data/market/d1/usdcad.csv",
+      "rows": 1849,
+      "first_timestamp": "1609632000000",
+      "last_timestamp": "1790553600000",
+      "sha256": "dcc92dc52b1aac716346697fc79464aae52dc7d7158c539d6a9a87015b95b0e5"
+    },
+    {
+      "file": "data/market/d1/usdchf.csv",
+      "rows": 1849,
+      "first_timestamp": "1609632000000",
+      "last_timestamp": "1790553600000",
+      "sha256": "8e835f74de304b6d6056a8b60249abd3727a921385aa9d2ad0278f652dd4a62e"
+    },
+    {
+      "file": "data/market/d1/usdjpy.csv",
+      "rows": 1795,
+      "first_timestamp": "1609632000000",
+      "last_timestamp": "1790553600000",
+      "sha256": "a3116aad96461b72520b594f51ccde4eef917a9c991e2d360d1e338456c5c590"
     },
     {
       "file": "data/market/h4/audjpy.csv",
-      "rows": 9690,
+      "rows": 9696,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790611200000",
-      "sha256": "951f06272e7097b9d4ffc8e730f1eb76627c3679f6c5c00aa20ccd3717d31426"
+      "last_timestamp": "1790697600000",
+      "sha256": "b4cd0c982bcf3fa7cd4f393cc50174804a37bc332179c5995a8d3359544f4bb4"
     },
     {
       "file": "data/market/h4/audnzd.csv",
-      "rows": 9630,
+      "rows": 9636,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790611200000",
-      "sha256": "e7ab7fcf64144daa024836ff8e02f4f5cf46101830d0e527d1bf1f48fecf28c2"
+      "last_timestamp": "1790697600000",
+      "sha256": "73acad76b5184df1ee21aa8b9cca4bb17998f518f988fb61c0d553b5471de547"
     },
     {
       "file": "data/market/h4/audusd.csv",
-      "rows": 9448,
+      "rows": 9455,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790611200000",
-      "sha256": "4ecf03ee556df23df4635fc1da3dd2c31034c85ac061717d0e3776af0c90f2a3"
+      "last_timestamp": "1790712000000",
+      "sha256": "1ccb87982cf5d257ba2661ecb9e86dc8713e7cd859b50d053ee27f461c4f4048"
     },
     {
       "file": "data/market/h4/eurgbp.csv",
-      "rows": 9552,
+      "rows": 9560,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790582400000",
-      "sha256": "29d6444a16f9e82da1739bb88f84fe8117744cd0a9ec596ab645845ee002c222"
+      "last_timestamp": "1790697600000",
+      "sha256": "0c0f99dce2b4e5cabc26655e52ee7ddca81a0617500ea0ba7fb0a9d28f0c4029"
     },
     {
       "file": "data/market/h4/eurjpy.csv",
-      "rows": 9604,
+      "rows": 9612,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790582400000",
-      "sha256": "37ab99cd44f5ea006a3bc935d112b75f9b728015a4f15ff5dc665b415151c4f5"
+      "last_timestamp": "1790697600000",
+      "sha256": "5dba81eba03764c60b4bbbf7b0ef5b2815245a7c6970080484447d8389af21b9"
     },
     {
       "file": "data/market/h4/eurusd.csv",
-      "rows": 9306,
+      "rows": 9312,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790625600000",
-      "sha256": "78c165e2bdc289a56529be971e10241bad83b6e8495b4cf5202701215e4cbe65"
+      "last_timestamp": "1790712000000",
+      "sha256": "dab17203e8b43a0d9504a4444c5761d49fd67fc15d174ed44b13bd1e7d4ccd28"
     },
     {
       "file": "data/market/h4/gbpjpy.csv",
-      "rows": 9594,
+      "rows": 9602,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790582400000",
-      "sha256": "b702f983e2b7fac9729b1f7a5d6794933b5cde07558a112e627b858407df6a74"
+      "last_timestamp": "1790697600000",
+      "sha256": "377eec013ba53649cd34c6c07fc4e662e825850e5192494f5cb945ef54a4e452"
     },
     {
       "file": "data/market/h4/gbpusd.csv",
-      "rows": 9250,
+      "rows": 9256,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790625600000",
-      "sha256": "5062506f64b3c0e4505ab88184e5f7208d9c629d68e8f0330a96d4527c0b9ef3"
+      "last_timestamp": "1790712000000",
+      "sha256": "be1e81f8b274f5e80013825b4032e46cda67af2974525cc3925f472400816acd"
     },
     {
       "file": "data/market/h4/nzdusd.csv",
-      "rows": 9302,
+      "rows": 9310,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790596800000",
-      "sha256": "928843983f3becac06f82b597e4f61b644968297c1eebd593d56d57018525ce0"
+      "last_timestamp": "1790712000000",
+      "sha256": "46a6fe1db841f457732c99eed9d4dc63bc3b9e8a4aa4bdbe9b72b8c9dd45a5ab"
     },
     {
       "file": "data/market/h4/usdcad.csv",
-      "rows": 9396,
+      "rows": 9404,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790596800000",
-      "sha256": "a96f89db770ce93e3dc76989c3e12066ab2457ea40473f9cc5809a43113a499f"
+      "last_timestamp": "1790712000000",
+      "sha256": "906a00af0de097e41c65e231f46dd53236ab65f63a18eb163abd41332c777b31"
     },
     {
       "file": "data/market/h4/usdchf.csv",
-      "rows": 9386,
+      "rows": 9394,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790596800000",
-      "sha256": "0a00946d2f8c8d90630ce27949b632775c728b144058dc48045f0397ac70d320"
+      "last_timestamp": "1790712000000",
+      "sha256": "453b096c7feca58fa289f3d344b62474df2795397ef9b4335dfb3304f06d0c97"
     },
     {
       "file": "data/market/h4/usdjpy.csv",
-      "rows": 9306,
+      "rows": 9312,
       "first_timestamp": "1609704000000",
-      "last_timestamp": "1790625600000",
-      "sha256": "1505b3746e0f569009e312f5eb4150f76c5ab84fe88b18b069d7e503cca8fa19"
+      "last_timestamp": "1790712000000",
+      "sha256": "1a8ef1decfacf9a6597b31cc48b19ddb985ff9f6c9774fdf11a00f6cc57e853c"
     }
   ]
 }
