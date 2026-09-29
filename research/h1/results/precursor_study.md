@@ -79,7 +79,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |eurgbp|short|dist_ema200_atr|2.963|-0.4866|3.45|37|
 |usdchf|short|adx14|25.68|23.04|2.642|102|
 |audjpy|short|adx14|25.36|22.75|2.604|178|
-|usdcad|short|dist_ema200_atr|2.509|0.1388|2.37|176|
+|usdcad|short|dist_ema200_atr|2.509|0.1395|2.369|176|
 |usdjpy|short|adx14|26.58|24.22|2.356|182|
 |gbpjpy|short|adx14|25.43|23.11|2.317|274|
 |audjpy|long|dist_ema200_atr|-1.488|0.7438|-2.232|191|
@@ -87,7 +87,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |usdchf|long|adx14|25.02|23.04|1.976|112|
 |usdjpy|long|adx14|26.18|24.22|1.963|230|
 |audusd|short|dist_ema200_atr|1.447|-0.506|1.953|137|
-|eurusd|short|dist_ema200_atr|1.318|-0.5825|1.901|153|
+|eurusd|short|dist_ema200_atr|1.318|-0.5833|1.902|153|
 |audnzd|short|adx14|20.56|22.42|-1.86|51|
 |eurjpy|long|dist_ema200_atr|-0.7034|1.141|-1.845|254|
 |eurjpy|long|adx14|25.69|23.92|1.764|254|
