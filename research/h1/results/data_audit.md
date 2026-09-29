@@ -1,21 +1,21 @@
 # H1 Data Audit
 
-- generated: 2026-09-28T23:42:22.363707+00:00
+- generated: 2026-09-29T00:19:06.934964+00:00
 
 |TF|Pair|Status|Rows|Details|
 |---|---|---|---:|---|
-|h1|usdjpy|OK|35791|2021-01-03T22:00:00+00:00 -> 2026-09-28T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdjpy|OK|35792|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurjpy|OK|35311|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|gbpjpy|OK|34803|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audjpy|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|eurusd|OK|35791|2021-01-03T22:00:00+00:00 -> 2026-09-28T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|gbpusd|OK|35789|2021-01-03T22:00:00+00:00 -> 2026-09-28T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|eurusd|OK|35792|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|gbpusd|OK|35790|2021-01-03T22:00:00+00:00 -> 2026-09-28T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audusd|OK|35790|2021-01-03T22:00:00+00:00 -> 2026-09-28T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|nzdusd|OK|35304|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|usdcad|OK|34274|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|usdchf|OK|32164|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdcad|OK|35310|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdchf|OK|35304|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurgbp|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|audnzd|OK|33767|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|audnzd|OK|35303|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h4|usdjpy|OK|9306|2021-01-03T20:00:00+00:00 -> 2026-09-28T20:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h4|eurjpy|OK|9607|2021-01-03T20:00:00+00:00 -> 2026-09-28T20:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h4|gbpjpy|OK|9594|2021-01-03T20:00:00+00:00 -> 2026-09-28T08:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|

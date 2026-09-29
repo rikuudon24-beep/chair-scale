@@ -1,9 +1,9 @@
 [
   {
     "pair": "usdjpy",
-    "rows": 35789,
+    "rows": 35790,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 22:00:00+00:00",
+    "end": "2026-09-28 23:00:00+00:00",
     "file": "research/h1/results/datasets/usdjpy.parquet"
   },
   {
@@ -29,16 +29,16 @@
   },
   {
     "pair": "eurusd",
-    "rows": 35789,
+    "rows": 35790,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 22:00:00+00:00",
+    "end": "2026-09-28 23:00:00+00:00",
     "file": "research/h1/results/datasets/eurusd.parquet"
   },
   {
     "pair": "gbpusd",
-    "rows": 35787,
+    "rows": 35788,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-28 22:00:00+00:00",
+    "end": "2026-09-28 23:00:00+00:00",
     "file": "research/h1/results/datasets/gbpusd.parquet"
   },
   {
@@ -57,14 +57,14 @@
   },
   {
     "pair": "usdcad",
-    "rows": 34272,
+    "rows": 35308,
     "start": "2021-01-04 00:00:00+00:00",
     "end": "2026-08-31 23:00:00+00:00",
     "file": "research/h1/results/datasets/usdcad.parquet"
   },
   {
     "pair": "usdchf",
-    "rows": 32162,
+    "rows": 35302,
     "start": "2021-01-04 00:00:00+00:00",
     "end": "2026-08-31 23:00:00+00:00",
     "file": "research/h1/results/datasets/usdchf.parquet"
@@ -78,7 +78,7 @@
   },
   {
     "pair": "audnzd",
-    "rows": 33765,
+    "rows": 35301,
     "start": "2021-01-04 00:00:00+00:00",
     "end": "2026-08-31 23:00:00+00:00",
     "file": "research/h1/results/datasets/audnzd.parquet"
