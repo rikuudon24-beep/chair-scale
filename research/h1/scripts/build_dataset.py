@@ -87,8 +87,10 @@ def forward_labels(x,pair):
         x[f"mae_long_{H}"]=(fut_lo-x.close)/ps
         x[f"mae_short_{H}"]=(x.close-fut_hi)/ps
         for t in CFG["targets_pips"]:
-            x[f"up_{t}_{H}"]=(x[f"mfe_up_{H}"]>=t).astype("Int8")
-            x[f"down_{t}_{H}"]=(x[f"mfe_down_{H}"]>=t).astype("Int8")
+            x[f"up_{t}_{H}"]=pd.Series(pd.NA,index=x.index,dtype="Int8")
+            x.loc[x[f"mfe_up_{H}"].notna(),f"up_{t}_{H}"]=(x.loc[x[f"mfe_up_{H}"].notna(),f"mfe_up_{H}"]>=t).astype("Int8")
+            x[f"down_{t}_{H}"]=pd.Series(pd.NA,index=x.index,dtype="Int8")
+            x.loc[x[f"mfe_down_{H}"].notna(),f"down_{t}_{H}"]=(x.loc[x[f"mfe_down_{H}"].notna(),f"mfe_down_{H}"]>=t).astype("Int8")
     return x
 
 def main():
