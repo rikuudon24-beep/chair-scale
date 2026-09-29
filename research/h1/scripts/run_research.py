@@ -11,7 +11,8 @@ steps=[
  ["python","research/h1/scripts/precursor_candidates.py"],
  ["python","research/h1/scripts/precursor_trade_quality.py"],
  ["python","research/h1/scripts/precursor_tp_sl.py"],
- ["python","research/h1/scripts/cross_pair_validation.py"],\n    ["python","research/h1/scripts/cross_pair_regime_stability.py"],
+ ["python","research/h1/scripts/cross_pair_validation.py"],
+ ["python","research/h1/scripts/cross_pair_regime_stability.py"],
 ]
 for cmd in steps:
     print("[RUN]"," ".join(cmd),flush=True)
