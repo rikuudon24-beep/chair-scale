@@ -47,20 +47,34 @@ def atoms(x, direction):
     return {k:v.fillna(False) for k,v in a.items() if k not in directional[direction]}
 
 def evaluate(x, mask, direction):
-    target = x["up_100_48"] if direction == "long" else x["down_100_48"]
-    mfe = x["mfe_up_48"] if direction == "long" else x["mfe_down_48"]
-    mae = x["mae_long_48"] if direction == "long" else x["mae_short_48"]
-    m = mask & target.notna(); n = int(m.sum())
-    if n == 0: return None
-    k = int(target[m].sum())
-    return {"trades":n,"hit_rate":k/n,"lcb95":wilson_lower(k,n),
-            "mean_mfe":float(mfe[m].mean()),"median_mfe":float(mfe[m].median()),
-            "mean_mae":float(mae[m].mean())}
+    ps = 0.01 if "jpy" in str(x.pair.iloc[0]) else 0.0001
+    idx = np.flatnonzero(mask.fillna(False).to_numpy())
+    selected = []
+    next_allowed = -1
+    for i in idx:
+        if i < next_allowed or i + 48 >= len(x):
+            continue
+        selected.append(i)
+        next_allowed = i + 49
+    if not selected:
+        return None
+    op=x.open.to_numpy(); hi=x.high.to_numpy(); lo=x.low.to_numpy()
+    mfe_vals=[]; mae_vals=[]; hits=0
+    for i in selected:
+        entry=op[i+1]; fh=np.max(hi[i+1:i+49]); fl=np.min(lo[i+1:i+49])
+        if direction=="long":
+            mfe_vals.append((fh-entry)/ps); mae_vals.append((fl-entry)/ps); hits += int(fh-entry >= 100*ps)
+        else:
+            mfe_vals.append((entry-fl)/ps); mae_vals.append((entry-fh)/ps); hits += int(entry-fl >= 100*ps)
+    n=len(selected); hit=hits/n
+    return {"trades":n,"hit_rate":hit,"lcb95":wilson_lower(hits,n),
+            "mean_mfe":float(np.mean(mfe_vals)),"median_mfe":float(np.median(mfe_vals)),
+            "mean_mae":float(np.mean(mae_vals))}
 
 def main():
     rows = []
     for fp in sorted(DATA.glob("*.parquet")):
-        pair = fp.stem; x = pd.read_parquet(fp).sort_index(); disc,_,_ = split(x)
+        pair = fp.stem; x = pd.read_parquet(fp).sort_index(); x["pair"]=pair; disc,_,_ = split(x)
         for direction in ["long","short"]:
             aa = atoms(disc, direction)
             eligible = [k for k,v in aa.items() if int(v.sum()) >= 50]
@@ -81,7 +95,7 @@ def main():
     for _,r in res.iterrows():
         x=pd.read_parquet(DATA/f"{r.pair}.parquet").sort_index(); _,val,oos=split(x)
         for sn,part in [("validation",val),("oos",oos)]:
-            aa=atoms(part,r.direction); mask=pd.Series(True,index=part.index)
+            part["pair"]=r.pair; aa=atoms(part,r.direction); mask=pd.Series(True,index=part.index)
             for name in r.conditions.split(" & "): mask &= aa[name]
             ev=evaluate(part,mask,r.direction)
             if ev is None: ev={"trades":0,"hit_rate":np.nan,"lcb95":np.nan,"mean_mfe":np.nan,"median_mfe":np.nan,"mean_mae":np.nan}
