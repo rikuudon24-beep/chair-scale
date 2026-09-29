@@ -8,7 +8,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |Pair|Dir|Feature|Event rate|Baseline rate|Lift|Events|
 |---|---|---|---:|---:|---:|---:|
 |usdcad|short|break20_up|0.460|0.061|0.399|174|
-|eurusd|short|break20_up|0.451|0.056|0.395|153|
+|eurusd|short|break20_up|0.451|0.055|0.395|153|
 |audusd|short|break20_up|0.423|0.060|0.363|137|
 |gbpusd|long|break20_down|0.410|0.059|0.351|212|
 |audusd|long|break20_down|0.385|0.059|0.326|122|
@@ -87,7 +87,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |usdchf|long|adx14|25.02|23|2.02|112|
 |usdjpy|long|adx14|26.18|24.22|1.963|230|
 |audusd|short|dist_ema200_atr|1.447|-0.506|1.953|137|
-|eurusd|short|dist_ema200_atr|1.318|-0.5805|1.899|153|
+|eurusd|short|dist_ema200_atr|1.318|-0.5806|1.899|153|
 |audnzd|short|adx14|20.56|22.42|-1.86|51|
 |eurjpy|long|dist_ema200_atr|-0.7034|1.141|-1.845|254|
 |eurjpy|long|adx14|25.69|23.92|1.764|254|

@@ -1,9 +1,9 @@
 [
   {
     "pair": "usdjpy",
-    "rows": 35794,
+    "rows": 35795,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-29 03:00:00+00:00",
+    "end": "2026-09-29 04:00:00+00:00",
     "file": "research/h1/results/datasets/usdjpy.parquet"
   },
   {
@@ -29,9 +29,9 @@
   },
   {
     "pair": "eurusd",
-    "rows": 35794,
+    "rows": 35795,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-29 03:00:00+00:00",
+    "end": "2026-09-29 04:00:00+00:00",
     "file": "research/h1/results/datasets/eurusd.parquet"
   },
   {
