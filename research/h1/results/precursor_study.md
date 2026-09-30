@@ -52,7 +52,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 
 |Pair|Dir|Feature|Event median|Baseline median|Median delta|Events|
 |---|---|---|---:|---:|---:|---:|
-|usdcad|short|rsi14|64.17|49.74|14.43|176|
+|usdcad|short|rsi14|64.17|49.73|14.44|176|
 |audusd|short|rsi14|64.28|50.12|14.17|137|
 |eurusd|short|rsi14|62.59|49.53|13.06|153|
 |audusd|long|rsi14|37.35|50.12|-12.76|122|
@@ -66,28 +66,28 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |audnzd|long|rsi14|40.73|50.13|-9.396|67|
 |gbpusd|short|rsi14|59.39|50.04|9.344|225|
 |usdchf|short|rsi14|59.88|50.55|9.333|102|
-|usdjpy|long|rsi14|43.54|52.81|-9.267|230|
+|usdjpy|long|rsi14|43.54|52.81|-9.266|230|
 |eurgbp|short|rsi14|58.19|49.13|9.063|37|
 |gbpjpy|long|rsi14|43|51.93|-8.931|306|
-|usdcad|long|rsi14|40.92|49.74|-8.811|181|
+|usdcad|long|rsi14|40.92|49.73|-8.808|181|
 |audnzd|short|rsi14|58.67|50.13|8.54|51|
 |audjpy|short|rsi14|60.08|51.83|8.243|178|
 |eurjpy|short|rsi14|59.82|52|7.823|215|
 |gbpjpy|short|rsi14|58.18|51.93|6.246|274|
-|usdjpy|short|rsi14|58.69|52.81|5.876|182|
+|usdjpy|short|rsi14|58.69|52.81|5.877|182|
 |eurgbp|long|rsi14|43.66|49.13|-5.47|43|
 |eurgbp|short|dist_ema200_atr|2.963|-0.4866|3.45|37|
 |usdchf|short|adx14|25.68|23.04|2.643|102|
 |audjpy|short|adx14|25.36|22.75|2.604|178|
-|usdcad|short|dist_ema200_atr|2.509|0.1402|2.368|176|
-|usdjpy|short|adx14|26.58|24.22|2.356|182|
+|usdcad|short|dist_ema200_atr|2.509|0.1405|2.368|176|
+|usdjpy|short|adx14|26.58|24.22|2.358|182|
 |gbpjpy|short|adx14|25.43|23.11|2.317|274|
 |audjpy|long|dist_ema200_atr|-1.488|0.7438|-2.232|191|
 |usdchf|short|dist_ema200_atr|2.141|0.1119|2.029|102|
 |usdchf|long|adx14|25.02|23.04|1.977|112|
-|usdjpy|long|adx14|26.18|24.22|1.963|230|
+|usdjpy|long|adx14|26.18|24.22|1.964|230|
 |audusd|short|dist_ema200_atr|1.447|-0.515|1.962|137|
-|eurusd|short|dist_ema200_atr|1.318|-0.5843|1.903|153|
+|eurusd|short|dist_ema200_atr|1.318|-0.5845|1.903|153|
 |audnzd|short|adx14|20.56|22.42|-1.86|51|
 |eurjpy|long|dist_ema200_atr|-0.7034|1.141|-1.845|254|
 |eurjpy|long|adx14|25.69|23.92|1.764|254|

@@ -12,7 +12,7 @@ Selection rule: discovery only; minimum 30 trades, PF >= 1.10 and positive expec
 |Rule|TP|SL|H|Split|Trades|Win rate|PF|Expectancy pips|Total pips|
 |---|---:|---:|---|---:|---:|---:|---:|---:|---:|
 |h4_aligned_long|100|50|72|oos|190|0.410|1.0538345373353257|1.49|293.2|
-|h4_aligned_long|100|50|72|validation|226|0.350|0.9907085889050073|-0.33|-102.7|
+|h4_aligned_long|100|50|72|validation|227|0.349|0.9830389843293704|-0.58|-154.2|
 |h4_aligned_long|150|75|120|oos|203|0.381|0.9610815908473976|-2.42|-668.1|
 |h4_aligned_long|150|75|120|validation|233|0.339|0.9725185173737566|-1.35|-286.5|
 |meanrev_long|100|50|72|oos|34|0.267|0.7003955683003287|-15.32|-387.0|

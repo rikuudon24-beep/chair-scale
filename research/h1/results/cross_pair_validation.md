@@ -260,10 +260,10 @@ Structures were frozen from prior GBPJPY research and applied unchanged to all c
 |gbpusd|pullback_reversal_rsi|discovery|50|75|110|0.473|0.846|-0.058|
 |gbpusd|pullback_reversal_rsi|discovery|75|50|110|0.273|0.703|-0.173|
 |gbpusd|pullback_reversal_rsi|discovery|75|75|110|0.309|0.739|-0.109|
-|gbpusd|pullback_reversal_rsi|validation|50|50|42|0.357|0.714|-0.143|
-|gbpusd|pullback_reversal_rsi|validation|50|75|42|0.357|0.556|-0.190|
-|gbpusd|pullback_reversal_rsi|validation|75|50|42|0.262|0.786|-0.107|
-|gbpusd|pullback_reversal_rsi|validation|75|75|42|0.262|0.611|-0.167|
+|gbpusd|pullback_reversal_rsi|validation|50|50|43|0.372|0.762|-0.116|
+|gbpusd|pullback_reversal_rsi|validation|50|75|43|0.372|0.593|-0.171|
+|gbpusd|pullback_reversal_rsi|validation|75|50|43|0.256|0.786|-0.105|
+|gbpusd|pullback_reversal_rsi|validation|75|75|43|0.256|0.611|-0.163|
 |gbpusd|pullback_reversal_rsi|oos|50|50|29|0.310|0.692|-0.138|
 |gbpusd|pullback_reversal_rsi|oos|50|75|29|0.345|0.667|-0.115|
 |gbpusd|pullback_reversal_rsi|oos|75|50|29|0.241|0.750|-0.121|
