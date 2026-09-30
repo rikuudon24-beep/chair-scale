@@ -48,10 +48,10 @@ Only structures that stayed positive in both OOS halves with adequate half-sampl
 |pullback_reversal_rsi|usdjpy|validation|50|75|35|0.600|1.500|0.200|54.6|60.3|48.2|82.5|6.0|
 |pullback_reversal_rsi|usdjpy|validation|75|50|35|0.429|0.750|-0.143|70.7|83.6|53.4|74.8|9.0|
 |pullback_reversal_rsi|usdjpy|validation|75|75|35|0.486|0.944|-0.029|75.0|84.7|78.0|90.1|10.0|
-|pullback_reversal_rsi|usdjpy|oos|50|50|31|0.613|1.900|0.290|51.9|59.5|40.7|53.8|13.0|
-|pullback_reversal_rsi|usdjpy|oos|50|75|31|0.742|4.600|0.581|53.5|63.7|40.7|55.1|21.0|
-|pullback_reversal_rsi|usdjpy|oos|75|50|31|0.387|0.857|-0.065|70.7|80.1|49.0|65.4|21.0|
-|pullback_reversal_rsi|usdjpy|oos|75|75|31|0.484|1.875|0.226|74.8|82.9|49.0|73.5|28.0|
+|pullback_reversal_rsi|usdjpy|oos|50|50|31|0.613|1.900|0.290|51.9|59.5|40.7|53.8|12.0|
+|pullback_reversal_rsi|usdjpy|oos|50|75|31|0.742|4.600|0.581|53.5|63.7|40.7|55.1|19.0|
+|pullback_reversal_rsi|usdjpy|oos|75|50|31|0.387|0.857|-0.065|70.7|80.1|49.0|60.8|21.0|
+|pullback_reversal_rsi|usdjpy|oos|75|75|31|0.484|1.875|0.226|74.8|82.9|49.0|73.5|25.0|
 |pullback_reversal_rsi|eurjpy|discovery|50|50|96|0.562|1.543|0.198|51.0|57.2|37.7|53.7|8.0|
 |pullback_reversal_rsi|eurjpy|discovery|50|75|96|0.604|2.320|0.344|51.8|58.4|37.7|75.5|14.0|
 |pullback_reversal_rsi|eurjpy|discovery|75|50|96|0.458|1.100|0.042|65.0|81.2|43.1|54.8|13.0|
