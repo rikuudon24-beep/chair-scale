@@ -18,6 +18,7 @@ steps=[
  ["python","research/h1/scripts/stable_jpy_filter_stability.py"],
  ["python","research/h1/scripts/stable_jpy_adx_rsi_tp_sl.py"],
  ["python","research/h1/scripts/stable_jpy_adx_rsi_period_stability.py"],
+ ["python","research/h1/scripts/stable_jpy_adx_rsi_risk_profile.py"],
 ]
 for cmd in steps:
     print("[RUN]"," ".join(cmd),flush=True)
