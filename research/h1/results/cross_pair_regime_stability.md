@@ -252,13 +252,13 @@ The four structures and TP/SL values are frozen from the prior cross-pair test. 
 |nzdusd|mid_rsi_reversal|oos_second|75|50|10|0.200|1.500|0.100|
 |nzdusd|mid_rsi_reversal|oos_first|75|75|16|0.000|inf|0.000|
 |nzdusd|mid_rsi_reversal|oos_second|75|75|10|0.200|inf|0.200|
-|nzdusd|pullback_reversal_macd|oos_first|50|50|18|0.167|1.000|0.000|
+|nzdusd|pullback_reversal_macd|oos_first|50|50|19|0.158|0.750|-0.053|
 |nzdusd|pullback_reversal_macd|oos_second|50|50|17|0.294|0.833|-0.059|
-|nzdusd|pullback_reversal_macd|oos_first|50|75|18|0.167|2.000|0.056|
+|nzdusd|pullback_reversal_macd|oos_first|50|75|19|0.158|1.000|0.000|
 |nzdusd|pullback_reversal_macd|oos_second|50|75|17|0.294|inf|0.196|
-|nzdusd|pullback_reversal_macd|oos_first|75|50|18|0.056|0.500|-0.083|
+|nzdusd|pullback_reversal_macd|oos_first|75|50|19|0.053|0.375|-0.132|
 |nzdusd|pullback_reversal_macd|oos_second|75|50|17|0.176|0.750|-0.088|
-|nzdusd|pullback_reversal_macd|oos_first|75|75|18|0.056|1.000|0.000|
+|nzdusd|pullback_reversal_macd|oos_first|75|75|19|0.053|0.500|-0.053|
 |nzdusd|pullback_reversal_macd|oos_second|75|75|17|0.176|inf|0.176|
 |usdcad|pullback_reversal|oos_first|50|50|14|0.357|1.000|0.000|
 |usdcad|pullback_reversal|oos_second|50|50|12|0.250|0.375|-0.417|

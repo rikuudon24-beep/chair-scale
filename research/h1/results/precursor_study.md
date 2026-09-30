@@ -16,7 +16,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |eurjpy|long|break20_down|0.346|0.047|0.300|254|
 |eurjpy|short|break20_up|0.353|0.071|0.282|215|
 |gbpusd|short|break20_up|0.338|0.059|0.279|225|
-|usdchf|long|break20_down|0.330|0.053|0.278|112|
+|usdchf|long|break20_down|0.330|0.052|0.278|112|
 |audjpy|long|break20_down|0.325|0.048|0.277|191|
 |eurgbp|short|break20_up|0.324|0.049|0.275|37|
 |eurusd|long|break20_down|0.333|0.060|0.273|144|
@@ -65,8 +65,8 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |usdchf|long|rsi14|40.48|50.55|-10.06|112|
 |audnzd|long|rsi14|40.73|50.13|-9.396|67|
 |gbpusd|short|rsi14|59.39|50.04|9.344|225|
-|usdchf|short|rsi14|59.88|50.55|9.333|102|
-|usdjpy|long|rsi14|43.54|52.81|-9.266|230|
+|usdchf|short|rsi14|59.88|50.55|9.332|102|
+|usdjpy|long|rsi14|43.54|52.81|-9.265|230|
 |eurgbp|short|rsi14|58.19|49.13|9.063|37|
 |gbpjpy|long|rsi14|43|51.93|-8.931|306|
 |usdcad|long|rsi14|40.92|49.73|-8.808|181|
@@ -74,7 +74,7 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |audjpy|short|rsi14|60.08|51.83|8.243|178|
 |eurjpy|short|rsi14|59.82|52|7.823|215|
 |gbpjpy|short|rsi14|58.18|51.93|6.246|274|
-|usdjpy|short|rsi14|58.69|52.81|5.877|182|
+|usdjpy|short|rsi14|58.69|52.81|5.878|182|
 |eurgbp|long|rsi14|43.66|49.13|-5.47|43|
 |eurgbp|short|dist_ema200_atr|2.963|-0.4866|3.45|37|
 |usdchf|short|adx14|25.68|23.04|2.643|102|
@@ -83,12 +83,12 @@ Discovery only. This study identifies candidate state changes; it does not freez
 |usdjpy|short|adx14|26.58|24.22|2.358|182|
 |gbpjpy|short|adx14|25.43|23.11|2.317|274|
 |audjpy|long|dist_ema200_atr|-1.488|0.7438|-2.232|191|
-|usdchf|short|dist_ema200_atr|2.141|0.1119|2.029|102|
+|usdchf|short|dist_ema200_atr|2.141|0.1114|2.03|102|
 |usdchf|long|adx14|25.02|23.04|1.977|112|
 |usdjpy|long|adx14|26.18|24.22|1.964|230|
-|audusd|short|dist_ema200_atr|1.447|-0.515|1.962|137|
-|eurusd|short|dist_ema200_atr|1.318|-0.5845|1.903|153|
+|audusd|short|dist_ema200_atr|1.447|-0.5152|1.963|137|
+|eurusd|short|dist_ema200_atr|1.318|-0.5846|1.903|153|
 |audnzd|short|adx14|20.56|22.42|-1.86|51|
 |eurjpy|long|dist_ema200_atr|-0.7034|1.141|-1.845|254|
 |eurjpy|long|adx14|25.69|23.92|1.764|254|
-|audusd|long|dist_ema200_atr|-2.227|-0.515|-1.712|122|
+|audusd|long|dist_ema200_atr|-2.227|-0.5152|-1.712|122|
