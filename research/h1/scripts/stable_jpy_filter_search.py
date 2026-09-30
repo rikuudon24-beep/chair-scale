@@ -50,10 +50,10 @@ def trade_result(x,pair,i,tp,sl):
     for j in range(i+1,end):
         hit_tp=hi[j] >= entry+tp*p
         hit_sl=lo[j] <= entry-sl*p
-        if hit_tp and hit_sl: return -sl/sl
+        if hit_tp and hit_sl: return -1.0
         if hit_sl: return -1.0
-        if hit_tp: return tp/sl
-    return (float(x.close.iloc[end-1])-entry)/(sl*p)
+        if hit_tp: return 1.0
+    return 0.0
 
 def eval_part(x,pair,mask,tp=50,sl=75):
     ids=signal_indices(x,mask)
