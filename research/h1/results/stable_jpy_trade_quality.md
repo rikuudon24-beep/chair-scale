@@ -12,10 +12,10 @@ Only structures that stayed positive in both OOS halves with adequate half-sampl
 |pullback_reversal|usdjpy|validation|50|75|34|0.588|1.429|0.176|53.7|62.2|54.6|87.6|6.0|
 |pullback_reversal|usdjpy|validation|75|50|34|0.412|0.700|-0.176|54.9|84.0|57.2|70.5|8.0|
 |pullback_reversal|usdjpy|validation|75|75|34|0.500|1.000|0.000|73.3|86.6|75.9|90.3|11.5|
-|pullback_reversal|usdjpy|oos|50|50|31|0.516|1.333|0.129|50.6|55.1|37.4|57.4|8.0|
+|pullback_reversal|usdjpy|oos|50|50|31|0.516|1.333|0.129|50.6|55.1|37.4|58.1|8.0|
 |pullback_reversal|usdjpy|oos|50|75|31|0.710|3.667|0.516|54.3|60.7|37.4|66.7|18.0|
-|pullback_reversal|usdjpy|oos|75|50|31|0.387|0.857|-0.065|54.3|77.5|49.0|59.6|12.0|
-|pullback_reversal|usdjpy|oos|75|75|31|0.516|1.778|0.226|75.4|79.7|49.0|83.3|24.0|
+|pullback_reversal|usdjpy|oos|75|50|31|0.387|0.857|-0.065|54.3|77.5|49.0|59.8|12.0|
+|pullback_reversal|usdjpy|oos|75|75|31|0.516|1.778|0.226|75.4|79.7|49.0|84.0|24.0|
 |pullback_reversal|eurjpy|discovery|50|50|89|0.551|1.485|0.180|51.0|57.5|30.7|51.9|8.0|
 |pullback_reversal|eurjpy|discovery|50|75|89|0.573|2.040|0.292|51.2|58.1|30.7|78.3|13.0|
 |pullback_reversal|eurjpy|discovery|75|50|89|0.416|0.925|-0.034|60.1|80.6|41.5|56.6|14.0|
@@ -50,7 +50,7 @@ Only structures that stayed positive in both OOS halves with adequate half-sampl
 |pullback_reversal_rsi|usdjpy|validation|75|75|35|0.486|0.944|-0.029|75.0|84.7|78.0|90.1|10.0|
 |pullback_reversal_rsi|usdjpy|oos|50|50|31|0.613|1.900|0.290|51.9|59.5|40.7|53.8|12.0|
 |pullback_reversal_rsi|usdjpy|oos|50|75|31|0.742|4.600|0.581|53.5|63.7|40.7|55.1|19.0|
-|pullback_reversal_rsi|usdjpy|oos|75|50|31|0.387|0.857|-0.065|70.7|80.1|49.0|60.8|21.0|
+|pullback_reversal_rsi|usdjpy|oos|75|50|31|0.387|0.857|-0.065|70.7|80.1|49.0|61.2|21.0|
 |pullback_reversal_rsi|usdjpy|oos|75|75|31|0.484|1.875|0.226|74.8|82.9|49.0|73.5|25.0|
 |pullback_reversal_rsi|eurjpy|discovery|50|50|97|0.557|1.500|0.186|51.0|57.1|37.7|53.6|8.0|
 |pullback_reversal_rsi|eurjpy|discovery|50|75|97|0.598|2.231|0.330|51.7|58.1|37.7|75.6|14.0|
