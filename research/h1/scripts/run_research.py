@@ -15,6 +15,7 @@ steps=[
  ["python","research/h1/scripts/cross_pair_regime_stability.py"],
  ["python","research/h1/scripts/stable_jpy_trade_quality.py"],
  ["python","research/h1/scripts/stable_jpy_filter_search.py"],
+ ["python","research/h1/scripts/stable_jpy_filter_stability.py"],
 ]
 for cmd in steps:
     print("[RUN]"," ".join(cmd),flush=True)
