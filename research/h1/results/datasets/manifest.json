@@ -1,16 +1,16 @@
 [
   {
     "pair": "usdjpy",
-    "rows": 35825,
+    "rows": 35826,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/usdjpy.parquet"
   },
   {
     "pair": "eurjpy",
-    "rows": 35309,
+    "rows": 35825,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-08-31 23:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/eurjpy.parquet"
   },
   {
@@ -29,51 +29,51 @@
   },
   {
     "pair": "eurusd",
-    "rows": 35825,
+    "rows": 35826,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/eurusd.parquet"
   },
   {
     "pair": "gbpusd",
-    "rows": 35823,
+    "rows": 35824,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/gbpusd.parquet"
   },
   {
     "pair": "audusd",
-    "rows": 35824,
+    "rows": 35825,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/audusd.parquet"
   },
   {
     "pair": "nzdusd",
-    "rows": 35817,
+    "rows": 35818,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/nzdusd.parquet"
   },
   {
     "pair": "usdcad",
-    "rows": 35823,
+    "rows": 35824,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/usdcad.parquet"
   },
   {
     "pair": "usdchf",
-    "rows": 35817,
+    "rows": 35818,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-09-30 10:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/usdchf.parquet"
   },
   {
     "pair": "eurgbp",
-    "rows": 35307,
+    "rows": 35823,
     "start": "2021-01-04 00:00:00+00:00",
-    "end": "2026-08-31 23:00:00+00:00",
+    "end": "2026-09-30 11:00:00+00:00",
     "file": "research/h1/results/datasets/eurgbp.parquet"
   },
   {
