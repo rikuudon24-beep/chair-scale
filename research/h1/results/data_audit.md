@@ -1,19 +1,19 @@
 # H1 Data Audit
 
-- generated: 2026-09-30T06:58:44.449342+00:00
+- generated: 2026-09-30T11:12:36.034369+00:00
 
 |TF|Pair|Status|Rows|Details|
 |---|---|---|---:|---|
-|h1|usdjpy|OK|35822|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdjpy|OK|35827|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurjpy|OK|35311|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|gbpjpy|OK|35310|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audjpy|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|eurusd|OK|35822|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|gbpusd|OK|35820|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|audusd|OK|35821|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|nzdusd|OK|35814|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|usdcad|OK|35820|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|usdchf|OK|35814|2021-01-03T22:00:00+00:00 -> 2026-09-30T05:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|eurusd|OK|35827|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|gbpusd|OK|35825|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|audusd|OK|35826|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|nzdusd|OK|35819|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdcad|OK|35825|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdchf|OK|35819|2021-01-03T22:00:00+00:00 -> 2026-09-30T10:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurgbp|OK|35309|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audnzd|OK|35303|2021-01-03T22:00:00+00:00 -> 2026-08-31T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h4|usdjpy|OK|9306|2021-01-03T20:00:00+00:00 -> 2026-09-28T20:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|

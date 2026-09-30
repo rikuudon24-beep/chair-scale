@@ -14,10 +14,10 @@ Validation and OOS are evaluation only.
 |trend_down & h4_bull & d1_bull & adx25+ & near_ema20|oos|32|0.750|0.579|3.429|0.531|
 |trend_down & h4_bull & d1_bull & near_ema20 & rsi_up6|discovery|153|0.608|0.529|2.114|0.320|
 |trend_down & h4_bull & d1_bull & near_ema20 & rsi_up6|validation|62|0.565|0.441|1.346|0.145|
-|trend_down & h4_bull & d1_bull & near_ema20 & rsi_up6|oos|53|0.774|0.645|4.100|0.585|
+|trend_down & h4_bull & d1_bull & near_ema20 & rsi_up6|oos|52|0.788|0.660|4.556|0.615|
 |trend_down & h4_bull & d1_bull & rsi45_55 & rsi_up6|discovery|155|0.606|0.528|2.186|0.329|
 |trend_down & h4_bull & d1_bull & rsi45_55 & rsi_up6|validation|69|0.580|0.462|1.429|0.174|
-|trend_down & h4_bull & d1_bull & rsi45_55 & rsi_up6|oos|53|0.717|0.584|3.167|0.491|
+|trend_down & h4_bull & d1_bull & rsi45_55 & rsi_up6|oos|52|0.731|0.597|3.455|0.519|
 |trend_down & h4_bull & d1_bull & atr_above_med & near_ema20|discovery|122|0.615|0.526|2.143|0.328|
 |trend_down & h4_bull & d1_bull & atr_above_med & near_ema20|validation|44|0.614|0.466|1.588|0.227|
 |trend_down & h4_bull & d1_bull & atr_above_med & near_ema20|oos|48|0.812|0.681|5.571|0.667|
@@ -59,7 +59,7 @@ Validation and OOS are evaluation only.
 |trend_down & h4_bull & d1_bull & far_ema200 & rsi45_55|oos|51|0.725|0.591|2.846|0.471|
 |trend_down & h4_bull & d1_bull & macd_pos & rsi_up6|discovery|194|0.572|0.502|1.762|0.247|
 |trend_down & h4_bull & d1_bull & macd_pos & rsi_up6|validation|76|0.605|0.493|1.586|0.224|
-|trend_down & h4_bull & d1_bull & macd_pos & rsi_up6|oos|68|0.676|0.558|2.875|0.441|
+|trend_down & h4_bull & d1_bull & macd_pos & rsi_up6|oos|67|0.687|0.568|3.067|0.463|
 |trend_down & h4_bull & d1_bull & rsi45_55 & w1_bull|discovery|93|0.602|0.501|1.931|0.290|
 |trend_down & h4_bull & d1_bull & rsi45_55 & w1_bull|validation|38|0.579|0.422|1.375|0.158|
 |trend_down & h4_bull & d1_bull & rsi45_55 & w1_bull|oos|37|0.811|0.658|6.000|0.676|
@@ -83,7 +83,7 @@ Validation and OOS are evaluation only.
 |trend_down & h4_bull & d1_bull & macd_neg & rsi_up6|oos|44|0.886|0.760|9.750|0.795|
 |trend_down & h4_bull & d1_bull & rsi_up6|discovery|219|0.562|0.495|1.708|0.233|
 |trend_down & h4_bull & d1_bull & rsi_up6|validation|86|0.558|0.453|1.263|0.116|
-|trend_down & h4_bull & d1_bull & rsi_up6|oos|74|0.784|0.677|4.833|0.622|
+|trend_down & h4_bull & d1_bull & rsi_up6|oos|73|0.795|0.688|5.273|0.644|
 |trend_down & h4_bull & d1_bull & near_ema20 & w1_bull|discovery|94|0.596|0.495|1.867|0.277|
 |trend_down & h4_bull & d1_bull & near_ema20 & w1_bull|validation|35|0.543|0.382|1.188|0.086|
 |trend_down & h4_bull & d1_bull & near_ema20 & w1_bull|oos|39|0.821|0.673|6.400|0.692|
