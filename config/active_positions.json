@@ -1,0 +1,13 @@
+{
+  "positions": [
+    {
+      "id": "usdcad-long-20260930-2000",
+      "pair": "usdcad",
+      "direction": "long",
+      "entry_timestamp": "2026-09-30T20:00:00Z",
+      "reference_entry_price": 1.42297,
+      "source": "frozen_h4_entry_alert",
+      "status": "open"
+    }
+  ]
+}
