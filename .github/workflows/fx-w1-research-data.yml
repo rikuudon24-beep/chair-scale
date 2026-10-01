@@ -10,7 +10,7 @@ on:
 jobs:
   download:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 180
     permissions:
       contents: write
     steps:
@@ -23,10 +23,17 @@ jobs:
           python-version: "3.11"
       - name: Download W1 research data
         run: python scripts/download_w1_research_data.py
-      - name: Commit W1 data
+      - name: Run causal price-structure study
+        run: python scripts/research_price_structure_transition.py
+      - name: Commit W1 data and research reports
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/market/w1
-          git diff --cached --quiet || git commit -m "data: add weekly research candles"
+          git add data/market/w1 reports/price_structure_transition_*.csv
+          git diff --cached --quiet || git commit -m "research: weekly data and price structure results"
           git push
+      - name: Upload research reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fx-price-structure-transition-research-w1
+          path: reports/price_structure_transition_*.csv
