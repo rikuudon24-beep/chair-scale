@@ -1,0 +1,32 @@
+name: FX weekly research data
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/download_w1_research_data.py"
+      - ".github/workflows/fx-w1-research-data.yml"
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Download W1 research data
+        run: python scripts/download_w1_research_data.py
+      - name: Commit W1 data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/market/w1
+          git diff --cached --quiet || git commit -m "data: add weekly research candles"
+          git push
