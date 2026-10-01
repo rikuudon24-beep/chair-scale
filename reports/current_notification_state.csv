@@ -1,6 +1,6 @@
 pair,latest_completed_h4,state,status_label,status_detail,direction,touch_candle,reference_price,signal_candle,entry_candidate_h4,entry_window_open,signal_age_h4,close,ema20,ema200,distance_to_ema20_pips,gc,dc,sma_stack_bull,di_strong_bull,strong_close_bear,source
 usdjpy,2026-10-01T00:00:00+00:00,ARMED,ブレイク待ち,20EMAタッチ済み・基準足高値/安値の実体ブレイク待ち,short,2026-09-30T16:00:00+00:00,157.235,,,False,,158.109,157.42370493756388,157.44690411424293,68.52950624361256,False,False,False,False,False,dukascopy_h4_csv
-eurjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,178.965,178.6936806352961,180.9787098039217,27.131936470391338,False,False,False,False,False,dukascopy_h4_csv
+eurjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,179.121,178.70853777815324,180.98026204272767,41.24622218467664,False,False,False,False,False,dukascopy_h4_csv
 gbpjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,209.521,208.6248740278275,211.03938092916255,89.61259721724844,False,False,False,False,False,dukascopy_h4_csv
 audjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,109.649,109.92518971387324,111.60835428930723,-27.618971387323654,False,False,False,False,False,dukascopy_h4_csv
 eurusd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.13289,1.1352017788890512,1.1494796229182807,-23.11778889051208,False,False,False,False,False,dukascopy_h4_csv
@@ -10,4 +10,4 @@ nzdusd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,Fa
 usdcad,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.42403,1.4188335463678656,1.3996875368890827,51.96453632134279,False,False,True,True,False,dukascopy_h4_csv
 usdchf,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,0.83578,0.8330545203404252,0.8186497707405072,27.254796595748143,False,False,True,True,False,dukascopy_h4_csv
 audnzd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.23231,1.2361178644370747,1.2283505421425043,-38.078644370747035,False,False,False,False,False,dukascopy_h4_csv
-eurgbp,2026-10-01T00:00:00+00:00,SEARCH_TOUCH,20EMAタッチ待ち,GC/DC後の初回20EMAタッチ待ち,short,,,,,False,,0.85411,0.8564810027314629,0.8575048901717058,-23.710027314628455,False,False,False,False,False,dukascopy_h4_csv
+eurgbp,2026-10-01T00:00:00+00:00,SEARCH_TOUCH,20EMAタッチ待ち,GC/DC後の初回20EMAタッチ待ち,short,,,,,False,,0.85446,0.8565143360647962,0.8575083727587706,-20.54336064796214,False,False,False,False,False,dukascopy_h4_csv
