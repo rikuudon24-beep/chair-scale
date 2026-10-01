@@ -1,2 +1,2 @@
 pair,latest_completed_h4,state,direction,signal_candle,entry_candidate_h4,close,ema20,ema200,gc,dc,sma_stack_bull,di_strong_bull,strong_close_bear,source,notification_id
-usdcad,2026-09-30T16:00:00+00:00,TRIGGERED,long,2026-09-30T16:00:00+00:00,2026-09-30T20:00:00+00:00,1.42297,1.4177430303275036,1.3992016115213208,False,False,True,True,False,dukascopy_h4_csv,usdcad|long|2026-09-30T16:00:00+00:00
+usdcad,2026-09-30T20:00:00+00:00,TRIGGERED,long,2026-09-30T16:00:00+00:00,2026-09-30T20:00:00+00:00,1.42345,1.4182865512486937,1.3994428890186212,False,False,True,True,False,dukascopy_h4_csv,usdcad|long|2026-09-30T16:00:00+00:00
