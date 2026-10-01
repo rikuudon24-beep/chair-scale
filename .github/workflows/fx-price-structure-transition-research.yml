@@ -1,0 +1,35 @@
+name: FX price-structure transition research
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research_price_structure_transition.py"
+      - ".github/workflows/fx-price-structure-transition-research.yml"
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run causal price-structure study
+        run: python scripts/research_price_structure_transition.py
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/price_structure_transition_*.csv
+          git diff --cached --quiet || git commit -m "research: price structure transition results"
+          git push
+      - name: Upload research reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fx-price-structure-transition-research
+          path: reports/price_structure_transition_*.csv
