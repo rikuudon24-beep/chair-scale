@@ -26,21 +26,27 @@ def evaluate(pos):
     f=d.build_features(g)
     if direction=="long":
         sig=f.price20_cross_down & f.di_spread_down3
+        reached50 = g.high.astype(float) >= float(pos["reference_entry_price"]) + 50*0.0001
     else:
         sig=f.price20_cross_up & f.di_spread_up3
+        reached50 = g.low.astype(float) <= float(pos["reference_entry_price"]) - 50*0.0001
     entry_ts=pd.Timestamp(pos["entry_timestamp"])
     after=g.timestamp>entry_ts
-    candidates=g.index[after & sig.fillna(False)]
-    if len(candidates):
-        i=int(candidates[0])
-        return {
-            **pos, "state":"EXIT_TRIGGERED",
-            "exit_signal_timestamp":pd.Timestamp(g.timestamp.iloc[i]).isoformat(),
-            "exit_signal_price":float(g.close.iloc[i]),
-            "exit_reason":"price20_cross_down+di_spread_down3" if direction=="long" else "price20_cross_up+di_spread_up3",
-            "latest_completed_h4":pd.Timestamp(g.timestamp.iloc[-1]).isoformat(),
-            "latest_close":float(g.close.iloc[-1])
-        }
+    target_hits=g.index[after & reached50]
+    target_i=int(target_hits[0]) if len(target_hits) else None
+    if target_i is not None:
+        candidates=g.index[(g.index>target_i) & sig.fillna(False)]
+        if len(candidates):
+            i=int(candidates[0])
+            return {
+                **pos, "state":"EXIT_TRIGGERED",
+                "plus50_timestamp":pd.Timestamp(g.timestamp.iloc[target_i]).isoformat(),
+                "exit_signal_timestamp":pd.Timestamp(g.timestamp.iloc[i]).isoformat(),
+                "exit_signal_price":float(g.close.iloc[i]),
+                "exit_reason":"price20_cross_down+di_spread_down3" if direction=="long" else "price20_cross_up+di_spread_up3",
+                "latest_completed_h4":pd.Timestamp(g.timestamp.iloc[-1]).isoformat(),
+                "latest_close":float(g.close.iloc[-1])
+            }
     i=len(g)-1
     return {
         **pos, "state":"HOLD_NO_EXIT",
