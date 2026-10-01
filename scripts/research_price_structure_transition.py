@@ -27,8 +27,9 @@ PAIRS = [
     "eurusd","gbpusd","audusd","nzdusd",
     "usdcad","usdchf","audnzd","eurgbp",
 ]
-TFS = ["h4", "h1"]
-HORIZONS = {"h4": [1, 3, 6, 12, 24], "h1": [1, 3, 6, 12, 24]}
+TFS = ["w1", "d1", "h4", "h1"]
+# W1/D1 are first-class structure timeframes; H1 remains optional research data.
+HORIZONS = {"w1": [1, 2, 3, 6, 12], "d1": [1, 3, 6, 12, 24], "h4": [1, 3, 6, 12, 24], "h1": [1, 3, 6, 12, 24]}
 TARGETS = [50, 100, 150, 200]
 SWING_N = 2
 
@@ -107,6 +108,8 @@ def build_features(df, pair):
     bear_break = np.zeros(len(x), dtype=bool)
     down_line_break = np.zeros(len(x), dtype=bool)
     up_line_break = np.zeros(len(x), dtype=bool)
+    down_line_break_event = np.zeros(len(x), dtype=bool)
+    up_line_break_event = np.zeros(len(x), dtype=bool)
     strong_bull = np.zeros(len(x), dtype=bool)
     strong_bear = np.zeros(len(x), dtype=bool)
 
@@ -137,6 +140,9 @@ def build_features(df, pair):
                 slope = (x.loc[b, "high"] - x.loc[a, "high"]) / (b-a)
                 line = x.loc[b, "high"] + slope * (i-b)
                 down_line_break[i] = x.loc[i, "close"] > line
+                if i > b:
+                    prev_line = x.loc[b, "high"] + slope * (i-1-b)
+                    down_line_break_event[i] = x.loc[i, "close"] > line and x.loc[i-1, "close"] <= prev_line
 
         # Ascending line from the latest two confirmed swing lows.
         if len(lows) >= 2:
@@ -145,6 +151,9 @@ def build_features(df, pair):
                 slope = (x.loc[b, "low"] - x.loc[a, "low"]) / (b-a)
                 line = x.loc[b, "low"] + slope * (i-b)
                 up_line_break[i] = x.loc[i, "close"] < line
+                if i > b:
+                    prev_line = x.loc[b, "low"] + slope * (i-1-b)
+                    up_line_break_event[i] = x.loc[i, "close"] < line and x.loc[i-1, "close"] >= prev_line
 
         rng = x.loc[i, "high"] - x.loc[i, "low"]
         body = abs(x.loc[i, "close"] - x.loc[i, "open"])
@@ -157,6 +166,8 @@ def build_features(df, pair):
     x["bear_break"] = bear_break
     x["descending_line_break_up"] = down_line_break
     x["ascending_line_break_down"] = up_line_break
+    x["descending_line_break_up_event"] = down_line_break_event
+    x["ascending_line_break_down_event"] = up_line_break_event
     x["strong_bull_close"] = strong_bull
     x["strong_bear_close"] = strong_bear
 
@@ -212,11 +223,11 @@ def main():
 
     all_df = pd.concat(chunks, ignore_index=True)
     features_bull = [
-        "bull_hl","bull_break","descending_line_break_up",
+        "bull_hl","bull_break","descending_line_break_up","descending_line_break_up_event",
         "bull_structure_shift","bull_trendline_confirmation","bull_full_structure"
     ]
     features_bear = [
-        "bear_lh","bear_break","ascending_line_break_down",
+        "bear_lh","bear_break","ascending_line_break_down","ascending_line_break_down_event",
         "bear_structure_shift","bear_trendline_confirmation","bear_full_structure"
     ]
 
@@ -244,9 +255,11 @@ def main():
     # Pair robustness on OOS for the composite candidates.
     rob = []
     composites = [
+        ("bull","descending_line_break_up_event"),
         ("bull","bull_structure_shift"),
         ("bull","bull_trendline_confirmation"),
         ("bull","bull_full_structure"),
+        ("bear","ascending_line_break_down_event"),
         ("bear","bear_structure_shift"),
         ("bear","bear_trendline_confirmation"),
         ("bear","bear_full_structure"),
