@@ -232,6 +232,37 @@ def main():
     summary = summarize(df)
     summary.to_csv("reports/notification_entry_quality_summary.csv", index=False, float_format="%.6f")
 
+    # Pair robustness is descriptive only; no minimum-n winner is selected.
+    rob_rows = []
+    for period in ["discovery", "validation", "oos"]:
+        for pair in PAIRS:
+            for direction in ["long", "short"]:
+                g = df[(df.period == period) & (df.pair == pair) & (df.direction == direction)]
+                if g.empty:
+                    continue
+                buckets = {
+                    "all": pd.Series(True, index=g.index),
+                    "range_atr_0_75_1_25": (g.signal_range_atr > 0.75) & (g.signal_range_atr <= 1.25),
+                    "range_atr_gt_1_25": g.signal_range_atr > 1.25,
+                    "touch_to_signal_atr_le_1": g.touch_to_signal_atr <= 1.0,
+                    "touch_to_signal_atr_gt_1": g.touch_to_signal_atr > 1.0,
+                }
+                for bucket, mask in buckets.items():
+                    q = g.loc[mask]
+                    for target in [50, 100]:
+                        if q.empty:
+                            continue
+                        v = q[f"pnl_{target}"]
+                        rob_rows.append([
+                            period, pair, direction, bucket, target, len(q),
+                            float(q[f"hit_{target}"].mean()),
+                            float(v.mean())
+                        ])
+    pd.DataFrame(rob_rows, columns=[
+        "period","pair","direction","bucket","target_pips","trades",
+        "hit_rate","mean_pips"
+    ]).to_csv("reports/notification_entry_quality_pair_robustness.csv", index=False, float_format="%.6f")
+
     oos = summary[summary.period == "oos"].sort_values(["target_pips","hit_rate"], ascending=[True,False])
     print("signals", len(df))
     print(oos.head(40).to_string(index=False))
