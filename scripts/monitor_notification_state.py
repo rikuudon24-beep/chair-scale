@@ -76,26 +76,46 @@ def evaluate(pair):
                 if breach_streak >= 2:
                     state = "WAIT"; direction = None; touch = None; ref = None; breach_streak = 0
         elif state == "TRIGGERED":
-            # A completed candle after the signal means the entry window has
-            # already passed; replaying further history starts a new search.
-            if i == len(g) - 1:
-                break
-            state = "WAIT"; direction = None; touch = None; ref = None; breach_streak = 0
+            # The entry window is the NEXT H4 open only. Once another completed
+            # candle exists after the signal, the candidate is stale and the
+            # replay must return to WAIT before evaluating later candles.
+            state = "WAIT"; direction = None; touch = None; ref = None; signal = None; breach_streak = 0
 
     i = len(g) - 1
     ts = pd.Timestamp(g.timestamp.iloc[i])
     signal_ts = pd.Timestamp(g.timestamp.iloc[signal]) if signal is not None else None
     entry_ts = signal_ts + H4 if signal_ts is not None else None
+    signal_age_bars = (i - signal) if signal is not None else None
+    pip = 0.01 if "jpy" in pair else 0.0001
+    if state == "SEARCH_TOUCH":
+        status_label = "20EMAタッチ待ち"
+        status_detail = "GC/DC後の初回20EMAタッチ待ち"
+    elif state == "ARMED":
+        status_label = "ブレイク待ち"
+        status_detail = "20EMAタッチ済み・基準足高値/安値の実体ブレイク待ち"
+    elif state == "TRIGGERED":
+        status_label = "エントリー候補"
+        status_detail = "直近完了H4がシグナル・次H4始値が候補"
+    else:
+        status_label = "待機"
+        status_detail = "現在の通知条件なし"
     row = {
         "pair": pair,
         "latest_completed_h4": ts.isoformat(),
         "state": state,
+        "status_label": status_label,
+        "status_detail": status_detail,
         "direction": direction or "",
+        "touch_candle": pd.Timestamp(g.timestamp.iloc[touch]).isoformat() if touch is not None else "",
+        "reference_price": float(ref) if ref is not None else "",
         "signal_candle": signal_ts.isoformat() if signal_ts is not None else "",
         "entry_candidate_h4": entry_ts.isoformat() if entry_ts is not None else "",
+        "entry_window_open": bool(state == "TRIGGERED" and signal == i),
+        "signal_age_h4": signal_age_bars if signal_age_bars is not None else "",
         "close": float(g.close.iloc[i]),
         "ema20": float(e20.iloc[i]),
         "ema200": float(e200.iloc[i]),
+        "distance_to_ema20_pips": float((g.close.iloc[i] - e20.iloc[i]) / pip),
         "gc": bool(gc.iloc[i]) if pd.notna(gc.iloc[i]) else False,
         "dc": bool(dc.iloc[i]) if pd.notna(dc.iloc[i]) else False,
         "sma_stack_bull": bool(f.sma_stack_bull.iloc[i]),
