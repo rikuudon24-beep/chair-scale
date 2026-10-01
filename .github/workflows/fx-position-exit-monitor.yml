@@ -1,0 +1,68 @@
+name: FX position exit monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+  push:
+    paths:
+      - "scripts/monitor_position_exit.py"
+      - "config/active_positions.json"
+      - ".github/workflows/fx-position-exit-monitor.yml"
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Evaluate completed-H4 exits
+        run: python scripts/monitor_position_exit.py
+      - name: Publish exit alerts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import csv, os, urllib.request, json
+          p="reports/current_exit_alerts.csv"
+          if not os.path.exists(p): raise SystemExit(0)
+          token=os.environ["GITHUB_TOKEN"]; repo=os.environ["GITHUB_REPOSITORY"]
+          base=f"https://api.github.com/repos/{repo}"
+          headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json","Content-Type":"application/json"}
+          def get(url):
+              req=urllib.request.Request(url,headers=headers)
+              with urllib.request.urlopen(req,timeout=30) as r: return json.load(r)
+          existing=get(base+"/issues?state=all&per_page=100")
+          titles={x.get("title") for x in existing if "pull_request" not in x}
+          with open(p,newline="") as f:
+              for r in csv.DictReader(f):
+                  title=f"FX EXIT {r['pair']} {r['direction']} {r['exit_signal_timestamp']}"
+                  if title in titles:
+                      continue
+                  body=(
+                    "## FX exit alert\n\n"
+                    f"- Pair: {r['pair']}\n"
+                    f"- Position: {r['direction'].upper()}\n"
+                    f"- Confirmed H4 exit signal: {r['exit_signal_timestamp']}\n"
+                    f"- Signal close: {r['exit_signal_price']}\n"
+                    f"- Condition: {r['exit_reason']}\n\n"
+                    "This is a notification only. No order is executed."
+                  )
+                  req=urllib.request.Request(base+"/issues",data=json.dumps({"title":title,"body":body}).encode(),headers=headers,method="POST")
+                  with urllib.request.urlopen(req,timeout=30) as resp: resp.read()
+          PY
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/current_position_exit_state.csv reports/current_exit_alerts.csv
+          git diff --cached --quiet || git commit -m "monitor: update FX position exit state"
+          git push
