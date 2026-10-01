@@ -1,5 +1,5 @@
 pair,latest_completed_h4,state,status_label,status_detail,direction,touch_candle,reference_price,signal_candle,entry_candidate_h4,entry_window_open,signal_age_h4,close,ema20,ema200,distance_to_ema20_pips,gc,dc,sma_stack_bull,di_strong_bull,strong_close_bear,source
-usdjpy,2026-10-01T00:00:00+00:00,ARMED,ブレイク待ち,20EMAタッチ済み・基準足高値/安値の実体ブレイク待ち,short,2026-09-30T16:00:00+00:00,157.235,,,False,,158.116,157.42437160423054,157.4469737659842,69.16283957694702,False,False,False,False,False,dukascopy_h4_csv
+usdjpy,2026-10-01T00:00:00+00:00,ARMED,ブレイク待ち,20EMAタッチ済み・基準足高値/安値の実体ブレイク待ち,short,2026-09-30T16:00:00+00:00,157.235,,,False,,158.109,157.42370493756388,157.44690411424293,68.52950624361256,False,False,False,False,False,dukascopy_h4_csv
 eurjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,178.965,178.6936806352961,180.9787098039217,27.131936470391338,False,False,False,False,False,dukascopy_h4_csv
 gbpjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,209.521,208.6248740278275,211.03938092916255,89.61259721724844,False,False,False,False,False,dukascopy_h4_csv
 audjpy,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,109.649,109.92518971387324,111.60835428930723,-27.618971387323654,False,False,False,False,False,dukascopy_h4_csv
@@ -8,6 +8,6 @@ gbpusd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,Fa
 audusd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,0.69535,0.6984189689998221,0.7088972984753801,-30.68968999822119,False,False,False,False,False,dukascopy_h4_csv
 nzdusd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,0.56259,0.5647884728210274,0.5771381580522129,-21.98472821027364,False,False,False,False,False,dukascopy_h4_csv
 usdcad,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.42403,1.4188335463678656,1.3996875368890827,51.96453632134279,False,False,True,True,False,dukascopy_h4_csv
-usdchf,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,0.83615,0.8330897584356632,0.8186534523325469,30.602415643367074,False,False,True,True,False,dukascopy_h4_csv
+usdchf,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,0.83578,0.8330545203404252,0.8186497707405072,27.254796595748143,False,False,True,True,False,dukascopy_h4_csv
 audnzd,2026-10-01T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.23231,1.2361178644370747,1.2283505421425043,-38.078644370747035,False,False,False,False,False,dukascopy_h4_csv
-eurgbp,2026-10-01T00:00:00+00:00,SEARCH_TOUCH,20EMAタッチ待ち,GC/DC後の初回20EMAタッチ待ち,short,,,,,False,,0.85411,0.8564810027314629,0.8575048901717058,-23.710027314628455,False,False,False,False,False,dukascopy_h4_csv
+eurgbp,2026-10-01T00:00:00+00:00,SEARCH_TOUCH,20EMAタッチ待ち,GC/DC後の初回20EMAタッチ待ち,short,,,,,False,,0.85411,0.8564551523913269,0.857501934799314,-23.45152391326821,False,False,False,False,False,dukascopy_h4_csv

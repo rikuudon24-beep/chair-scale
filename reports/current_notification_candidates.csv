@@ -1,2 +1,2 @@
 pair,latest_completed_h4,state,status_label,status_detail,direction,touch_candle,reference_price,signal_candle,entry_candidate_h4,entry_window_open,signal_age_h4,close,ema20,ema200,distance_to_ema20_pips,gc,dc,sma_stack_bull,di_strong_bull,strong_close_bear,source
-usdjpy,2026-10-01T00:00:00+00:00,ARMED,ブレイク待ち,20EMAタッチ済み・基準足高値/安値の実体ブレイク待ち,short,2026-09-30T16:00:00+00:00,157.235,,,False,,158.116,157.42437160423054,157.4469737659842,69.16283957694702,False,False,False,False,False,dukascopy_h4_csv
+usdjpy,2026-10-01T00:00:00+00:00,ARMED,ブレイク待ち,20EMAタッチ済み・基準足高値/安値の実体ブレイク待ち,short,2026-09-30T16:00:00+00:00,157.235,,,False,,158.109,157.42370493756388,157.44690411424293,68.52950624361256,False,False,False,False,False,dukascopy_h4_csv
