@@ -6,6 +6,7 @@ on:
     paths:
       - "scripts/research_price_structure_transition.py"
       - ".github/workflows/fx-price-structure-transition-research.yml"
+      - "data/market/w1/**"
 
 jobs:
   research:
