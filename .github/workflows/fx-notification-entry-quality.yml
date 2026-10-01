@@ -1,0 +1,36 @@
+name: FX notification entry-quality audit
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "scripts/research_notification_entry_quality.py"
+      - ".github/workflows/fx-notification-entry-quality.yml"
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run entry-quality audit
+        run: python scripts/research_notification_entry_quality.py
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/notification_entry_quality_*.csv
+          git diff --cached --quiet || git commit -m "research: notification entry quality audit"
+          git push
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fx-notification-entry-quality
+          path: reports/notification_entry_quality_*.csv
