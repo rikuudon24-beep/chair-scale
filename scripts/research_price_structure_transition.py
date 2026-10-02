@@ -72,16 +72,13 @@ def add_labels(df, pair):
     close = df["close"].to_numpy()
     high = df["high"].to_numpy()
     low = df["low"].to_numpy()
+    # Vectorized future-window labels. These are labels only and never feed
+    # feature construction, so using future prices here cannot create leakage.
+    future_high = pd.concat([df["high"].shift(-k) for k in range(1, 25)], axis=1).max(axis=1)
+    future_low = pd.concat([df["low"].shift(-k) for k in range(1, 25)], axis=1).min(axis=1)
     for target in TARGETS:
-        up = np.zeros(len(df), dtype=bool)
-        dn = np.zeros(len(df), dtype=bool)
-        for i in range(len(df)):
-            end = min(len(df), i + 25)
-            if i + 1 < end:
-                up[i] = np.max(high[i+1:end]) >= close[i] + target*p
-                dn[i] = np.min(low[i+1:end]) <= close[i] - target*p
-        out[f"hit_up_{target}"] = up
-        out[f"hit_dn_{target}"] = dn
+        out[f"hit_up_{target}"] = (future_high >= df["close"] + target*p).fillna(False).to_numpy()
+        out[f"hit_dn_{target}"] = (future_low <= df["close"] - target*p).fillna(False).to_numpy()
     return pd.DataFrame(out, index=df.index)
 
 
