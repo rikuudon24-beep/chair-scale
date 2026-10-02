@@ -27,7 +27,7 @@ PAIRS = [
     "eurusd","gbpusd","audusd","nzdusd",
     "usdcad","usdchf","audnzd","eurgbp",
 ]
-TFS = ["w1", "d1", "h4", "h1"]
+TFS = ["w1", "d1", "h4"]
 # H1 is computationally much larger than the higher timeframes. Keep the
 # feature logic causal, but allow CI to run one timeframe at a time.
 TF_FILTER = __import__("os").environ.get("FX_RESEARCH_TF", "").strip().lower()
@@ -255,7 +255,8 @@ def main():
         "period","direction","feature","target_pips","samples",
         "hit_rate","baseline_without_feature","difference","lift"
     ])
-    out.to_csv("reports/price_structure_transition_effects.csv", index=False, float_format="%.8f")
+    suffix = f"_{TF_FILTER}" if TF_FILTER else ""
+    out.to_csv(f"reports/price_structure_transition_effects{suffix}.csv", index=False, float_format="%.8f")
 
     # Pair robustness on OOS for the composite candidates.
     rob = []
@@ -281,7 +282,7 @@ def main():
                         rob.append([tf,pair,direction,feature,target,int(m.sum()),float(g.loc[m,label].mean())])
     pd.DataFrame(rob, columns=[
         "timeframe","pair","direction","feature","target_pips","samples","oos_hit_rate"
-    ]).to_csv("reports/price_structure_transition_pair_robustness.csv", index=False, float_format="%.8f")
+    ]).to_csv(f"reports/price_structure_transition_pair_robustness{suffix}.csv", index=False, float_format="%.8f")
 
     summary = {
         "missing_data": ",".join(missing),
@@ -289,7 +290,7 @@ def main():
         "timeframes_available": ",".join(sorted(all_df.timeframe.unique())),
         "status": "PASS"
     }
-    pd.DataFrame([summary]).to_csv("reports/price_structure_transition_summary.csv", index=False)
+    pd.DataFrame([summary]).to_csv(f"reports/price_structure_transition_summary{suffix}.csv", index=False)
 
     print("rows_analyzed", len(all_df))
     print("missing_data", ",".join(missing) if missing else "none")
