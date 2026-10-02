@@ -1,0 +1,47 @@
+name: FX causal MTF structure confluence research
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 */6 * * *"
+  push:
+    paths:
+      - "scripts/research_mtf_structure_confluence.py"
+      - "scripts/research_price_structure_transition.py"
+      - "data/market/w1/**"
+      - "data/market/d1/**"
+      - "data/market/h4/**"
+      - "data/market/h1/**"
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    concurrency:
+      group: fx-mtf-structure-confluence
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt numpy
+      - name: Run causal MTF study
+        run: python scripts/research_mtf_structure_confluence.py
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/mtf_structure_confluence_*.csv
+          git diff --cached --quiet || git commit -m "research: causal MTF structure confluence results"
+          git push
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: fx-mtf-structure-confluence
+          path: reports/mtf_structure_confluence_*.csv
