@@ -7,11 +7,15 @@ on:
       - "scripts/research_price_structure_transition.py"
       - ".github/workflows/fx-price-structure-transition-research.yml"
       - "data/market/w1/**"
+      - "data/market/h1/**"
 
 jobs:
   research:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
+    concurrency:
+      group: fx-price-structure-transition
+      cancel-in-progress: false
     permissions:
       contents: write
     steps:
