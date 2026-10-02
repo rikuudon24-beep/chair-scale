@@ -2,6 +2,8 @@ name: FX weekly research data
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "11 */6 * * *"
   push:
     paths:
       - "scripts/download_w1_research_data.py"
@@ -30,14 +32,21 @@ jobs:
           python -m pip install -r requirements.txt numpy
       - name: Download W1 research data
         run: python scripts/download_w1_research_data.py
-      - name: Run causal price-structure study
-        run: python scripts/research_price_structure_transition.py
-      - name: Commit W1 data and research reports
+      - name: Commit W1 data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/market/w1 reports/price_structure_transition_*.csv
-          git diff --cached --quiet || git commit -m "research: weekly data and price structure results"
+          git add data/market/w1
+          git diff --cached --quiet || git commit -m "data: refresh W1 research candles"
+          git push
+      - name: Run causal price-structure study
+        run: python scripts/research_price_structure_transition.py
+      - name: Commit research reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/price_structure_transition_*.csv
+          git diff --cached --quiet || git commit -m "research: weekly price structure results"
           git push
       - name: Upload research reports
         uses: actions/upload-artifact@v4
