@@ -2,6 +2,8 @@ name: FX H1 research data
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
   push:
     paths:
       - "scripts/download_h1_research_data.py"
