@@ -28,6 +28,11 @@ PAIRS = [
     "usdcad","usdchf","audnzd","eurgbp",
 ]
 TFS = ["w1", "d1", "h4", "h1"]
+# H1 is computationally much larger than the higher timeframes. Keep the
+# feature logic causal, but allow CI to run one timeframe at a time.
+TF_FILTER = __import__("os").environ.get("FX_RESEARCH_TF", "").strip().lower()
+if TF_FILTER:
+    TFS = [TF_FILTER] if TF_FILTER in TFS else TFS
 # W1/D1 are first-class structure timeframes; H1 remains optional research data.
 HORIZONS = {"w1": [1, 2, 3, 6, 12], "d1": [1, 3, 6, 12, 24], "h4": [1, 3, 6, 12, 24], "h1": [1, 3, 6, 12, 24]}
 TARGETS = [50, 100, 150, 200]
