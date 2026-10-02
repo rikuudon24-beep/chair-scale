@@ -253,6 +253,7 @@ usdjpy,2026-09-25T12:00:00+00:00,INVALIDATED,long,ARMED,two consecutive closes t
 usdjpy,2026-09-30T00:00:00+00:00,DC,short,SEARCH_TOUCH,new short search,,,,,,
 usdjpy,2026-09-30T16:00:00+00:00,ARMED,short,ARMED,first EMA20 touch,2026-09-30T16:00:00+00:00,157.235,,,,
 usdjpy,2026-10-01T00:00:00+00:00,BREACH_TOLERATED,short,ARMED,one close through touch extreme,,,,,,
+usdjpy,2026-10-01T04:00:00+00:00,REVERSE_CROSS_INVALIDATION,short,ARMED,reverse cross while armed,,,,,,
 eurjpy,2021-01-04T00:00:00+00:00,DC,short,SEARCH_TOUCH,new short search,,,,,,
 eurjpy,2021-01-04T08:00:00+00:00,ARMED,short,ARMED,first EMA20 touch,2021-01-04T08:00:00+00:00,126.159,,,,
 eurjpy,2021-01-04T12:00:00+00:00,BREACH_TOLERATED,short,ARMED,one close through touch extreme,,,,,,
