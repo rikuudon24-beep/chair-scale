@@ -77,6 +77,16 @@ def main():
                                          float(vals.mean()/base_rate) if np.isfinite(base_rate) and base_rate else np.nan])
     out=pd.DataFrame(rows,columns=["period","pair","direction","combo","target_pips","samples","hit_rate","baseline","lift"])
     out.to_csv("reports/mtf_structure_confluence_effects.csv",index=False,float_format="%.8f")
+
+    # OOS pair robustness: keep only combinations with >=5 occurrences per pair.
+    rob=[]
+    if len(out):
+        oos=out[out.period=="oos"].copy()
+        for _,r in oos.iterrows():
+            if int(r.samples) >= 5:
+                rob.append([r.pair,r.direction,r.combo,int(r.target_pips),int(r.samples),float(r.hit_rate)])
+    pd.DataFrame(rob,columns=["pair","direction","combo","target_pips","samples","oos_hit_rate"]).to_csv(
+        "reports/mtf_structure_confluence_pair_robustness.csv",index=False,float_format="%.8f")
     summary=pd.DataFrame([{"pairs_with_all_tf":len(PAIRS)-len(missing),"missing_pairs":",".join(missing),"rows":len(out),"status":"PASS" if len(out) else "FAIL"}])
     summary.to_csv("reports/mtf_structure_confluence_summary.csv",index=False)
     print(summary.to_string(index=False))
