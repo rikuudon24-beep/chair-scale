@@ -10,4 +10,4 @@ nzdusd,2026-10-02T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,Fa
 usdcad,2026-10-02T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.42118,1.420711830197038,1.4010551976334311,4.681698029620485,False,False,True,True,True,dukascopy_h4_csv
 usdchf,2026-10-02T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,0.82918,0.8323580805452042,0.8194156389033415,-31.78080545204187,False,False,True,False,True,dukascopy_h4_csv
 audnzd,2026-10-02T00:00:00+00:00,WAIT,待機,現在の通知条件なし,,,,,,False,,1.23607,1.2363206469633055,1.2288392507703856,-2.5064696330545644,False,False,False,False,False,dukascopy_h4_csv
-eurgbp,2026-10-02T00:00:00+00:00,SEARCH_TOUCH,20EMAタッチ待ち,GC/DC後の初回20EMAタッチ待ち,short,,,,,False,,0.85187,0.854653466765489,0.8572166526204626,-27.834667654890175,False,False,False,False,False,dukascopy_h4_csv
+eurgbp,2026-10-02T00:00:00+00:00,SEARCH_TOUCH,20EMAタッチ待ち,GC/DC後の初回20EMAタッチ待ち,short,,,,,False,,0.85187,0.8546392869003899,0.8572138693569522,-27.692869003899112,False,False,False,False,False,dukascopy_h4_csv
