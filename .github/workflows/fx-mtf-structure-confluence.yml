@@ -16,7 +16,7 @@ on:
 jobs:
   research:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     concurrency:
       group: fx-mtf-structure-confluence
       cancel-in-progress: false
