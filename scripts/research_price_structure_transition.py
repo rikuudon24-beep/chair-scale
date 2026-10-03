@@ -53,18 +53,31 @@ def pip_size(pair):
 
 
 def confirmed_swings(df, n=SWING_N):
-    h, l = df["high"], df["low"]
-    # A swing is only marked at index i+n, so the pivot was known only after n
-    # completed candles to the right.
-    sh = pd.Series(False, index=df.index)
-    sl = pd.Series(False, index=df.index)
-    for i in range(n, len(df)-n):
-        if h.iloc[i] == h.iloc[i-n:i+n+1].max() and (h.iloc[i-n:i+n+1] == h.iloc[i]).sum() == 1:
-            sh.iloc[i+n] = True
-        if l.iloc[i] == l.iloc[i-n:i+n+1].min() and (l.iloc[i-n:i+n+1] == l.iloc[i]).sum() == 1:
-            sl.iloc[i+n] = True
-    return sh, sl
+    """Return swing markers at the first candle where the pivot is knowable.
 
+    The pivot itself is at i; it becomes available at i+n after n completed
+    right-side candles. The rolling implementation is equivalent to the
+    original explicit-window test, but avoids a Python loop over every row.
+    """
+    h = df["high"]
+    l = df["low"]
+    width = 2*n + 1
+
+    hmax = h.rolling(width, center=True, min_periods=width).max()
+    lmin = l.rolling(width, center=True, min_periods=width).min()
+    heq = h.eq(hmax)
+    leq = l.eq(lmin)
+
+    # Require the pivot value to be unique inside its confirmation window.
+    hcount = heq.astype("int8").rolling(width, center=True, min_periods=width).sum()
+    lcount = leq.astype("int8").rolling(width, center=True, min_periods=width).sum()
+    pivot_high = heq & hcount.eq(1)
+    pivot_low = leq & lcount.eq(1)
+
+    # shift(+n) makes a pivot at i visible at i+n.
+    sh = pivot_high.shift(n, fill_value=False).astype(bool)
+    sl = pivot_low.shift(n, fill_value=False).astype(bool)
+    return sh, sl
 
 def add_labels(df, pair):
     p = pip_size(pair)
@@ -84,83 +97,74 @@ def add_labels(df, pair):
 
 def build_features(df, pair):
     x = df.copy()
+    high = x["high"].to_numpy(dtype=float)
+    low = x["low"].to_numpy(dtype=float)
+    open_ = x["open"].to_numpy(dtype=float)
+    close = x["close"].to_numpy(dtype=float)
+
     x["atr14"] = (x["high"]-x["low"]).rolling(14).mean()
     sh, sl = confirmed_swings(x)
-    x["confirmed_swing_high"] = sh
-    x["confirmed_swing_low"] = sl
+    shv = sh.to_numpy(dtype=bool)
+    slv = sl.to_numpy(dtype=bool)
+    x["confirmed_swing_high"] = shv
+    x["confirmed_swing_low"] = slv
 
-    # Store the latest two confirmed swing highs/lows available at each candle.
-    high_idx = []
-    low_idx = []
-    last_highs = []
-    last_lows = []
-    for i in range(len(x)):
-        if sh.iloc[i]:
-            high_idx.append(i)
-        if sl.iloc[i]:
-            low_idx.append(i)
-        high_idx = high_idx[-8:]
-        low_idx = low_idx[-8:]
-        last_highs.append(tuple(high_idx))
-        last_lows.append(tuple(low_idx))
+    nrows = len(x)
+    bull_hl = np.zeros(nrows, dtype=bool)
+    bear_lh = np.zeros(nrows, dtype=bool)
+    bull_break = np.zeros(nrows, dtype=bool)
+    bear_break = np.zeros(nrows, dtype=bool)
+    down_line_break = np.zeros(nrows, dtype=bool)
+    up_line_break = np.zeros(nrows, dtype=bool)
+    down_line_break_event = np.zeros(nrows, dtype=bool)
+    up_line_break_event = np.zeros(nrows, dtype=bool)
+    strong_bull = np.zeros(nrows, dtype=bool)
+    strong_bear = np.zeros(nrows, dtype=bool)
 
-    bull_hl = np.zeros(len(x), dtype=bool)
-    bear_lh = np.zeros(len(x), dtype=bool)
-    bull_break = np.zeros(len(x), dtype=bool)
-    bear_break = np.zeros(len(x), dtype=bool)
-    down_line_break = np.zeros(len(x), dtype=bool)
-    up_line_break = np.zeros(len(x), dtype=bool)
-    down_line_break_event = np.zeros(len(x), dtype=bool)
-    up_line_break_event = np.zeros(len(x), dtype=bool)
-    strong_bull = np.zeros(len(x), dtype=bool)
-    strong_bear = np.zeros(len(x), dtype=bool)
+    # Only the latest two confirmed pivots are needed. Keeping scalar indices
+    # avoids allocating a tuple/list snapshot for every H1 candle.
+    h1 = h2 = l1 = l2 = -1
+    for i in range(nrows):
+        if shv[i]:
+            h1, h2 = h2, i
+        if slv[i]:
+            l1, l2 = l2, i
 
-    for i in range(len(x)):
-        highs = last_highs[i]
-        lows = last_lows[i]
+        if l1 >= 0 and l2 >= 0:
+            bull_hl[i] = low[l2] > low[l1]
 
-        if len(lows) >= 2:
-            a, b = lows[-2], lows[-1]
-            bull_hl[i] = x.loc[b, "low"] > x.loc[a, "low"]
+        if h1 >= 0 and h2 >= 0:
+            bear_lh[i] = high[h2] < high[h1]
 
-        if len(highs) >= 2:
-            a, b = highs[-2], highs[-1]
-            bear_lh[i] = x.loc[b, "high"] < x.loc[a, "high"]
+        if h2 >= 0:
+            bull_break[i] = close[i] > high[h2]
 
-        if len(highs) >= 1:
-            last_h = x.loc[highs[-1], "high"]
-            bull_break[i] = x.loc[i, "close"] > last_h
-
-        if len(lows) >= 1:
-            last_l = x.loc[lows[-1], "low"]
-            bear_break[i] = x.loc[i, "close"] < last_l
+        if l2 >= 0:
+            bear_break[i] = close[i] < low[l2]
 
         # Descending line from the latest two confirmed swing highs.
-        if len(highs) >= 2:
-            a, b = highs[-2], highs[-1]
-            if x.loc[b, "high"] < x.loc[a, "high"] and b > a:
-                slope = (x.loc[b, "high"] - x.loc[a, "high"]) / (b-a)
-                line = x.loc[b, "high"] + slope * (i-b)
-                down_line_break[i] = x.loc[i, "close"] > line
-                if i > b:
-                    prev_line = x.loc[b, "high"] + slope * (i-1-b)
-                    down_line_break_event[i] = x.loc[i, "close"] > line and x.loc[i-1, "close"] <= prev_line
+        if h1 >= 0 and h2 >= 0 and high[h2] < high[h1] and h2 > h1:
+            slope = (high[h2] - high[h1]) / (h2-h1)
+            line = high[h2] + slope * (i-h2)
+            down_line_break[i] = close[i] > line
+            if i > h2:
+                prev_line = high[h2] + slope * (i-1-h2)
+                down_line_break_event[i] = close[i] > line and close[i-1] <= prev_line
 
         # Ascending line from the latest two confirmed swing lows.
-        if len(lows) >= 2:
-            a, b = lows[-2], lows[-1]
-            if x.loc[b, "low"] > x.loc[a, "low"] and b > a:
-                slope = (x.loc[b, "low"] - x.loc[a, "low"]) / (b-a)
-                line = x.loc[b, "low"] + slope * (i-b)
-                up_line_break[i] = x.loc[i, "close"] < line
-                if i > b:
-                    prev_line = x.loc[b, "low"] + slope * (i-1-b)
-                    up_line_break_event[i] = x.loc[i, "close"] < line and x.loc[i-1, "close"] >= prev_line
+        if l1 >= 0 and l2 >= 0 and low[l2] > low[l1] and l2 > l1:
+            slope = (low[l2] - low[l1]) / (l2-l1)
+            line = low[l2] + slope * (i-l2)
+            up_line_break[i] = close[i] < line
+            if i > l2:
+                prev_line = low[l2] + slope * (i-1-l2)
+                up_line_break_event[i] = close[i] < line and close[i-1] >= prev_line
 
-        rng = x.loc[i, "high"] - x.loc[i, "low"]
-        body = abs(x.loc[i, "close"] - x.loc[i, "open"])
-        strong_bull[i] = rng > 0 and x.loc[i, "close"] > x.loc[i, "open"] and body/rng >= 0.60
-        strong_bear[i] = rng > 0 and x.loc[i, "close"] < x.loc[i, "open"] and body/rng >= 0.60
+        rng = high[i] - low[i]
+        body = abs(close[i] - open_[i])
+        if rng > 0:
+            strong_bull[i] = close[i] > open_[i] and body/rng >= 0.60
+            strong_bear[i] = close[i] < open_[i] and body/rng >= 0.60
 
     x["bull_hl"] = bull_hl
     x["bear_lh"] = bear_lh
@@ -173,7 +177,6 @@ def build_features(df, pair):
     x["strong_bull_close"] = strong_bull
     x["strong_bear_close"] = strong_bear
 
-    # Composite hypotheses derived from the source material.
     x["bull_structure_shift"] = x["bull_hl"] & x["bull_break"]
     x["bear_structure_shift"] = x["bear_lh"] & x["bear_break"]
     x["bull_trendline_confirmation"] = x["bull_hl"] & x["descending_line_break_up"]
@@ -181,7 +184,6 @@ def build_features(df, pair):
     x["bull_full_structure"] = x["bull_hl"] & x["bull_break"] & x["descending_line_break_up"] & x["strong_bull_close"]
     x["bear_full_structure"] = x["bear_lh"] & x["bear_break"] & x["ascending_line_break_down"] & x["strong_bear_close"]
     return x
-
 
 def evaluate(g, features, direction, period):
     rows = []
