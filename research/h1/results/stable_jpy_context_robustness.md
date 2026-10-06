@@ -25,8 +25,8 @@ Frozen H1 setup: trend_down + ADX>=20 + RSI6 change >3, TP40/SL75/H48. Only H4/D
 |eurjpy|validation|14|0.857|6.000|0.714|
 |eurjpy|oos|7|0.571|1.333|0.143|
 |gbpjpy|discovery|32|0.688|2.200|0.375|
-|gbpjpy|validation|7|0.857|6.000|0.714|
-|gbpjpy|oos|5|0.800|4.000|0.600|
+|gbpjpy|validation|8|0.875|7.000|0.750|
+|gbpjpy|oos|4|0.750|3.000|0.500|
 
 ## close_ema20
 |Pair|Split|N|Win|PF|ExpR|
@@ -63,8 +63,8 @@ Frozen H1 setup: trend_down + ADX>=20 + RSI6 change >3, TP40/SL75/H48. Only H4/D
 |eurjpy|discovery|34|0.794|3.857|0.588|
 |eurjpy|validation|7|0.714|2.500|0.429|
 |eurjpy|oos|8|0.375|0.600|-0.250|
-|gbpjpy|discovery|35|0.714|2.500|0.429|
-|gbpjpy|validation|5|1.000|inf|1.000|
+|gbpjpy|discovery|36|0.722|2.600|0.444|
+|gbpjpy|validation|4|1.000|inf|1.000|
 |gbpjpy|oos|11|0.364|0.571|-0.273|
 
 ## ema20_gt50

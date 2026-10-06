@@ -41,16 +41,16 @@ TP/SL triggers are unchanged. Cost is modeled as a round-trip pip deduction from
 |gbpjpy|discovery|2.0|62|61|0.689|1.091|0.029|1.77|
 |gbpjpy|discovery|3.0|62|61|0.689|1.049|0.016|0.96|
 |gbpjpy|discovery|5.0|62|61|0.689|0.967|-0.011|-0.67|
-|gbpjpy|validation|0.5|20|20|0.650|0.972|-0.010|-0.20|
-|gbpjpy|validation|1.0|20|20|0.650|0.953|-0.017|-0.33|
-|gbpjpy|validation|2.0|20|20|0.650|0.917|-0.030|-0.60|
-|gbpjpy|validation|3.0|20|20|0.650|0.881|-0.043|-0.87|
-|gbpjpy|validation|5.0|20|20|0.650|0.813|-0.070|-1.40|
-|gbpjpy|oos|0.5|19|19|0.789|1.962|0.204|3.87|
-|gbpjpy|oos|1.0|19|19|0.789|1.924|0.197|3.75|
-|gbpjpy|oos|2.0|19|19|0.789|1.851|0.184|3.49|
-|gbpjpy|oos|3.0|19|19|0.789|1.779|0.171|3.24|
-|gbpjpy|oos|5.0|19|19|0.789|1.641|0.144|2.73|
+|gbpjpy|validation|0.5|21|21|0.667|1.046|0.016|0.33|
+|gbpjpy|validation|1.0|21|21|0.667|1.026|0.009|0.19|
+|gbpjpy|validation|2.0|21|21|0.667|0.987|-0.004|-0.09|
+|gbpjpy|validation|3.0|21|21|0.667|0.949|-0.018|-0.37|
+|gbpjpy|validation|5.0|21|21|0.667|0.875|-0.044|-0.93|
+|gbpjpy|oos|0.5|20|20|0.750|1.570|0.143|2.87|
+|gbpjpy|oos|1.0|20|20|0.750|1.539|0.137|2.73|
+|gbpjpy|oos|2.0|20|20|0.750|1.481|0.123|2.47|
+|gbpjpy|oos|3.0|20|20|0.750|1.423|0.110|2.20|
+|gbpjpy|oos|5.0|20|20|0.750|1.313|0.083|1.67|
 
 ## TP40/SL90/H48
 |Pair|Split|Cost pips|Signals|Resolved|Win|PF|Expectancy R|Net R|
@@ -90,16 +90,16 @@ TP/SL triggers are unchanged. Cost is modeled as a round-trip pip deduction from
 |gbpjpy|discovery|2.0|62|60|0.700|0.964|-0.011|-0.67|
 |gbpjpy|discovery|3.0|62|60|0.700|0.928|-0.022|-1.33|
 |gbpjpy|discovery|5.0|62|60|0.700|0.860|-0.044|-2.67|
-|gbpjpy|validation|0.5|20|20|0.700|1.018|0.006|0.11|
-|gbpjpy|validation|1.0|20|20|0.700|1.000|0.000|0.00|
-|gbpjpy|validation|2.0|20|20|0.700|0.964|-0.011|-0.22|
-|gbpjpy|validation|3.0|20|20|0.700|0.928|-0.022|-0.44|
-|gbpjpy|validation|5.0|20|20|0.700|0.860|-0.044|-0.89|
-|gbpjpy|oos|0.5|19|19|0.789|1.637|0.135|2.56|
-|gbpjpy|oos|1.0|19|19|0.789|1.607|0.129|2.46|
-|gbpjpy|oos|2.0|19|19|0.789|1.549|0.118|2.24|
-|gbpjpy|oos|3.0|19|19|0.789|1.492|0.107|2.03|
-|gbpjpy|oos|5.0|19|19|0.789|1.382|0.085|1.61|
+|gbpjpy|validation|0.5|21|21|0.714|1.091|0.026|0.55|
+|gbpjpy|validation|1.0|21|21|0.714|1.071|0.021|0.43|
+|gbpjpy|validation|2.0|21|21|0.714|1.033|0.010|0.20|
+|gbpjpy|validation|3.0|21|21|0.714|0.995|-0.002|-0.03|
+|gbpjpy|validation|5.0|21|21|0.714|0.921|-0.024|-0.50|
+|gbpjpy|oos|0.5|20|20|0.750|1.309|0.078|1.56|
+|gbpjpy|oos|1.0|20|20|0.750|1.286|0.072|1.44|
+|gbpjpy|oos|2.0|20|20|0.750|1.239|0.061|1.22|
+|gbpjpy|oos|3.0|20|20|0.750|1.194|0.050|1.00|
+|gbpjpy|oos|5.0|20|20|0.750|1.105|0.028|0.56|
 
 ## TP40/SL100/H48
 |Pair|Split|Cost pips|Signals|Resolved|Win|PF|Expectancy R|Net R|
@@ -139,16 +139,16 @@ TP/SL triggers are unchanged. Cost is modeled as a round-trip pip deduction from
 |gbpjpy|discovery|2.0|62|60|0.700|0.869|-0.040|-2.40|
 |gbpjpy|discovery|3.0|62|60|0.700|0.838|-0.050|-3.00|
 |gbpjpy|discovery|5.0|62|60|0.700|0.778|-0.070|-4.20|
-|gbpjpy|validation|0.5|20|20|0.750|1.179|0.045|0.90|
-|gbpjpy|validation|1.0|20|20|0.750|1.158|0.040|0.80|
-|gbpjpy|validation|2.0|20|20|0.750|1.118|0.030|0.60|
-|gbpjpy|validation|3.0|20|20|0.750|1.078|0.020|0.40|
-|gbpjpy|validation|5.0|20|20|0.750|1.000|-0.000|-0.00|
-|gbpjpy|oos|0.5|19|19|0.895|3.341|0.248|4.70|
-|gbpjpy|oos|1.0|19|19|0.895|3.282|0.243|4.61|
-|gbpjpy|oos|2.0|19|19|0.895|3.167|0.233|4.42|
-|gbpjpy|oos|3.0|19|19|0.895|3.053|0.223|4.23|
-|gbpjpy|oos|5.0|19|19|0.895|2.833|0.203|3.85|
+|gbpjpy|validation|0.5|21|21|0.762|1.258|0.062|1.30|
+|gbpjpy|validation|1.0|21|21|0.762|1.236|0.057|1.19|
+|gbpjpy|validation|2.0|21|21|0.762|1.192|0.047|0.98|
+|gbpjpy|validation|3.0|21|21|0.762|1.150|0.037|0.77|
+|gbpjpy|validation|5.0|21|21|0.762|1.067|0.017|0.35|
+|gbpjpy|oos|0.5|20|20|0.850|2.227|0.185|3.70|
+|gbpjpy|oos|1.0|20|20|0.850|2.188|0.180|3.60|
+|gbpjpy|oos|2.0|20|20|0.850|2.111|0.170|3.40|
+|gbpjpy|oos|3.0|20|20|0.850|2.036|0.160|3.20|
+|gbpjpy|oos|5.0|20|20|0.850|1.889|0.140|2.80|
 
 ## TP50/SL100/H48
 |Pair|Split|Cost pips|Signals|Resolved|Win|PF|Expectancy R|Net R|
@@ -188,14 +188,14 @@ TP/SL triggers are unchanged. Cost is modeled as a round-trip pip deduction from
 |gbpjpy|discovery|2.0|62|59|0.644|0.852|-0.054|-3.18|
 |gbpjpy|discovery|3.0|62|59|0.644|0.826|-0.064|-3.77|
 |gbpjpy|discovery|5.0|62|59|0.644|0.776|-0.084|-4.95|
-|gbpjpy|validation|0.5|20|19|0.632|0.844|-0.058|-1.09|
-|gbpjpy|validation|1.0|20|19|0.632|0.832|-0.063|-1.19|
-|gbpjpy|validation|2.0|20|19|0.632|0.807|-0.073|-1.38|
-|gbpjpy|validation|3.0|20|19|0.632|0.782|-0.083|-1.57|
-|gbpjpy|validation|5.0|20|19|0.632|0.735|-0.103|-1.95|
-|gbpjpy|oos|0.5|19|18|0.889|3.940|0.328|5.91|
-|gbpjpy|oos|1.0|19|18|0.889|3.881|0.323|5.82|
-|gbpjpy|oos|2.0|19|18|0.889|3.765|0.313|5.64|
-|gbpjpy|oos|3.0|19|18|0.889|3.650|0.303|5.46|
-|gbpjpy|oos|5.0|19|18|0.889|3.429|0.283|5.10|
+|gbpjpy|validation|0.5|21|20|0.650|0.915|-0.030|-0.60|
+|gbpjpy|validation|1.0|21|20|0.650|0.901|-0.035|-0.70|
+|gbpjpy|validation|2.0|21|20|0.650|0.874|-0.045|-0.90|
+|gbpjpy|validation|3.0|21|20|0.650|0.847|-0.055|-1.10|
+|gbpjpy|validation|5.0|21|20|0.650|0.796|-0.075|-1.50|
+|gbpjpy|oos|0.5|20|19|0.842|2.627|0.258|4.91|
+|gbpjpy|oos|1.0|20|19|0.842|2.587|0.253|4.81|
+|gbpjpy|oos|2.0|20|19|0.842|2.510|0.243|4.62|
+|gbpjpy|oos|3.0|20|19|0.842|2.434|0.233|4.43|
+|gbpjpy|oos|5.0|20|19|0.842|2.286|0.213|4.05|
 

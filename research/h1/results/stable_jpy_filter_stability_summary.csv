@@ -1,31 +1,31 @@
 conditions,val_min_trades,val_min_win,val_min_pf,oos_min_trades,oos_min_win,oos_min_pf,oos_all_positive,val_all_positive
-trend_down & h4_bull & d1_bull & w1_bull,14,0.625,1.6666666666666667,16,0.75,3.75,True,True
+trend_down & h4_bull & d1_bull & w1_bull,14,0.625,1.6666666666666667,15,0.75,3.75,True,True
+trend_down & h4_bull & d1_bull & rsi_up6,27,0.5333333333333333,1.1428571428571428,24,0.75,3.6,True,True
 trend_down & h4_bull & d1_bull & adx20+ & w1_bull,8,0.625,1.6666666666666667,10,0.6428571428571429,2.25,True,True
-trend_down & h4_bull & d1_bull & macd_pos & rsi_up6,24,0.5416666666666666,1.1818181818181819,21,0.6190476190476191,2.1666666666666665,True,True
-trend_down & h4_bull & d1_bull & macd_neg & rsi_up6,14,0.4375,0.7777777777777778,13,0.8571428571428571,7.5,True,False
-trend_down & h4_bull & d1_bull & rsi55_60,18,0.34782608695652173,0.5714285714285714,13,0.8,5.5,True,False
-trend_down & h4_bull & d1_bull & atr_above_med & near_ema20,13,0.42857142857142855,0.75,15,0.7333333333333333,5.0,True,False
-trend_down & h4_bull & d1_bull & rsi_up6,27,0.5,1.0,24,0.7692307692307693,4.75,True,False
-trend_down & h4_bull & d1_bull & rsi55_60 & rsi_up6,17,0.3181818181818182,0.5,11,0.7692307692307693,4.5,True,False
-trend_down & h4_bull & d1_bull & rsi_up6 & w1_bull,12,0.4666666666666667,0.875,14,0.7857142857142857,4.0,True,False
-trend_down & h4_bull & d1_bull & atr_above_med & w1_bull,10,0.42857142857142855,0.75,13,0.7333333333333333,3.6666666666666665,True,False
-trend_down & h4_bull & d1_bull & atr_above_med & rsi45_55,16,0.4375,0.7777777777777778,14,0.7333333333333333,3.5,True,False
-trend_down & h4_bull & d1_bull & macd_pos & near_ema20,19,0.47368421052631576,0.9,16,0.6875,3.4,True,False
-trend_down & h4_bull & d1_bull & near_ema20 & rsi_up6,20,0.5,1.0,17,0.6842105263157895,3.25,True,False
-trend_down & h4_bull & d1_bull & macd_neg & rsi40_45,13,0.5,1.0,8,0.75,3.0,True,False
+trend_down & h4_bull & d1_bull & macd_pos & rsi_up6,26,0.5384615384615384,1.1666666666666667,20,0.6,2.0,True,True
+trend_down & h4_bull & d1_bull & macd_neg & rsi_up6,14,0.5,1.0,13,0.8571428571428571,7.5,True,False
+trend_down & h4_bull & d1_bull & atr_above_med & near_ema20,13,0.4375,0.7777777777777778,14,0.7142857142857143,5.0,True,False
+trend_down & h4_bull & d1_bull & near_ema20 & rsi_up6,20,0.5,1.0,17,0.7222222222222222,4.333333333333333,True,False
+trend_down & h4_bull & d1_bull & rsi_up6 & w1_bull,12,0.5,1.0,13,0.7692307692307693,4.0,True,False
+trend_down & h4_bull & d1_bull & macd_pos & near_ema20,21,0.47619047619047616,0.9090909090909091,16,0.6875,3.6666666666666665,True,False
+trend_down & h4_bull & d1_bull & atr_above_med & w1_bull,10,0.42857142857142855,0.75,12,0.7333333333333333,3.6666666666666665,True,False
+trend_down & h4_bull & d1_bull & near_ema20,23,0.4782608695652174,0.9166666666666666,19,0.7368421052631579,3.6,True,False
+trend_down & h4_bull & d1_bull & atr_above_med & rsi45_55,16,0.4444444444444444,0.8,14,0.7142857142857143,3.5,True,False
+trend_down & h4_bull & d1_bull & far_ema200 & near_ema20,21,0.47619047619047616,0.9090909090909091,16,0.7619047619047619,3.2,True,False
 trend_down & h4_bull & d1_bull & rsi45_55 & rsi_up6,22,0.5,1.0,17,0.7058823529411765,3.0,True,False
-trend_down & h4_bull & d1_bull & near_ema20,21,0.47619047619047616,0.9090909090909091,19,0.7368421052631579,3.0,True,False
+trend_down & h4_bull & d1_bull & macd_pos & rsi45_55,23,0.4782608695652174,0.9166666666666666,16,0.6875,3.0,True,False
+trend_down & h4_bull & d1_bull & rsi55_60,19,0.34782608695652173,0.5714285714285714,12,0.75,3.0,True,False
 trend_down & h4_bull & d1_bull & far_ema200 & rsi55_60,13,0.3333333333333333,0.5454545454545454,7,0.75,3.0,True,False
-trend_down & h4_bull & d1_bull & adx20+ & rsi45_55,16,0.5,1.0,13,0.6666666666666666,2.75,True,False
-trend_down & h4_bull & d1_bull & far_ema200 & near_ema20,19,0.47368421052631576,0.9,16,0.7272727272727273,2.6666666666666665,True,False
-trend_down & h4_bull & d1_bull & macd_pos & rsi45_55,21,0.47619047619047616,0.9090909090909091,16,0.6818181818181818,2.5,True,False
-trend_down & h4_bull & d1_bull & adx20+ & near_ema20,14,0.42857142857142855,0.75,13,0.625,2.5,True,False
-trend_down & h4_bull & d1_bull & macd_pos & w1_bull,12,0.38461538461538464,0.625,13,0.6666666666666666,2.5,True,False
-trend_down & h4_bull & d1_bull & macd_pos,24,0.4583333333333333,0.8461538461538461,22,0.6363636363636364,2.3333333333333335,True,False
-trend_down & h4_bull & d1_bull & adx25+ & near_ema20,7,0.4444444444444444,0.8,10,0.6923076923076923,2.3333333333333335,True,False
-trend_down & h4_bull & d1_bull & rsi45_55,23,0.4782608695652174,0.9166666666666666,19,0.6666666666666666,2.2857142857142856,True,False
-trend_down & h4_bull & d1_bull & far_ema200 & rsi45_55,21,0.47619047619047616,0.9090909090909091,16,0.6666666666666666,2.0,True,False
-trend_down & h4_bull & d1_bull & rsi45_55 & w1_bull,12,0.42857142857142855,0.75,11,0.6666666666666666,2.0,True,False
-trend_down & h4_bull & d1_bull & adx20+ & bb_narrow,8,0.375,0.6,8,0.6,2.0,True,False
+trend_down & h4_bull & d1_bull & macd_neg & rsi40_45,13,0.5,1.0,8,0.7333333333333333,2.75,True,False
+trend_down & h4_bull & d1_bull & adx20+ & rsi45_55,16,0.47058823529411764,0.8888888888888888,13,0.6875,2.75,True,False
+trend_down & h4_bull & d1_bull & adx20+ & near_ema20,14,0.4,0.6666666666666666,13,0.6470588235294118,2.75,True,False
+trend_down & h4_bull & d1_bull & rsi45_55,25,0.48,0.9230769230769231,19,0.6956521739130435,2.6666666666666665,True,False
+trend_down & h4_bull & d1_bull & rsi55_60 & rsi_up6,18,0.3181818181818182,0.5,11,0.7272727272727273,2.6666666666666665,True,False
+trend_down & h4_bull & d1_bull & macd_pos & w1_bull,12,0.42857142857142855,0.75,12,0.6666666666666666,2.5,True,False
+trend_down & h4_bull & d1_bull & far_ema200 & rsi45_55,23,0.4782608695652174,0.9166666666666666,16,0.7,2.3333333333333335,True,False
+trend_down & h4_bull & d1_bull & adx25+ & near_ema20,7,0.4,0.6666666666666666,10,0.7,2.3333333333333335,True,False
+trend_down & h4_bull & d1_bull & rsi45_55 & w1_bull,12,0.4666666666666667,0.875,11,0.6666666666666666,2.0,True,False
+trend_down & h4_bull & d1_bull & adx20+ & bb_narrow,8,0.375,0.6,9,0.6,2.0,True,False
+trend_down & h4_bull & d1_bull & macd_pos,26,0.46153846153846156,0.8571428571428571,22,0.5909090909090909,1.8571428571428572,True,False
 trend_down & h4_bull & d1_bull & far_ema200 & rsi<40,17,0.4117647058823529,0.7,6,0.5,1.0,False,False
 trend_down & h4_bull & d1_bull & rsi<40,17,0.4117647058823529,0.7,6,0.5,1.0,False,False
