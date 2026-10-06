@@ -1,20 +1,20 @@
 # H1 Data Audit
 
-- generated: 2026-10-06T13:51:23.224424+00:00
+- generated: 2026-10-06T14:15:42.811411+00:00
 
 |TF|Pair|Status|Rows|Details|
 |---|---|---|---:|---|
-|h1|usdjpy|OK|35839|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|usdjpy|OK|35925|2021-01-03T22:00:00+00:00 -> 2026-10-06T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|eurjpy|OK|35838|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|gbpjpy|OK|35837|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audjpy|OK|35836|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|eurusd|OK|35924|2021-01-03T22:00:00+00:00 -> 2026-10-06T12:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|eurusd|OK|35925|2021-01-03T22:00:00+00:00 -> 2026-10-06T13:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|gbpusd|OK|35837|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audusd|OK|35838|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|nzdusd|OK|35831|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|usdcad|OK|35837|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|usdchf|OK|35831|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
-|h1|eurgbp|OK|35836|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
+|h1|eurgbp|OK|35837|2021-01-03T22:00:00+00:00 -> 2026-09-30T23:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h1|audnzd|OK|35830|2021-01-03T22:00:00+00:00 -> 2026-09-30T22:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h4|usdjpy|OK|9306|2021-01-03T20:00:00+00:00 -> 2026-09-28T20:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
 |h4|eurjpy|OK|9607|2021-01-03T20:00:00+00:00 -> 2026-09-28T20:00:00+00:00; bad_ohlc=0; non_increasing=0; bad_ts=0|
