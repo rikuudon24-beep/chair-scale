@@ -1,0 +1,28 @@
+name: FX H1 Non-JPY Independent Research
+on:
+  push:
+    branches: [fx-h1-research]
+    paths:
+      - "scripts/research_h1_non_jpy_independent.py"
+      - ".github/workflows/fx-h1-non-jpy-independent.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with: {ref: fx-h1-research}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.12"}
+      - run: python -m pip install pandas pyarrow numpy
+      - run: python scripts/research_h1_non_jpy_independent.py
+      - name: Commit results
+        run: |
+          git config user.name "fx-research-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/h1/results/NONJPY_*.csv research/h1/results/NONJPY_INDEPENDENT_RESEARCH.md
+          git diff --cached --quiet || git commit -m "h1bot: update non-JPY independent research"
+          git push
