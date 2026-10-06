@@ -93,7 +93,7 @@ jobs:
 $message
 
 Research candidate only. This is not an automatic broker execution order."
-            gh issue create --title "$title" --body "$body" --label "fx-alert" || true
+            gh issue create --title "$title" --body "$body" || true
           done < /tmp/h1_alerts.tsv
 
       - uses: actions/upload-artifact@v4
