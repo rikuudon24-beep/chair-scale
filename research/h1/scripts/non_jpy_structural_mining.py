@@ -48,8 +48,8 @@ def main():
     "short_reversal":part.trend_up&(r6<-3)&bear,
     "long_reversal_d1":part.trend_down&(r6>3)&d1bull,
     "short_reversal_d1":part.trend_up&(r6<-3)&d1bear,
-    "long_breakout":bull&part.break20_down==False&(part.close>part.prior20_high),
-    "short_breakout":bear&part.break20_up==False&(part.close<part.prior20_low),
+    "long_breakout":bull & (~part.break20_down) & (part.close > part.prior20_high),
+    "short_breakout":bear & (~part.break20_up) & (part.close < part.prior20_low),
    }
    for state,m in states.items():
     direction="short" if state.startswith("short") else "long"
