@@ -1,0 +1,37 @@
+name: USDJPY Bear Exit Design Research
+on:
+  push:
+    paths:
+      - "scripts/research_usdjpy_bear_exit_design_2026_10_07.py"
+      - "data/market/h4/usdjpy.csv"
+      - ".github/workflows/fx-usdjpy-bear-exit-design.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip pandas numpy
+      - name: Run USDJPY bear exit design
+        run: python -u scripts/research_usdjpy_bear_exit_design_2026_10_07.py
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: usdjpy-bear-exit-design-2026-10-07
+          path: |
+            reports/usdjpy_bear_exit_design_2026-10-07.csv
+            reports/usdjpy_bear_exit_design_events_2026-10-07.csv
+      - name: Commit reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/usdjpy_bear_exit_design_2026-10-07.csv reports/usdjpy_bear_exit_design_events_2026-10-07.csv
+          git diff --cached --quiet || git commit -m "research: save USDJPY bear exit design results"
+          git push
