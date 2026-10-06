@@ -101,3 +101,5 @@ for _,r in df.iterrows():
     lines.append(f"|{r.pair}|{r.structure}|{r.split}|{int(r.tp)}|{int(r.sl)}|{r.cost_pips:.1f}|{int(r.signals)}|{int(r.resolved)}|{r.win_rate:.3f}|{r.pf:.3f}|{r.expectancy_R:.3f}|{r.net_R:.2f}|")
 (OUT/"H1_CANDIDATE_COST_SENSITIVITY.md").write_text("\n".join(lines)+"\n")
 print("[OK] H1 candidate cost sensitivity")
+
+# workflow trigger checkpoint
