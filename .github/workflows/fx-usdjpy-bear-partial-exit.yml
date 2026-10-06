@@ -1,0 +1,24 @@
+name: USDJPY Bear Partial Exit Research
+on:
+  push:
+    paths:
+      - "scripts/research_usdjpy_bear_partial_exit_2026_10_07.py"
+      - ".github/workflows/fx-usdjpy-bear-partial-exit.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: python -m pip install pandas numpy
+      - run: python -u scripts/research_usdjpy_bear_partial_exit_2026_10_07.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/usdjpy_bear_partial_exit_2026-10-07.csv reports/usdjpy_bear_partial_exit_events_2026-10-07.csv
+          git diff --cached --quiet || git commit -m "research: save USDJPY bear partial exit results"
+          git push
