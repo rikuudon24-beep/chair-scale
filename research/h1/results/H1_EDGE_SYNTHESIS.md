@@ -63,3 +63,11 @@ This should be generalized beyond JPY before being frozen.
 
 ## Status
 This synthesis does not declare a production-ready trading edge. The existing repository itself states that verified trading performance is not yet established. The purpose here is to narrow the next research to robustness, generalization, execution timing, and notification conversion without repeating completed discovery work.
+
+
+## 2026-10-06 routing update
+- The JPY-derived H1 pullback/reversal architecture was tested across the remaining pairs rather than being forced universal.
+- Six pair-specific candidates passed the frozen OOS routing gate: USDJPY, EURJPY, GBPJPY, USDCHF, AUDUSD, AUDNZD.
+- A modeled 3-pip round-trip cost still left positive combined OOS expectancy for all six candidates.
+- EURUSD, GBPUSD, NZDUSD, USDCAD, EURGBP, and AUDJPY did not pass that gate and are now explicitly routed to independent research.
+- The first independent non-JPY discovery run found no candidates meeting the strict 100-pip/48H1 gate (n>=50, hit>=55%, Wilson LCB>=45%). This is a negative result, not a failure of the project: the next branch must search different structures/targets rather than loosen the gate after seeing results.
