@@ -24,6 +24,8 @@ steps=[
  ["python","research/h1/scripts/stable_jpy_filter_cost_comparison.py"],
  ["python","research/h1/scripts/final_candidate_refinement.py"],
  ["python","research/h1/scripts/non_jpy_50pip_independent.py"],
+ ["python","research/h1/scripts/non_jpy_structural_mining.py"],
+ ["python","research/h1/scripts/final_cost_exit_refinement.py"],
 ]
 for cmd in steps:
     print("[RUN]"," ".join(cmd),flush=True)
