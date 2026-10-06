@@ -1,0 +1,29 @@
+name: FX H1 Final Gate
+on:
+  push:
+    branches: [fx-h1-research]
+    paths:
+      - 'research/h1/scripts/final_gate.py'
+      - 'research/h1/results/H1_FINAL_COST_EXIT_SELECTED.csv'
+      - '.github/workflows/fx-h1-final-gate.yml'
+  workflow_dispatch:
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'h1gate:')"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fx-h1-research
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas pyarrow numpy
+      - run: python research/h1/scripts/final_gate.py
+      - name: Commit results
+        run: |
+          git config user.name "fx-research-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/h1/results/H1_FINAL_GATE.csv research/h1/results/H1_FINAL_GATE.md
+          git diff --cached --quiet || git commit -m "h1gate: update final H1 robustness gate"
+          git push
