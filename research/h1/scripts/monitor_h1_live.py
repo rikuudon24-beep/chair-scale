@@ -8,7 +8,7 @@ Backtest-matched conditions:
 - signal is evaluated only on a completed H1 candle
 - entry is the next H1 open
 - exits are fixed pair-specific TP/SL; same-candle TP+SL => SL first
-This is a research/alert monitor, not an execution engine.\n# Operational scope: six routed pairs only; all other pairs remain research-only.
+This is a research/alert monitor, not an execution engine.\n# Operational scope: six routed pairs only; all other pairs remain research-only.\n# Signal alerts are edge-triggered to prevent repeated entries while a condition persists.
 """
 from pathlib import Path
 import pandas as pd
