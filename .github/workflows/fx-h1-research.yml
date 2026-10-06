@@ -39,3 +39,5 @@ jobs:
           git add data/market/h1 research/h1/results
           git diff --cached --quiet || git commit -m "h1bot: update H1 research data and results"
           git push
+
+# final refinement trigger: cost-aware exits + independent structural mining
