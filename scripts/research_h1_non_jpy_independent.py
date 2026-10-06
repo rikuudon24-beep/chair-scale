@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 import itertools, math, pandas as pd, numpy as np
-ROOT=Path(__file__).resolve().parents[2]
+ROOT=Path(__file__).resolve().parents[1]
 DATA=ROOT/"research/h1/results/datasets"; OUT=ROOT/"research/h1/results"
 PAIRS=["eurusd","gbpusd","nzdusd","usdcad","eurgbp","audjpy"]
 def split(x):
