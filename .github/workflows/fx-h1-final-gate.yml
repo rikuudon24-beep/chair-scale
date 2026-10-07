@@ -7,6 +7,8 @@ on:
       - 'research/h1/results/H1_FINAL_COST_EXIT_SELECTED.csv'
       - '.github/workflows/fx-h1-final-gate.yml'
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   gate:
     runs-on: ubuntu-latest
