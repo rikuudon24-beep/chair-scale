@@ -1,6 +1,12 @@
 name: FX H1 Routed Live Monitor
 
 on:
+  push:
+    branches: [fx-h1-research]
+    paths:
+      - 'research/h1/scripts/monitor_h1_live.py'
+      - 'research/h1/results/H1_V1_OPERATIONAL_RULES.md'
+      - '.github/workflows/fx-h1-routed-live.yml'
   schedule:
     - cron: "11 * * * *"
   workflow_dispatch:
@@ -40,7 +46,7 @@ jobs:
         run: |
           python research/h1/scripts/download_h1.py             --start "$(date -u -d '-3 days' +%F)"             --end "$(date -u -d '+1 day' +%F)"
 
-      - name: Evaluate six routed H1 candidates
+      - name: Evaluate frozen H1 v1 candidates
         run: |
           python -m pip install pandas pyarrow
           python research/h1/scripts/monitor_h1_live.py
