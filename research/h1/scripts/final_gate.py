@@ -5,6 +5,9 @@ import pandas as pd
 from final_cost_exit_refinement import DATA, OUT, CANDS, split, mask, sim
 
 def main():
+    # Also run the non-selective local-parameter robustness report before the gate.
+    import neighborhood_robustness
+    neighborhood_robustness.main()
     sel = pd.read_csv(OUT / "H1_FINAL_COST_EXIT_SELECTED.csv")
     rows = []
     for _, r in sel.iterrows():
