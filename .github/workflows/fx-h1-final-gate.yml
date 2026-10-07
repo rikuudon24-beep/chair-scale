@@ -4,6 +4,7 @@ on:
     branches: [fx-h1-research]
     paths:
       - 'research/h1/scripts/final_gate.py'
+      - 'research/h1/scripts/neighborhood_robustness.py'
       - 'research/h1/results/H1_FINAL_COST_EXIT_SELECTED.csv'
       - '.github/workflows/fx-h1-final-gate.yml'
   workflow_dispatch:
@@ -22,12 +23,13 @@ jobs:
           python-version: '3.11'
       - run: pip install pandas pyarrow numpy
       - run: python research/h1/scripts/final_cost_exit_refinement.py
+      - run: python research/h1/scripts/neighborhood_robustness.py
       - run: python research/h1/scripts/final_gate.py
       - name: Commit results
         run: |
           git config user.name "fx-research-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research/h1/results/H1_FINAL_GATE.csv research/h1/results/H1_FINAL_GATE.md research/h1/results/H1_FINAL_COST_EXIT_SELECTED.csv research/h1/results/H1_FINAL_COST_EXIT_SELECTED.md
+          git add research/h1/results/H1_FINAL_GATE.csv research/h1/results/H1_FINAL_GATE.md research/h1/results/H1_FINAL_COST_EXIT_SELECTED.csv research/h1/results/H1_FINAL_COST_EXIT_SELECTED.md research/h1/results/H1_NEIGHBORHOOD_ROBUSTNESS.csv research/h1/results/H1_NEIGHBORHOOD_ROBUSTNESS.md
           git diff --cached --quiet || git commit -m "h1gate: update final H1 robustness gate"
           git push
 
