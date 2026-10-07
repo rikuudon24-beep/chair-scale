@@ -29,3 +29,5 @@ jobs:
           git add research/h1/results/H1_FINAL_GATE.csv research/h1/results/H1_FINAL_GATE.md
           git diff --cached --quiet || git commit -m "h1gate: update final H1 robustness gate"
           git push
+
+# trigger: final gate execution
