@@ -1,0 +1,38 @@
+name: FX H1 Pristine Holdout
+on:
+  push:
+    branches: [fx-h1-research]
+    paths:
+      - 'research/h1/scripts/pristine_holdout.py'
+      - '.github/workflows/fx-h1-pristine-holdout.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: fx-h1-pristine-holdout
+  cancel-in-progress: false
+jobs:
+  holdout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fx-h1-research
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install pandas pyarrow numpy
+      - run: python scripts/download_market_data.py --mode incremental
+      - run: python research/h1/scripts/build_dataset.py
+      - run: python research/h1/scripts/pristine_holdout.py
+      - name: Commit holdout results and refreshed data
+        run: |
+          git config user.name "fx-research-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/market research/h1/results/datasets research/h1/results/H1_PRISTINE_HOLDOUT.csv research/h1/results/H1_PRISTINE_HOLDOUT.md
+          git diff --cached --quiet || git commit -m "research: update locked H1 pristine holdout"
+          git push
