@@ -10,7 +10,7 @@ DATA=ROOT/"research/h1/results/datasets"
 OUT=ROOT/"research/h1/results"
 CANDS={
  "eurjpy":("pullback_reversal_rsi","next_open",100,40,72),
- "audnzd":("pullback_reversal","next_open",75,75,72),
+ "audnzd":("pullback_reversal","next_open",60,75,72),
 }
 def ps(pair): return .01 if "jpy" in pair else .0001
 def split(x):
