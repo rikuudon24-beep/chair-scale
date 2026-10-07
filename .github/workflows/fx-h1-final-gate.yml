@@ -21,6 +21,7 @@ jobs:
         with:
           python-version: '3.11'
       - run: pip install pandas pyarrow numpy
+      - run: python research/h1/scripts/final_cost_exit_refinement.py
       - run: python research/h1/scripts/final_gate.py
       - name: Commit results
         run: |
