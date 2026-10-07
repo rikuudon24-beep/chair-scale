@@ -12,7 +12,17 @@ jobs:
       with: {python-version: '3.11'}
     - run: pip install pandas numpy requests
     - run: python scripts/research_notification_replay.py
+      
+    - run: python scripts/research_cross_pair_entry_quality_2026_10_07.py
     - uses: actions/upload-artifact@v4
       with:
         name: notification-replay
         path: reports/notification_replay_*.csv
+
+      - name: Commit cross-pair reports
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/cross_pair_entry_quality_2026-10-07.csv reports/cross_pair_entry_quality_combinations_2026-10-07.csv
+          git diff --cached --quiet || git commit -m "Add cross-pair entry quality reports"
+          git push
