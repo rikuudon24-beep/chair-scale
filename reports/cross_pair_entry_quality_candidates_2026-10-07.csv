@@ -1,0 +1,6 @@
+direction,condition,threshold_1,threshold_2,validation_n,validation_hit_rate,oos_n,oos_hit_rate,oos_mean_pips
+all,"ema20_distance_atr <= threshold & bars_touch_to_signal <= threshold",1.365379,6,21,0.333333,13,0.307692,18.030769
+all,"touch_to_signal_atr <= threshold & pre6_move_atr >= threshold",1.689974,1.009330,11,0.454545,10,0.300000,41.770000
+all,"signal_range_atr <= threshold & bars_touch_to_signal <= threshold",1.151613,6,22,0.318182,13,0.384615,23.046154
+all,"touch_to_signal_atr <= threshold & bars_touch_to_signal <= threshold",1.689974,6,27,0.333333,17,0.294118,16.135294
+all,"signal_body_ratio >= threshold & ema20_distance_atr <= threshold",0.658375,1.365379,16,0.312500,12,0.333333,21.958333
