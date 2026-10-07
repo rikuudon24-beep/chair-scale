@@ -1,0 +1,5 @@
+pair,structure,entry,tp,sl,horizon,cost_pips,trades,win_rate,pf,expectancy_R,net_R,tp_count,sl_count,time_count,status,holdout_cutoff,evaluation_end
+eurjpy,pullback_reversal_rsi,next_open,100,40,72,3.0,0,,,,,0,0,0,INSUFFICIENT_SAMPLE,2026-09-30 22:00:00+00:00,2026-09-27 22:00:00+00:00
+eurjpy,pullback_reversal_rsi,next_open,100,40,72,5.0,0,,,,,0,0,0,INSUFFICIENT_SAMPLE,2026-09-30 22:00:00+00:00,2026-09-27 22:00:00+00:00
+audnzd,pullback_reversal,next_open,60,75,72,3.0,0,,,,,0,0,0,INSUFFICIENT_SAMPLE,2026-09-30 22:00:00+00:00,2026-09-27 22:00:00+00:00
+audnzd,pullback_reversal,next_open,60,75,72,5.0,0,,,,,0,0,0,INSUFFICIENT_SAMPLE,2026-09-30 22:00:00+00:00,2026-09-27 22:00:00+00:00
