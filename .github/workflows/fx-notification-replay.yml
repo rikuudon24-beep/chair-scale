@@ -19,7 +19,7 @@ jobs:
         name: notification-replay
         path: reports/notification_replay_*.csv
 
-      - name: Commit cross-pair reports
+    - name: Commit cross-pair reports
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
