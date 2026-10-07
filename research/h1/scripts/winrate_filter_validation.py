@@ -40,7 +40,7 @@ def filters(d):
  return {
   "bb_pct<=0.5":d.bb_pct<=.5,"utc_00_06":pd.Series(h<6,index=d.index),
   "dist_ema20<=0":d.dist_ema20_atr<=0,"body_range>=0.6":d.body_range>=.6,
-  "rsi<=45":d.rsi14<=45,"adx>=25":d.adx14>=25,"rsi>=50":d.rsi14>=50,
+  "rsi<=45":d.rsi14<=45,"adx>=20":d.adx14>=20,"adx>=25":d.adx14>=25,"rsi>=50":d.rsi14>=50,
   "ema20_slope>=0":d.ema20_slope>=0,"ema50_slope>=0":d.ema50_slope>=0,
  }
 def sim(d,m,pair,entry_mode,tp,sl,h,cost):
