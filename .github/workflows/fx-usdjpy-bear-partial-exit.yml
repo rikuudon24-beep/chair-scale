@@ -19,6 +19,6 @@ jobs:
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/usdjpy_bear_partial_exit_2026-10-07.csv reports/usdjpy_bear_partial_exit_events_2026-10-07.csv
+          git add reports/usdjpy_bear_structural_exit_2026-10-07.csv reports/usdjpy_bear_structural_exit_events_2026-10-07.csv
           git diff --cached --quiet || git commit -m "research: save USDJPY bear partial exit results"
           git push
