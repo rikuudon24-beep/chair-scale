@@ -31,37 +31,47 @@ def base_mask(d, structure):
     return d.trend_down & (d.d1_close > d.d1_open) & (d.rsi14.diff(6) > 3)
 
 def trade_returns(d, mask, entry_mode, tp, sl, horizon, pair):
+    # Keep filter mining on the exact same entry/exit mechanics as final refinement.
     idx = np.flatnonzero(mask.to_numpy())
     ps = PIP(pair)
-    out = []
-    last_exit = -1
+    hi = d.high.to_numpy(); lo = d.low.to_numpy(); cl = d.close.to_numpy(); op = d.open.to_numpy()
+    raw = []
     for i in idx:
-        if i <= last_exit or i + horizon >= len(d):
+        if i + 2 >= len(d):
             continue
         if entry_mode == "next_open":
-            entry = float(d.open.iloc[i+1]); start = i+1
+            raw.append((i + 1, float(op[i + 1]), i))
         elif entry_mode == "break_signal_high":
-            entry = None; start = i+1
-            for j in range(i+1, min(i+2, len(d))):
-                if d.close.iloc[j] > d.high.iloc[i]:
-                    entry = float(d.close.iloc[j]); start = j; break
-            if entry is None: continue
-        else:
-            entry = float(d.open.iloc[i+1]); start = i+1
-        end = min(start + horizon, len(d)-1)
-        ret = None; exit_i = end; reason = "TIME"
-        for j in range(start, end+1):
-            hi = float(d.high.iloc[j]); lo = float(d.low.iloc[j])
-            if lo <= entry - sl*ps:
-                ret = -sl; exit_i = j; reason = "SL"; break
-            if hi >= entry + tp*ps:
-                ret = tp; exit_i = j; reason = "TP"; break
+            level = float(hi[i]) + ps * 0.5
+            if hi[i + 1] >= level:
+                raw.append((i + 1, max(float(op[i + 1]), level), i))
+        elif entry_mode == "confirm_1bar":
+            if cl[i + 1] > hi[i]:
+                raw.append((i + 2, float(op[i + 2]), i))
+    chosen = []
+    last = -1
+    for start, entry, signal_i in raw:
+        if start <= last:
+            continue
+        chosen.append((start, entry, signal_i))
+        last = start + horizon
+    out = []
+    for start, entry, signal_i in chosen:
+        end = min(start + horizon, len(d) - 1)
+        ret = None; reason = "TIME"; exit_i = end
+        for j in range(start, end + 1):
+            hit_tp = hi[j] >= entry + tp * ps
+            hit_sl = lo[j] <= entry - sl * ps
+            if hit_tp and hit_sl:
+                ret = -sl; reason = "SL"; exit_i = j; break
+            if hit_tp:
+                ret = tp; reason = "TP"; exit_i = j; break
+            if hit_sl:
+                ret = -sl; reason = "SL"; exit_i = j; break
         if ret is None:
-            ret = (float(d.close.iloc[end]) - entry) / ps
-        out.append((i, ret - 3.0, reason))
-        last_exit = exit_i
-    return pd.DataFrame(out, columns=["signal_i","r","reason"])
-
+            ret = (cl[end] - entry) / ps
+        out.append((signal_i, ret - 3.0, reason))
+    return pd.DataFrame(out, columns=["signal_i", "r", "reason"])
 def stats(tr):
     if tr.empty: return {"n":0,"win":np.nan,"pf":np.nan,"expr":np.nan,"net":0.0}
     r=tr.r
