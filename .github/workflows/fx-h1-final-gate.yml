@@ -26,7 +26,7 @@ jobs:
         run: |
           git config user.name "fx-research-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add research/h1/results/H1_FINAL_GATE.csv research/h1/results/H1_FINAL_GATE.md
+          git add research/h1/results/H1_FINAL_GATE.csv research/h1/results/H1_FINAL_GATE.md research/h1/results/H1_FINAL_COST_EXIT_SELECTED.csv research/h1/results/H1_FINAL_COST_EXIT_SELECTED.md
           git diff --cached --quiet || git commit -m "h1gate: update final H1 robustness gate"
           git push
 
