@@ -30,4 +30,4 @@ jobs:
           git diff --cached --quiet || git commit -m "h1gate: update final H1 robustness gate"
           git push
 
-# trigger: final gate execution
+# final gate execution trigger
