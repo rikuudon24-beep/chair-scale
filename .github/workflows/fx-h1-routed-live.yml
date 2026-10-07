@@ -1,0 +1,110 @@
+name: FX H1 Routed Live Monitor
+
+on:
+  schedule:
+    - cron: "11 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: fx-h1-routed-live
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout research branch
+        uses: actions/checkout@v5
+        with:
+          ref: fx-h1-research
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Refresh H4/D1 market data
+        run: |
+          python scripts/download_market_data.py \
+            --mode incremental \
+            --start "$(date -u -d '-3 days' +%F)" \
+            --end "$(date -u -d '+1 day' +%F)"
+          python scripts/validate_market_data.py
+
+      - name: Refresh H1 market data
+        run: |
+          python research/h1/scripts/download_h1.py \
+            --start "$(date -u -d '-3 days' +%F)" \
+            --end "$(date -u -d '+1 day' +%F)"
+
+      - name: Evaluate frozen H1 v1 candidates
+        run: |
+          python -m pip install pandas pyarrow
+          python research/h1/scripts/monitor_h1_live.py
+
+      - name: Publish H1 state
+        run: |
+          git config user.name "fx-research-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/h1_live_positions.csv reports/h1_live_alerts.csv
+          git diff --cached --quiet || git commit -m "h1bot: refresh routed live state"
+          git push origin HEAD:fx-h1-research
+
+      - name: Create durable H1 alert issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ ! -s reports/h1_live_alerts.csv ]; then
+            exit 0
+          fi
+
+          python - <<'PY' > /tmp/h1_alerts.tsv
+          import csv
+          with open("reports/h1_live_alerts.csv", newline="") as f:
+              for r in csv.DictReader(f):
+                  print("\t".join([
+                      r["alert_id"], r["kind"], r["pair"], r["direction"],
+                      r["signal_time"], r["entry_time"], r["price"],
+                      r["tp"], r["sl"], r["message"]
+                  ]))
+          PY
+
+          while IFS=$'\t' read -r id kind pair direction signal entry price tp sl message; do
+            [ -z "$id" ] && continue
+            existing=$(gh issue list --state all --search "FX H1 $kind $pair in:title" --json title --jq '.[].title' | grep -F "$id" || true)
+            if [ -n "$existing" ]; then
+              continue
+            fi
+            title="FX H1 $kind $pair $id"
+            body="## FX H1 routed alert
+
+- Pair: $pair
+- Direction: $direction
+- Type: $kind
+- Signal candle: $signal
+- Entry candidate: $entry
+- Reference/entry price: $price
+- TP: $tp
+- SL: $sl
+
+$message
+
+Research candidate only. This is not an automatic broker execution order."
+            gh issue create --title "$title" --body "$body" || true
+          done < /tmp/h1_alerts.tsv
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h1-routed-live-state
+          path: |
+            reports/h1_live_positions.csv
+            reports/h1_live_alerts.csv
