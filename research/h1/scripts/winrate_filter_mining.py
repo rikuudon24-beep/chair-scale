@@ -28,7 +28,7 @@ PIP = lambda p: 0.01 if "JPY" in p else 0.0001
 def base_mask(d, structure):
     if structure == "pullback_reversal":
         return d.trend_down & (d.h4_close > d.h4_open) & (d.d1_close > d.d1_open)
-    return d.trend_down & (d.d1_close > d.d1_open) & (d.rsi14.diff(6) > 0.03)
+    return d.trend_down & (d.d1_close > d.d1_open) & (d.rsi14.diff(6) > 3)
 
 def trade_returns(d, mask, entry_mode, tp, sl, horizon, pair):
     idx = np.flatnonzero(mask.to_numpy())
