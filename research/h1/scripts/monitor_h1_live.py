@@ -46,9 +46,11 @@ def htf_prior(x,ts):
 
 def features(pair):
     raw=load(pair,"h1")
-    cutoff=pd.Timestamp.now(tz="UTC").floor("h")-pd.Timedelta(hours=1)
+    cutoff=pd.Timestamp.now(tz="UTC").floor("h")-pd.Timedelta(nanoseconds=1)
     h=raw[raw.index<=cutoff].copy()
     if len(h)<210: raise RuntimeError(f"insufficient completed H1 candles: {pair}")
+    if h.index[-1] < cutoff-pd.Timedelta(hours=2):
+        raise RuntimeError(f"stale H1 data: {pair}; latest_completed={h.index[-1].isoformat()} cutoff={cutoff.isoformat()}")
     c=h.close; e20=c.ewm(span=20,adjust=False).mean(); e50=c.ewm(span=50,adjust=False).mean(); e200=c.ewm(span=200,adjust=False).mean()
     atr=(pd.concat([(h.high-h.low),(h.high-c.shift()).abs(),(h.low-c.shift()).abs()],axis=1).max(axis=1).ewm(alpha=1/14,adjust=False).mean())
     rr=rsi(c); ad=adx14(h); slope=e20.pct_change()
@@ -125,7 +127,8 @@ def main():
                     et=ts+pd.Timedelta(hours=1); price=float(raw.loc[et,"open"]) if et in raw.index else float(h.close.iloc[-1])
                     status="OPEN" if et in raw.index else "PENDING"
                     tp=price+cfg["tp"]*pip(pair); sl=price-cfg["sl"]*pip(pair)
-                    \n                    if status=="OPEN":\n                        new.append([aid,"ENTRY",pair,"long",ts.isoformat(),et.isoformat(),price,tp,sl,f"ENTRY {pair} LONG at next H1 open {price:.5f}; TP {tp:.5f}; SL {sl:.5f}."])
+                                    if status=="OPEN":
+                        new.append([aid,"ENTRY",pair,"long",ts.isoformat(),et.isoformat(),price,tp,sl,f"ENTRY {pair} LONG at next H1 open {price:.5f}; TP {tp:.5f}; SL {sl:.5f}."])
                     out.append({"pair":pair,"direction":"long","signal_time":ts.isoformat(),"entry_time":et.isoformat(),"entry_price":price,"tp":tp,"sl":sl,"horizon":cfg["horizon"],"status":status,"last_checked":ts.isoformat()})
                 else:
                     out.append({"pair":pair,"direction":"long","signal_time":ts.isoformat(),"entry_time":(ts+pd.Timedelta(hours=2)).isoformat(),"entry_price":np.nan,"tp":np.nan,"sl":np.nan,"horizon":cfg["horizon"],"status":"CONFIRMING","last_checked":ts.isoformat()})
