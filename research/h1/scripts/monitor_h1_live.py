@@ -127,7 +127,7 @@ def main():
                     et=ts+pd.Timedelta(hours=1); price=float(raw.loc[et,"open"]) if et in raw.index else float(h.close.iloc[-1])
                     status="OPEN" if et in raw.index else "PENDING"
                     tp=price+cfg["tp"]*pip(pair); sl=price-cfg["sl"]*pip(pair)
-                                    if status=="OPEN":
+                    if status=="OPEN":
                         new.append([aid,"ENTRY",pair,"long",ts.isoformat(),et.isoformat(),price,tp,sl,f"ENTRY {pair} LONG at next H1 open {price:.5f}; TP {tp:.5f}; SL {sl:.5f}."])
                     out.append({"pair":pair,"direction":"long","signal_time":ts.isoformat(),"entry_time":et.isoformat(),"entry_price":price,"tp":tp,"sl":sl,"horizon":cfg["horizon"],"status":status,"last_checked":ts.isoformat()})
                 else:
