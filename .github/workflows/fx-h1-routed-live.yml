@@ -1,10 +1,6 @@
 name: FX H1 Routed Live Monitor
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/fx-h1-routed-live.yml'
   schedule:
     - cron: "11 * * * *"
   workflow_dispatch:
