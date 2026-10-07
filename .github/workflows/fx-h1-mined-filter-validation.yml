@@ -1,0 +1,27 @@
+name: FX H1 Mined Filter Validation
+on:
+  push:
+    branches: [fx-h1-research]
+    paths:
+      - 'research/h1/scripts/winrate_filter_validation.py'
+      - 'research/h1/results/datasets/**'
+      - '.github/workflows/fx-h1-mined-filter-validation.yml'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pandas numpy pyarrow
+      - run: python research/h1/scripts/winrate_filter_validation.py
+      - name: Commit validation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/h1/results/H1_MINED_FILTER_VALIDATION.csv research/h1/results/H1_MINED_FILTER_VALIDATION.md
+          git diff --cached --quiet || git commit -m "research: persist mined filter validation"
+          git push
