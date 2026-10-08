@@ -145,4 +145,4 @@ jobs:
 
 # trigger corrected research branch
 # runtime source is main; live state is published separately
-# trigger after HTF timestamp fix
+# trigger after D1 freshness fix
