@@ -79,6 +79,13 @@ def validate(pair, tf, old, fresh):
     if old.empty:
         return
     cutoff = int((time.time() - OVERLAP_HOURS * 3600) * 1000)
+    old_latest = int(old.timestamp.max()) if not old.empty else None
+    # If the previous live file is already older than the comparison window,
+    # zero overlap is expected during a source refresh. In that case accept the
+    # fresh source after its own freshness check rather than blocking the monitor.
+    if old_latest is not None and old_latest < cutoff:
+        print(f"[CHECK] {pair} {tf}: old source is outside overlap window; accepting fresh source")
+        return
     a = old[old.timestamp >= cutoff][["timestamp", "close"]]
     b = fresh[fresh.timestamp >= cutoff][["timestamp", "close"]]
     m = a.merge(b, on="timestamp", suffixes=("_old", "_new"))
