@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "scripts/research_cross_pair_structural_replay_2026_10_08.py"
+      - ".github/workflows/fx-cross-pair-structural-replay.yml"
 jobs:
   research:
     runs-on: ubuntu-latest
