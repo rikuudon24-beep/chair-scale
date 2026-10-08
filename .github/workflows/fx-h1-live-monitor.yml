@@ -3,10 +3,46 @@ name: FX H1 Live Monitor
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: "11 * * * *"
   workflow_dispatch:
 
 jobs:
-  smoke:
+  monitor:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "H1 workflow smoke OK"
+      - name: Checkout research branch
+        uses: actions/checkout@v5
+        with:
+          ref: fx-h1-research
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Refresh H1 market data
+        run: |
+          python research/h1/scripts/download_h1.py \
+            --start "$(date -u -d '-3 days' +%F)" \
+            --end "$(date -u -d '+1 day' +%F)"
+
+      - name: Evaluate frozen H1 v1 candidates
+        run: |
+          python -m pip install pandas pyarrow
+          python research/h1/scripts/monitor_h1_live.py
+
+      - name: Publish H1 state
+        run: |
+          git config user.name "fx-research-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/h1_live_positions.csv reports/h1_live_alerts.csv
+          git diff --cached --quiet || git commit -m "h1bot: refresh live state"
+          git push origin HEAD:fx-h1-research
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: h1-live-state
+          path: |
+            reports/h1_live_positions.csv
+            reports/h1_live_alerts.csv
