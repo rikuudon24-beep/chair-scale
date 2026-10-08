@@ -105,18 +105,31 @@ def main():
                         else: p.status="PENDING"
                     else: p.status="CLOSED"
             if p.status=="OPEN":
-                hi=float(h.high.iloc[-1]); lo=float(h.low.iloc[-1]); hit_tp=hi>=float(p.tp); hit_sl=lo<=float(p.sl)
-                kind=None; price=None
-                if hit_tp or hit_sl: kind="EXIT_SL" if hit_sl else "EXIT_TP"; price=float(p.sl if hit_sl else p.tp)
-                else:
-                    end=entry_time+pd.Timedelta(hours=int(p.horizon))
-                    if ts>=end:
-                        kind="EXIT_TIME"; price=float(h.close.iloc[-1])
-                if kind:
-                    aid=f"{kind}|{pair}|{p.signal_time}"
-                    if not seen(alerts,aid): new.append([aid,kind,pair,"long",p.signal_time,p.entry_time,price,float(p.tp),float(p.sl),f"{kind} {pair} LONG at {price:.5f}."])
-                    p.status="CLOSED"
-            p.last_checked=ts.isoformat(); out.append(p.to_dict()); continue
+                # Process every completed H1 candle since the last checkpoint.
+                # This prevents a missed scheduler run from losing an intermediate TP/SL hit.
+                last_checked=pd.Timestamp(p.last_checked) if pd.notna(p.last_checked) and str(p.last_checked)!="nan" else entry_time-pd.Timedelta(hours=1)
+                start=max(entry_time,last_checked+pd.Timedelta(hours=1))
+                bars=h[(h.index>=start)&(h.index<=ts)]
+                end=entry_time+pd.Timedelta(hours=int(p.horizon))
+                for bar_ts,bar in bars.iterrows():
+                    hit_tp=float(bar.high)>=float(p.tp); hit_sl=float(bar.low)<=float(p.sl)
+                    kind=None; price=None
+                    if hit_tp or hit_sl:
+                        kind="EXIT_SL" if hit_sl else "EXIT_TP"
+                        price=float(p.sl if hit_sl else p.tp)  # same-candle TP+SL => SL first
+                    elif bar_ts>=end:
+                        kind="EXIT_TIME"; price=float(bar.close)
+                    p.last_checked=bar_ts.isoformat()
+                    if kind:
+                        aid=f"{kind}|{pair}|{p.signal_time}"
+                        if not seen(alerts,aid):
+                            new.append([aid,kind,pair,"long",p.signal_time,p.entry_time,price,float(p.tp),float(p.sl),f"{kind} {pair} LONG at {price:.5f}."])
+                        p.status="CLOSED"
+                        break
+                if p.status=="OPEN":
+                    p.last_checked=ts.isoformat()
+            p.last_checked=ts.isoformat() if p.status!="CLOSED" else p.last_checked
+            out.append(p.to_dict()); continue
 
         # Signal on the latest completed candle. next_open can be entered immediately;
         # confirm_1bar stores the signal until the following candle confirms.
