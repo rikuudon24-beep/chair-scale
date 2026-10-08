@@ -26,6 +26,9 @@ jobs:
           ref: fx-h1-research
           fetch-depth: 1
 
+      - name: Record research revision
+        run: git rev-parse HEAD
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
