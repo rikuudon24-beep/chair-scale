@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Preflight the H1 universe before the H1 live monitor runs.
+"""Preflight the H1 live monitor inputs without coupling research-only pairs.
 
-This validates the 12-pair historical H1 input set and reports which pairs
-have frozen live rules. It does not promote research-only pairs into trading
-signals; only the frozen v1 pairs are eligible for live alerts.
+Live v1 pairs must pass this gate. Research-only files are checked and reported,
+but a research-only data problem must not suppress alerts for unrelated live v1
+pairs. Full-universe research data quality belongs in the research workflow.
 """
 import csv
 import math
@@ -20,6 +20,7 @@ UNIVERSE = [
 LIVE_V1 = {"eurjpy", "usdchf", "audnzd"}
 MIN_ROWS = 1000
 REQUIRED = ("timestamp", "open", "high", "low", "close")
+
 
 def validate(path):
     with path.open(newline="") as f:
@@ -47,26 +48,37 @@ def validate(path):
         previous = ts
     return len(rows), rows[0]["timestamp"], rows[-1]["timestamp"]
 
+
 def main():
     failures = []
-    print("=== H1 universe preflight ===")
+    research_warnings = []
+    print("=== H1 live monitor preflight ===")
     for pair in UNIVERSE:
         path = H1_DIR / f"{pair}.csv"
-        if not path.exists():
-            failures.append(f"{pair}: missing H1 CSV")
-            continue
+        scope = "LIVE_V1" if pair in LIVE_V1 else "RESEARCH_ONLY"
         try:
+            if not path.exists():
+                raise ValueError("missing H1 CSV")
             count, first, last = validate(path)
-            scope = "LIVE_V1" if pair in LIVE_V1 else "RESEARCH_ONLY"
             print(f"[OK] {pair}: rows={count} range={first}->{last} scope={scope}")
         except Exception as exc:
-            failures.append(f"{pair}: {exc}")
+            message = f"{pair}: {exc}"
+            if pair in LIVE_V1:
+                failures.append(message)
+                print(f"[FAIL] {message} scope=LIVE_V1")
+            else:
+                research_warnings.append(message)
+                print(f"[WARN] {message} scope=RESEARCH_ONLY (does not block live alerts)")
+
     if failures:
-        print("[FAIL] H1 input preflight failed:")
-        print("\n".join(failures))
+        print("[FAIL] H1 live input preflight failed:")
+        print("\\n".join(failures))
         return 2
-    print(f"[OK] {len(UNIVERSE)} H1 files passed; {len(LIVE_V1)} pairs have frozen live v1 rules; {len(UNIVERSE)-len(LIVE_V1)} remain research-only.")
+    print(f"[OK] All {len(LIVE_V1)} live v1 inputs passed.")
+    print(f"[INFO] Research-only pairs checked={len(UNIVERSE)-len(LIVE_V1)}; warnings={len(research_warnings)}.")
+    print("[INFO] Research-only data issues do not block the independent live v1 monitor.")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())
