@@ -39,7 +39,8 @@ def aggregate(h1, tf):
     )
     need = 3 if tf == "h4" else 18
     x = x[x.n >= need].drop(columns="n").dropna(subset=["open", "high", "low", "close"])
-    x["timestamp"] = (x.index.view("int64") // 10**6).astype("int64")
+    # Convert through Unix seconds so pandas datetime resolution (ns/us/ms/s) cannot corrupt the epoch value.
+    x["timestamp"] = [int(ts.timestamp() * 1000) for ts in x.index]
     return x.reset_index(drop=True)[["timestamp", "open", "high", "low", "close", "volume"]]
 
 
