@@ -72,7 +72,7 @@ def main():
 
     if failures:
         print("[FAIL] H1 live input preflight failed:")
-        print("\\n".join(failures))
+        print("\n".join(failures))
         return 2
     print(f"[OK] All {len(LIVE_V1)} live v1 inputs passed.")
     print(f"[INFO] Research-only pairs checked={len(UNIVERSE)-len(LIVE_V1)}; warnings={len(research_warnings)}.")
