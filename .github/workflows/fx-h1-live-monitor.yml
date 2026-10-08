@@ -50,6 +50,9 @@ jobs:
           rc=${PIPESTATUS[0]}
           exit $rc
 
+      - name: Validate H1 universe and frozen live scope
+        run: python scripts/validate_h1_monitor_inputs.py
+
       - name: Evaluate frozen H1 v1 candidates
         run: |
           set +e
