@@ -20,9 +20,10 @@ jobs:
         path: reports/notification_replay_*.csv
 
     - name: Commit cross-pair reports
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/cross_pair_entry_quality_2026-10-07.csv reports/cross_pair_entry_quality_combinations_2026-10-07.csv
-          git diff --cached --quiet || git commit -m "Add cross-pair entry quality reports"
-          git push
+      if: success()
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add reports/cross_pair_entry_quality_2026-10-07.csv reports/cross_pair_entry_quality_combinations_2026-10-07.csv
+        git diff --cached --quiet || git commit -m "Add cross-pair entry quality reports"
+        git push
