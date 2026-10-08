@@ -1,12 +1,9 @@
 name: FX H1 Routed Live Monitor
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/fx-h1-routed-live.yml'
-  schedule:
-    - cron: "11 * * * *"
+  # Legacy routed monitor retained for manual diagnostics only.
+  # The canonical live writer is fx-h1-live-monitor.yml; running both would
+  # race on the same position/alert ledgers using different data sources.
   workflow_dispatch:
 
 concurrency:
