@@ -7,9 +7,18 @@ on:
     - cron: "11 * * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: fx-h1-live-monitor
+  cancel-in-progress: false
+
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout research branch
         uses: actions/checkout@v5
@@ -29,20 +38,46 @@ jobs:
 
       - name: Evaluate frozen H1 v1 candidates
         run: |
+          set +e
           python -m pip install pandas pyarrow
-          python research/h1/scripts/monitor_h1_live.py
+          python research/h1/scripts/monitor_h1_live.py 2>&1 | tee /tmp/h1-monitor.log
+          rc=${PIPESTATUS[0]}
+          cp /tmp/h1-monitor.log reports/h1_monitor_last.log
+          exit $rc
 
       - name: Publish H1 state
+        if: success()
         run: |
           git config user.name "fx-research-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/h1_live_positions.csv reports/h1_live_alerts.csv
+          git add reports/h1_live_positions.csv reports/h1_live_alerts.csv reports/h1_monitor_last.log
           git diff --cached --quiet || git commit -m "h1bot: refresh live state"
           git push origin HEAD:fx-h1-research
 
+      - name: Publish diagnostic issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ ! -f /tmp/h1-monitor.log ]; then exit 0; fi
+          {
+            echo "## H1 monitor failure"
+            echo
+            echo "- Workflow run: ${{ github.run_id }}"
+            echo "- Commit: ${{ github.sha }}"
+            echo
+            echo '```text'
+            tail -n 120 /tmp/h1-monitor.log
+            echo '```'
+          } > /tmp/h1-failure.md
+          gh issue create --title "FX H1 monitor failure ${{ github.run_id }}" --body-file /tmp/h1-failure.md || true
+
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: h1-live-state
           path: |
             reports/h1_live_positions.csv
             reports/h1_live_alerts.csv
+            reports/h1_monitor_last.log
+          if-no-files-found: ignore
