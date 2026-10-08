@@ -7,50 +7,18 @@ after refresh. Recent overlap is checked before the live bars are accepted.
 import json
 import time
 from pathlib import Path
-from urllib.parse import quote
-from urllib.request import Request, urlopen
-
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "data" / "market"
-SYMBOLS = {"eurjpy": "EURJPY=X", "usdchf": "CHF=X", "audnzd": "AUDNZD=X"}
+SYMBOLS = {"eurjpy", "usdchf", "audnzd"}
+H1_DIR = OUT / "h1"
 PIP = {"eurjpy": 0.01, "usdchf": 0.0001, "audnzd": 0.0001}
 MAX_AGE_H4 = 6.0
 MAX_AGE_D1 = 30.0
 OVERLAP_HOURS = 96
 MEDIAN_MAX_PIPS = 3.0
 P95_MAX_PIPS = 10.0
-
-
-def fetch(symbol):
-    url = (
-        "https://query1.finance.yahoo.com/v8/finance/chart/"
-        + quote(symbol, safe="")
-        + "?interval=1h&range=60d&events=history"
-    )
-    req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-    with urlopen(req, timeout=30) as r:
-        payload = json.loads(r.read().decode("utf-8"))
-    result = payload.get("chart", {}).get("result")
-    if not result:
-        raise RuntimeError(f"Yahoo chart error for {symbol}: {payload.get('chart', {}).get('error')}")
-    z = result[0]
-    ts = z.get("timestamp") or []
-    q = (z.get("indicators") or {}).get("quote", [{}])[0]
-    rows = []
-    for i, t in enumerate(ts):
-        vals = [q.get(k, [None] * len(ts))[i] for k in ("open", "high", "low", "close")]
-        if any(v is None for v in vals):
-            continue
-        rows.append({"timestamp": int(t) * 1000, "open": float(vals[0]),
-                     "high": float(vals[1]), "low": float(vals[2]),
-                     "close": float(vals[3]), "volume": 0})
-    if not rows:
-        raise RuntimeError(f"Yahoo returned no usable H1 rows for {symbol}")
-    x = pd.DataFrame(rows).drop_duplicates("timestamp").sort_values("timestamp")
-    x["dt"] = pd.to_datetime(x.timestamp, unit="ms", utc=True)
-    return x.set_index("dt")
 
 
 def existing(pair, tf):
@@ -114,8 +82,22 @@ def merge(pair, tf, fresh):
 
 
 def main():
-    for pair, symbol in SYMBOLS.items():
-        h1 = fetch(symbol)
+    # H1 is the single live source. The workflow refreshes it immediately before
+    # this script runs, so rebuilding H4/D1 from the same H1 stream avoids a
+    # second provider request that can return a different/stale snapshot.
+    for pair in sorted(SYMBOLS):
+        path = H1_DIR / f"{pair}.csv"
+        if not path.exists():
+            raise RuntimeError(f"{pair}: live H1 file missing: {path}")
+        h1 = pd.read_csv(path)
+        if h1.empty:
+            raise RuntimeError(f"{pair}: live H1 file is empty")
+        h1["dt"] = pd.to_datetime(h1.timestamp, unit="ms", utc=True)
+        h1 = h1.set_index("dt").sort_index()
+        latest_h1 = h1.index.max()
+        h1_age = (pd.Timestamp.now(tz="UTC") - latest_h1).total_seconds() / 3600
+        if h1_age > 2.0:
+            raise RuntimeError(f"{pair}: live H1 source stale before HTF aggregation: {h1_age:.2f}h")
         for tf in ("h4", "d1"):
             fresh = aggregate(h1, tf)
             merge(pair, tf, fresh)
