@@ -38,6 +38,13 @@ jobs:
           rc=${PIPESTATUS[0]}
           exit $rc
 
+      - name: Refresh live H4/D1 context
+        run: |
+          set +e
+          python research/h1/scripts/download_htf_live.py 2>&1 | tee /tmp/htf-refresh.log
+          rc=${PIPESTATUS[0]}
+          exit $rc
+
       - name: Evaluate frozen H1 v1 candidates
         run: |
           set +e
