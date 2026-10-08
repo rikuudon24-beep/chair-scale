@@ -32,9 +32,7 @@ jobs:
 
       - name: Refresh H1 market data
         run: |
-          python research/h1/scripts/download_h1.py \
-            --start "$(date -u -d '-3 days' +%F)" \
-            --end "$(date -u -d '+1 day' +%F)"
+          python research/h1/scripts/download_h1_live.py
 
       - name: Evaluate frozen H1 v1 candidates
         run: |
