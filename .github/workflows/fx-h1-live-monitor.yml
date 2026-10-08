@@ -23,7 +23,7 @@ jobs:
       - name: Checkout research branch
         uses: actions/checkout@v5
         with:
-          ref: fx-h1-research
+          ref: main
           fetch-depth: 1
 
       - name: Record research revision
