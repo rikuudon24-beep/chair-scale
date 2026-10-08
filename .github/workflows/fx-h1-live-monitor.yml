@@ -61,12 +61,86 @@ jobs:
 
       - name: Publish H1 state
         if: success()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          git config user.name "fx-research-bot"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/h1_live_positions.csv reports/h1_live_alerts.csv reports/h1_monitor_last.log
-          git diff --cached --quiet || git commit -m "h1bot: refresh live state"
-          git push origin HEAD:fx-h1-research
+          set -euo pipefail
+          python - <<'PY'
+          import base64, json, os, urllib.parse, urllib.request
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          token = os.environ["GITHUB_TOKEN"]
+          branch = "fx-h1-research"
+          base = f"https://api.github.com/repos/{repo}"
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github+json",
+              "Content-Type": "application/json",
+          }
+
+          def api(method, path, payload=None):
+              data = None if payload is None else json.dumps(payload).encode()
+              req = urllib.request.Request(base + path, data=data, headers=headers, method=method)
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return json.load(r)
+
+          files = [
+              "reports/h1_live_positions.csv",
+              "reports/h1_live_alerts.csv",
+              "reports/h1_monitor_last.log",
+          ]
+
+          ref = api("GET", f"/git/ref/heads/{urllib.parse.quote(branch, safe='')}")
+          parent = ref["object"]["sha"]
+          commit = api("GET", f"/git/commits/{parent}")
+          tree_entries = []
+          changed = False
+
+          for path in files:
+              with open(path, "rb") as f:
+                  local = f.read()
+              try:
+                  remote = api(
+                      "GET",
+                      f"/contents/{urllib.parse.quote(path, safe='/')}?ref={urllib.parse.quote(branch, safe='')}",
+                  )
+                  remote_bytes = base64.b64decode(remote["content"].replace("\\n", ""))
+              except urllib.error.HTTPError as e:
+                  if e.code == 404:
+                      remote_bytes = None
+                  else:
+                      raise
+
+              if remote_bytes != local:
+                  changed = True
+              tree_entries.append({
+                  "path": path,
+                  "mode": "100644",
+                  "type": "blob",
+                  "content": local.decode("utf-8"),
+              })
+
+          if not changed:
+              print("H1 state unchanged; no publish commit needed.")
+              raise SystemExit(0)
+
+          tree = api("POST", "/git/trees", {
+              "base_tree": commit["tree"]["sha"],
+              "tree": tree_entries,
+          })
+          new_commit = api("POST", "/git/commits", {
+              "message": "h1bot: refresh live state",
+              "tree": tree["sha"],
+              "parents": [parent],
+          })
+          api(
+              "PATCH",
+              f"/git/refs/heads/{urllib.parse.quote(branch, safe='')}",
+              {"sha": new_commit["sha"], "force": False},
+          )
+          print("Published H1 state:", new_commit["sha"])
+          PY
 
       - name: Publish durable H1 alert issues
         if: success()
