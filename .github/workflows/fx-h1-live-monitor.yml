@@ -42,6 +42,7 @@ jobs:
           exit $rc
 
       # H4/D1 are rebuilt from the freshly refreshed H1 source; no second market-data request.
+      # source-of-truth refresh
       - name: Refresh live H4/D1 context
         run: |
           set +e
