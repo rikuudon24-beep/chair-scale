@@ -50,6 +50,20 @@ jobs:
           rc=${PIPESTATUS[0]}
           exit $rc
 
+      - name: Restore persisted H1 position and alert state
+        run: |
+          set -euo pipefail
+          git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
+          mkdir -p reports
+          for path in reports/h1_live_positions.csv reports/h1_live_alerts.csv; do
+            if git cat-file -e "origin/fx-h1-research:$path" 2>/dev/null; then
+              git show "origin/fx-h1-research:$path" > "$path"
+              echo "[OK] Restored $path from fx-h1-research"
+            else
+              echo "[WARN] No persisted $path found; monitor will initialize it"
+            fi
+          done
+
       - name: Validate H1 universe and frozen live scope
         run: python scripts/validate_h1_monitor_inputs.py
 
