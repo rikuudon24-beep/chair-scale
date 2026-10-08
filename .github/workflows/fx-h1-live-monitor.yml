@@ -158,9 +158,22 @@ jobs:
           repo=os.environ["GITHUB_REPOSITORY"]
           base=f"https://api.github.com/repos/{repo}"
           headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json","Content-Type":"application/json"}
-          req=urllib.request.Request(base+"/issues?state=all&per_page=100",headers=headers)
-          with urllib.request.urlopen(req,timeout=30) as r:
-              existing=json.load(r)
+          # Read every issue page so alert de-duplication remains correct after 100+ alerts.
+          existing=[]
+          page=1
+          while True:
+              req=urllib.request.Request(
+                  base+f"/issues?state=all&per_page=100&page={page}",
+                  headers=headers,
+              )
+              with urllib.request.urlopen(req,timeout=30) as r:
+                  batch=json.load(r)
+              if not batch:
+                  break
+              existing.extend(batch)
+              if len(batch) < 100:
+                  break
+              page += 1
           titles={x.get("title") for x in existing if "pull_request" not in x}
           with open(p,newline="") as f:
               rows=list(csv.DictReader(f))
