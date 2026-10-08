@@ -32,7 +32,10 @@ jobs:
 
       - name: Refresh H1 market data
         run: |
-          python research/h1/scripts/download_h1_live.py
+          set +e
+          python research/h1/scripts/download_h1_live.py 2>&1 | tee /tmp/h1-refresh.log
+          rc=${PIPESTATUS[0]}
+          exit $rc
 
       - name: Evaluate frozen H1 v1 candidates
         run: |
@@ -57,7 +60,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ ! -f /tmp/h1-monitor.log ]; then exit 0; fi
+          log=""
+          if [ -f /tmp/h1-monitor.log ]; then log="/tmp/h1-monitor.log"; fi
+          if [ -z "$log" ] && [ -f /tmp/h1-refresh.log ]; then log="/tmp/h1-refresh.log"; fi
+          if [ -z "$log" ]; then exit 0; fi
           {
             echo "## H1 monitor failure"
             echo
@@ -65,7 +71,7 @@ jobs:
             echo "- Commit: ${{ github.sha }}"
             echo
             echo '```text'
-            tail -n 120 /tmp/h1-monitor.log
+            tail -n 120 "$log"
             echo '```'
           } > /tmp/h1-failure.md
           gh issue create --title "FX H1 monitor failure ${{ github.run_id }}" --body-file /tmp/h1-failure.md || true
