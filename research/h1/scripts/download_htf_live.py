@@ -70,9 +70,23 @@ def merge(pair, tf, fresh):
     path = OUT / tf / f"{pair}.csv"
     old = existing(pair, tf)
     validate(pair, tf, old, fresh)
+
+    # Fresh H1-derived HTF data is the source of truth. Preserve old rows only
+    # for history; never let an old stale file mask a fresh aggregation.
+    fresh_latest = pd.to_datetime(int(fresh.timestamp.max()), unit="ms", utc=True)
+    old_latest = (
+        pd.to_datetime(int(old.timestamp.max()), unit="ms", utc=True)
+        if not old.empty else None
+    )
+    print(
+        f"[HTF] {pair} {tf}: fresh_latest={fresh_latest.isoformat()} "
+        f"old_latest={old_latest.isoformat() if old_latest is not None else 'none'}"
+    )
+
     merged = fresh if old.empty else pd.concat([old.reset_index(drop=True), fresh], ignore_index=True)
     merged = merged.drop_duplicates("timestamp", keep="last").sort_values("timestamp")
     merged.to_csv(path, index=False)
+
     latest = pd.to_datetime(int(merged.timestamp.max()), unit="ms", utc=True)
     age = (pd.Timestamp.now(tz="UTC") - latest).total_seconds() / 3600
     limit = MAX_AGE_H4 if tf == "h4" else MAX_AGE_D1
@@ -96,10 +110,13 @@ def main():
         h1 = h1.set_index("dt").sort_index()
         latest_h1 = h1.index.max()
         h1_age = (pd.Timestamp.now(tz="UTC") - latest_h1).total_seconds() / 3600
+        print(f"[H1->HTF] {pair}: h1_latest={latest_h1.isoformat()} age={h1_age:.2f}h")
         if h1_age > 2.0:
             raise RuntimeError(f"{pair}: live H1 source stale before HTF aggregation: {h1_age:.2f}h")
         for tf in ("h4", "d1"):
             fresh = aggregate(h1, tf)
+            if fresh.empty:
+                raise RuntimeError(f"{pair} {tf}: aggregation produced no rows")
             merge(pair, tf, fresh)
 
 
