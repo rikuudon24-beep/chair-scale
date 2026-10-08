@@ -70,6 +70,7 @@ jobs:
         run: |
           log=""
           if [ -f /tmp/h1-monitor.log ]; then log="/tmp/h1-monitor.log"; fi
+          if [ -z "$log" ] && [ -f /tmp/htf-refresh.log ]; then log="/tmp/htf-refresh.log"; fi
           if [ -z "$log" ] && [ -f /tmp/h1-refresh.log ]; then log="/tmp/h1-refresh.log"; fi
           if [ -z "$log" ]; then exit 0; fi
           {
