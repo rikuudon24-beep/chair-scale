@@ -63,6 +63,49 @@ jobs:
           git diff --cached --quiet || git commit -m "h1bot: refresh live state"
           git push origin HEAD:fx-h1-research
 
+      - name: Publish durable H1 alert issues
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import csv, json, os, urllib.request
+          p="reports/h1_live_alerts.csv"
+          if not os.path.exists(p):
+              raise SystemExit(0)
+          token=os.environ["GITHUB_TOKEN"]
+          repo=os.environ["GITHUB_REPOSITORY"]
+          base=f"https://api.github.com/repos/{repo}"
+          headers={"Authorization":f"Bearer {token}","Accept":"application/vnd.github+json","Content-Type":"application/json"}
+          req=urllib.request.Request(base+"/issues?state=all&per_page=100",headers=headers)
+          with urllib.request.urlopen(req,timeout=30) as r:
+              existing=json.load(r)
+          titles={x.get("title") for x in existing if "pull_request" not in x}
+          with open(p,newline="") as f:
+              rows=list(csv.DictReader(f))
+          for row in rows:
+              title=f"FX H1 ALERT {row['alert_id']}"
+              if title in titles:
+                  continue
+              body=("## FX H1 alert\n\n"
+                    f"- Kind: {row['kind']}\n"
+                    f"- Pair: {row['pair']}\n"
+                    f"- Direction: {row['direction'].upper()}\n"
+                    f"- Signal time: {row['signal_time']}\n"
+                    f"- Entry time: {row['entry_time']}\n"
+                    f"- Price: {row['price']}\n"
+                    f"- TP: {row['tp']}\n"
+                    f"- SL: {row['sl']}\n\n"
+                    f"{row['message']}\n\n"
+                    "Research/notification only. No broker order is executed.")
+              payload=json.dumps({"title":title,"body":body}).encode()
+              req=urllib.request.Request(base+"/issues",data=payload,headers=headers,method="POST")
+              with urllib.request.urlopen(req,timeout=30) as resp:
+                  resp.read()
+              titles.add(title)
+
       - name: Publish diagnostic issue
         if: failure()
         env:
