@@ -91,7 +91,7 @@ def main():
             "signal_time": signal_time, "entry_time": iso_or_empty(p.get("entry_time", "")),
             "entry_price": entry_price, "initial_sl": sl, "initial_tp": tp,
             "exit_policy": "TP_SL_TIME", "time_limit": f"{horizon}H",
-            "status": "CLOSED" if is_exit_closed else status_map[old_status],
+            "status": ("CLOSED" if is_exit_closed else ("REJECTED" if old_status == "CLOSED" else status_map[old_status])),
             "last_checked_bar_time": iso_or_empty(p.get("last_checked", "")),
             "data_source": "Yahoo Finance chart API via H1 live source",
             "exit_time": exit_time, "exit_price": exit_price, "exit_reason": exit_reason,
