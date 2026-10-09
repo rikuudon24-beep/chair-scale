@@ -113,9 +113,14 @@ def upsert_ledger(path: str | Path, fields: list[str], rows: Iterable[Mapping[st
         if not key:
             raise ValueError(f"cannot upsert row without {key_field}")
         if key in by_key:
-            # Preserve an acknowledged delivery unless an explicit delivery state
-            # is supplied by the caller; never downgrade DELIVERED to PENDING.
             old = by_key[key]
+            if key_field == "trade_id" and old.get("status") and row.get("status"):
+                old_status = old["status"].upper()
+                new_status = row["status"].upper()
+                if old_status in TERMINAL_STATES and new_status != old_status:
+                    raise ValueError(f"terminal trade cannot change state: {old_status} -> {new_status} ({key})")
+                validate_transition(old_status, new_status)
+            # Preserve an acknowledged delivery; never downgrade DELIVERED to PENDING.
             if old.get("delivery_status") == "DELIVERED" and row.get("delivery_status") != "DELIVERED":
                 row["delivery_status"] = "DELIVERED"
                 row["delivered_at"] = old.get("delivered_at", "")
