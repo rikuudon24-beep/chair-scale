@@ -5,6 +5,7 @@ on:
   schedule:
     - cron: "47 */6 * * *"
   push:
+    branches: [main]
     paths:
       - "scripts/research_price_structure_transition.py"
       - ".github/workflows/fx-h1-price-structure-research.yml"

@@ -18,7 +18,7 @@ SYMBOLS = {"eurjpy": "EURJPY=X", "usdchf": "CHF=X", "audnzd": "AUDNZD=X"}
 PIP = {"eurjpy": 0.01, "usdchf": 0.0001, "audnzd": 0.0001}
 RANGE = "14d"
 MAX_AGE_HOURS = 2.0
-OVERLAP_HOURS = 72
+OVERLAP_HOURS = 168
 MIN_OVERLAP_BARS = 18
 MEDIAN_MAX_PIPS = 3.0
 P95_MAX_PIPS = 10.0
@@ -72,7 +72,9 @@ def validate_overlap(pair, old, fresh):
     a = old[old.timestamp >= cutoff][["timestamp", "close"]].copy()
     b = fresh[fresh.timestamp >= cutoff][["timestamp", "close"]].copy()
     if a.empty or b.empty:
-        return
+        raise RuntimeError(
+            f"{pair}: no timestamp overlap in the last {OVERLAP_HOURS}h; refusing source switch"
+        )
     m = a.merge(b, on="timestamp", suffixes=("_old", "_new"))
     if len(m) < MIN_OVERLAP_BARS:
         raise RuntimeError(f"{pair}: only {len(m)} overlap bars (<{MIN_OVERLAP_BARS}); refusing source switch")
