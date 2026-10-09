@@ -8,6 +8,9 @@ on:
       - "scripts/reconcile_h4_exit_lifecycle.py"
       - "scripts/test_fx_lifecycle_contract.py"
       - "tests/test_reconcile_h4_exit_lifecycle.py"
+      - "research/h1/scripts/download_h1_live.py"
+      - "scripts/download_h1_research_data.py"
+      - "tests/test_h1_data_integrity.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
       - ".github/workflows/fx-position-exit-monitor.yml"
       - ".github/workflows/fx-h1-live-monitor.yml"
@@ -47,3 +50,6 @@ jobs:
 
       - name: Test H4 lifecycle adapter
         run: python tests/test_reconcile_h4_exit_lifecycle.py
+
+      - name: Test H1 data integrity guards
+        run: python tests/test_h1_data_integrity.py
