@@ -38,7 +38,7 @@ for row in rows:
     if row.get("delivery_status") == "DELIVERED":
         continue
     event_type = row.get("event_type", "").upper()
-    if event_type in {"ENTRY_CONFIRMED", "ENTRY_REJECTED"}:
+    if row.get("timeframe", "").upper() == "H1":
         title = f"FX H1 ALERT {row['event_id']}"
     elif event_type == "EXIT_SIGNAL" and row.get("timeframe", "").upper() == "H4":
         # Match the existing H4 publisher's title to avoid duplicate issues during migration.
