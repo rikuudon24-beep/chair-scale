@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - "scripts/repair_market_ohlc.py"
+      - "scripts/download_market_data.py"
+      - "scripts/test_download_market_data_ohlc_preservation.py"
       - "scripts/production_market_scope.py"
       - "scripts/validate_market_data.py"
       - "scripts/test_production_market_scope.py"
@@ -36,3 +38,5 @@ jobs:
         run: python scripts/test_repair_market_ohlc.py
       - name: Test production market scope
         run: python scripts/test_production_market_scope.py
+      - name: Test source OHLC preservation
+        run: python scripts/test_download_market_data_ohlc_preservation.py
