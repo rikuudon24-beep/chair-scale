@@ -55,7 +55,7 @@ jobs:
           set -euo pipefail
           git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
           mkdir -p reports
-          for path in reports/h1_live_positions.csv reports/h1_live_alerts.csv; do
+          for path in reports/h1_live_positions.csv reports/h1_live_alerts.csv reports/fx_trade_lifecycle.csv reports/fx_notification_outbox.csv; do
             if git cat-file -e "origin/fx-h1-research:$path" 2>/dev/null; then
               git show "origin/fx-h1-research:$path" > "$path"
               echo "[OK] Restored $path from fx-h1-research"
@@ -72,12 +72,17 @@ jobs:
           set -euo pipefail
           python -m pip install pandas pyarrow
           python scripts/test_fx_lifecycle_contract.py
+          python scripts/test_reconcile_h1_lifecycle.py
           python research/h1/scripts/test_monitor_h1_lifecycle.py
           set +e
           python research/h1/scripts/monitor_h1_live.py 2>&1 | tee /tmp/h1-monitor.log
           rc=${PIPESTATUS[0]}
           cp /tmp/h1-monitor.log reports/h1_monitor_last.log
           exit $rc
+
+      - name: Reconcile common FX lifecycle ledger
+        if: success()
+        run: python scripts/reconcile_h1_lifecycle.py
 
       - name: Publish H1 state
         if: success()
@@ -108,6 +113,8 @@ jobs:
           files = [
               "reports/h1_live_positions.csv",
               "reports/h1_live_alerts.csv",
+              "reports/fx_trade_lifecycle.csv",
+              "reports/fx_notification_outbox.csv",
               "reports/h1_monitor_last.log",
           ]
 
