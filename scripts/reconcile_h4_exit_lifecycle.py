@@ -173,10 +173,37 @@ def main() -> None:
         closed["updated_at"] = now
         trade_rows.append(closed)
 
+    # User-confirmed manual closures are terminal lifecycle states, but never
+    # invent broker fill time/price. Only apply to an existing registered trade.
+    for pos in user_confirmed_closed:
+        pair = str(pos.get("pair", "")).lower()
+        direction = str(pos.get("direction", "")).lower()
+        entry_time = iso(pos.get("entry_timestamp", ""))
+        entry_price = str(pos.get("reference_entry_price", ""))
+        if not all((pair, direction in ("long", "short"), entry_time, entry_price)):
+            raise RuntimeError(f"incomplete user-confirmed closed position: {pos!r}")
+        trade_id = make_trade_id(STRATEGY_ID, pair, entry_time)
+        prior = existing_trades.get(trade_id)
+        if not prior:
+            # Do not synthesize a lifecycle trade if no matching historical row exists.
+            continue
+        trade_rows = [r for r in trade_rows if r.get("trade_id") != trade_id]
+        trade_rows.append({
+            **prior,
+            "status": "CLOSED",
+            "updated_at": now,
+            "closed_at": "",
+            "exit_time": "",
+            "exit_price": "",
+            "exit_reason": "user_confirmed_manual_close_fill_unknown",
+            "gross_pips": "",
+            "net_pips": "",
+        })
+
     # Keep history if a registered position is later removed from config.
     current_ids = {r["trade_id"] for r in trade_rows}
     for tid, row in existing_trades.items():
-        if tid not in current_ids:
+        if row.get("status", "").upper() == "CLOSED" and tid not in current_ids:
             trade_rows.append(row)
 
     # Persist the durable notification intent first. If the subsequent trade-ledger
