@@ -31,7 +31,7 @@ def existing(pair, tf):
 
 
 def aggregate(h1, tf):
-    rule = "4h" if tf == "h4" else "1D"
+    rule = "4h" if tf == "h4" else "24h"
     offset = "20h" if tf == "h4" else "0h"
     x = h1.resample(rule, origin="epoch", offset=offset, label="left", closed="left").agg(
         open=("open", "first"), high=("high", "max"), low=("low", "min"),
