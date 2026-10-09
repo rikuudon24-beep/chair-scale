@@ -54,7 +54,14 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/current_position_exit_state.csv reports/current_exit_monitor_failure.txt
           git diff --cached --quiet || git commit -m "monitor: mark FX exit state unknown"
-          git push
+          # Other scheduled workflows may update main concurrently; rebase and retry safely.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          echo "Could not push UNKNOWN exit state after 3 attempts" >&2
+          exit 1
       - name: Publish exit alerts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -105,4 +112,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/current_position_exit_state.csv reports/current_exit_alerts.csv
           git diff --cached --quiet || git commit -m "monitor: update FX position exit state"
-          git push
+          for attempt in 1 2 3; do
+            git pull --rebase origin main
+            if git push; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          echo "Could not push exit reports after 3 attempts" >&2
+          exit 1
