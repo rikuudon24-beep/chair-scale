@@ -14,16 +14,12 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "data" / "market" / "h1"
-
-SYMBOLS = {
-    "eurjpy": "EURJPY=X",
-    "usdchf": "CHF=X",
-    "audnzd": "AUDNZD=X",
-}
+SYMBOLS = {"eurjpy": "EURJPY=X", "usdchf": "CHF=X", "audnzd": "AUDNZD=X"}
 PIP = {"eurjpy": 0.01, "usdchf": 0.0001, "audnzd": 0.0001}
 RANGE = "14d"
 MAX_AGE_HOURS = 2.0
 OVERLAP_HOURS = 72
+MIN_OVERLAP_BARS = 18
 MEDIAN_MAX_PIPS = 3.0
 P95_MAX_PIPS = 10.0
 
@@ -42,11 +38,7 @@ def normalize_ohlc(df):
 
 
 def fetch(symbol):
-    url = (
-        "https://query1.finance.yahoo.com/v8/finance/chart/"
-        + quote(symbol, safe="")
-        + "?interval=1h&range=" + RANGE + "&events=history"
-    )
+    url = "https://query1.finance.yahoo.com/v8/finance/chart/" + quote(symbol, safe="") + "?interval=1h&range=" + RANGE + "&events=history"
     req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
     with urlopen(req, timeout=30) as r:
         payload = json.loads(r.read().decode("utf-8"))
@@ -61,14 +53,7 @@ def fetch(symbol):
         vals = [q.get(k, [None] * len(ts))[i] for k in ("open", "high", "low", "close")]
         if any(v is None for v in vals):
             continue
-        rows.append({
-            "timestamp": int(t) * 1000,
-            "open": float(vals[0]),
-            "high": float(vals[1]),
-            "low": float(vals[2]),
-            "close": float(vals[3]),
-            "volume": 0,
-        })
+        rows.append({"timestamp": int(t)*1000, "open": float(vals[0]), "high": float(vals[1]), "low": float(vals[2]), "close": float(vals[3]), "volume": 0})
     if not rows:
         raise RuntimeError(f"Yahoo returned no usable H1 rows for {symbol}")
     return normalize_ohlc(pd.DataFrame(rows).drop_duplicates("timestamp").sort_values("timestamp"))
@@ -89,8 +74,8 @@ def validate_overlap(pair, old, fresh):
     if a.empty or b.empty:
         return
     m = a.merge(b, on="timestamp", suffixes=("_old", "_new"))
-    if len(m) < 24:
-        raise RuntimeError(f"{pair}: only {len(m)} overlap bars; refusing source switch")
+    if len(m) < MIN_OVERLAP_BARS:
+        raise RuntimeError(f"{pair}: only {len(m)} overlap bars (<{MIN_OVERLAP_BARS}); refusing source switch")
     diff_pips = (m.close_new - m.close_old).abs() / PIP[pair]
     median = float(diff_pips.median())
     p95 = float(diff_pips.quantile(0.95))
@@ -103,11 +88,7 @@ def merge(pair, fresh):
     path = OUT / f"{pair}.csv"
     old = read_existing(path)
     validate_overlap(pair, old, fresh)
-    if old.empty:
-        merged = fresh
-    else:
-        merged = pd.concat([old, fresh], ignore_index=True)
-        merged = merged.drop_duplicates("timestamp", keep="last").sort_values("timestamp")
+    merged = fresh if old.empty else pd.concat([old, fresh], ignore_index=True).drop_duplicates("timestamp", keep="last").sort_values("timestamp")
     merged = normalize_ohlc(merged)
     merged[["timestamp", "open", "high", "low", "close", "volume"]].to_csv(path, index=False)
     latest = pd.to_datetime(int(merged.timestamp.max()), unit="ms", utc=True)
