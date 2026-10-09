@@ -27,7 +27,7 @@ def decimal_places(raw: str) -> int:
     value = raw.strip().lower()
     if "e" in value:
         value = format(Decimal(value), "f")
-    return len(value.split(".", 1)[1]) if "." in value else 0
+    return len(value.split(".", 1)[1].rstrip("0")) if "." in value else 0
 
 
 def analyze_row(row: dict[str, str]):
