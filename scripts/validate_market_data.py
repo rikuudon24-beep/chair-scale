@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import csv,sys,math
 from pathlib import Path
+from production_market_scope import production_market_files
 ROOT=Path(__file__).resolve().parents[1]
-files=sorted((ROOT/"data/market").glob("*/*.csv"))
+files=production_market_files(ROOT/"data/market")
 if not files:
     print("[FAIL] no market data")
     sys.exit(2)
