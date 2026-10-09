@@ -17,9 +17,30 @@ H4=pd.Timedelta(hours=4)
 
 def completed_market(pair):
     g=d.load_market("h4",pair).sort_values("timestamp").reset_index(drop=True)
+    if g.empty:
+        raise RuntimeError(f"{pair}: H4 market data is empty; exit state is UNKNOWN")
     now=pd.Timestamp.now(tz="UTC")
+    latest_ts=pd.to_datetime(g.timestamp.iloc[-1],utc=True)
+
+    # Never label an evaluation on stale data as HOLD_NO_EXIT.
+    # Allow the normal Friday close/weekend gap.
+    weekday=now.weekday()  # Monday=0 ... Sunday=6
+    market_closed=(weekday==4 and now.hour>=21) or weekday==5 or (weekday==6 and now.hour<21)
+    if not market_closed:
+        expected_latest=now.floor("4h")-H4
+        lag_hours=(expected_latest-latest_ts).total_seconds()/3600
+        if lag_hours>8:
+            raise RuntimeError(
+                f"{pair}: H4 market data stale; latest={latest_ts.isoformat()}, "
+                f"expected_at_least={expected_latest.isoformat()}, lag={lag_hours:.1f}h. "
+                "Exit state is UNKNOWN; do not treat this as HOLD_NO_EXIT."
+            )
+
     cutoff=now.floor("4h")-H4
-    return g[pd.to_datetime(g.timestamp,utc=True)<=cutoff].copy().reset_index(drop=True)
+    closed=g[pd.to_datetime(g.timestamp,utc=True)<=cutoff].copy().reset_index(drop=True)
+    if closed.empty:
+        raise RuntimeError(f"{pair}: no completed H4 candles available; exit state is UNKNOWN")
+    return closed
 
 def evaluate(pos):
     pair=pos["pair"]; direction=pos["direction"]; g=completed_market(pair)
