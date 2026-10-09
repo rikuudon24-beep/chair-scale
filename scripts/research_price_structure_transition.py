@@ -40,12 +40,55 @@ TARGETS = [50, 100, 150, 200]
 SWING_N = 2
 
 
+def normalize_timestamp_column(values):
+    """Parse numeric Unix timestamps in seconds or milliseconds safely.
+
+    Market CSVs have historically used both units. Infer one unit for the
+    entire column, reject mixed numeric magnitudes, and fail with a useful
+    message instead of allowing a year-52960 OutOfBoundsDatetime exception.
+    ISO-8601 strings remain supported for diagnostic/research fixtures.
+    """
+    raw = pd.Series(values)
+    numeric = pd.to_numeric(raw, errors="coerce")
+    numeric_mask = numeric.notna()
+
+    if numeric_mask.all():
+        if numeric.empty:
+            raise ValueError("timestamp column is empty")
+        magnitudes = numeric.abs()
+        # Current FX data should be either seconds (~1e9) or milliseconds (~1e12).
+        is_ms = magnitudes >= 100_000_000_000
+        is_seconds = (magnitudes >= 100_000_000) & (magnitudes < 100_000_000_000)
+        if not (is_ms | is_seconds).all():
+            bad = raw.loc[~(is_ms | is_seconds)].head(3).tolist()
+            raise ValueError(f"timestamp values are outside supported Unix seconds/ms ranges: {bad}")
+        if is_ms.any() and is_seconds.any():
+            raise ValueError("timestamp column mixes Unix seconds and milliseconds")
+        unit = "ms" if is_ms.all() else "s"
+        try:
+            parsed = pd.to_datetime(numeric, unit=unit, utc=True, errors="raise")
+        except (ValueError, OverflowError, pd.errors.OutOfBoundsDatetime) as exc:
+            raise ValueError(f"invalid Unix timestamp column interpreted as {unit}: {exc}") from exc
+    else:
+        if numeric_mask.any():
+            raise ValueError("timestamp column mixes numeric Unix values and non-numeric timestamps")
+        parsed = pd.to_datetime(raw, utc=True, errors="raise")
+    if parsed.isna().any():
+        raise ValueError("timestamp column contains missing or invalid timestamps")
+    return parsed
+
+
 def load_market(tf, pair):
     path = ROOT / "data" / "market" / tf / f"{pair}.csv"
     if not path.exists():
         return None
     df = pd.read_csv(path)
-    df["timestamp"] = pd.to_datetime(df["timestamp"], unit="s", utc=True)
+    if "timestamp" not in df.columns:
+        raise ValueError(f"{path}: required timestamp column is missing")
+    try:
+        df["timestamp"] = normalize_timestamp_column(df["timestamp"])
+    except (ValueError, TypeError) as exc:
+        raise ValueError(f"{path}: cannot normalize timestamps: {exc}") from exc
     return df.sort_values("timestamp").drop_duplicates("timestamp").reset_index(drop=True)
 
 
