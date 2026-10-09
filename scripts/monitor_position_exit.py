@@ -15,29 +15,40 @@ spec=importlib.util.spec_from_file_location("d","scripts/research_50pip_direct_e
 d=importlib.util.module_from_spec(spec); spec.loader.exec_module(d)
 H4=pd.Timedelta(hours=4)
 
+def market_closed_utc(now):
+    # Approximate FX weekly closure: Friday 21:00 UTC through Sunday 21:00 UTC.
+    return (now.weekday()==4 and now.hour>=21) or now.weekday()==5 or (now.weekday()==6 and now.hour<21)
+
+def expected_latest_h4_open(now):
+    # H4 timestamps label candle OPEN. During the weekend, the latest expected
+    # completed candle is Friday 16:00 UTC (16:00-20:00), not any old row.
+    if market_closed_utc(now):
+        days_since_friday=(now.weekday()-4)%7
+        friday=(now.normalize()-pd.Timedelta(days=days_since_friday))
+        return friday+pd.Timedelta(hours=16)
+    return now.floor("4h")-H4
+
 def completed_market(pair):
     g=d.load_market("h4",pair).sort_values("timestamp").reset_index(drop=True)
     if g.empty:
         raise RuntimeError(f"{pair}: H4 market data is empty; exit state is UNKNOWN")
     now=pd.Timestamp.now(tz="UTC")
-    cutoff=now.floor("4h")-H4
-    closed=g[pd.to_datetime(g.timestamp,utc=True)<=cutoff].copy().reset_index(drop=True)
+    expected=expected_latest_h4_open(now)
+    # Do not include a nominal 20:00 H4 candle over the weekend: it may be a
+    # truncated session candle, not a completed four-hour candle.
+    closed=g[pd.to_datetime(g.timestamp,utc=True)<=expected].copy().reset_index(drop=True)
     if closed.empty:
         raise RuntimeError(f"{pair}: no completed H4 candles available; exit state is UNKNOWN")
     latest_closed_ts=pd.to_datetime(closed.timestamp.iloc[-1],utc=True)
-
-    # Never label an evaluation on stale completed candles as HOLD_NO_EXIT.
-    # Allow the normal Friday close/weekend gap.
-    weekday=now.weekday()  # Monday=0 ... Sunday=6
-    market_closed=(weekday==4 and now.hour>=21) or weekday==5 or (weekday==6 and now.hour<21)
-    if not market_closed:
-        lag_hours=(cutoff-latest_closed_ts).total_seconds()/3600
-        if lag_hours>8:
-            raise RuntimeError(
-                f"{pair}: completed H4 data stale; latest_closed={latest_closed_ts.isoformat()}, "
-                f"expected={cutoff.isoformat()}, lag={lag_hours:.1f}h. "
-                "Exit state is UNKNOWN; do not treat this as HOLD_NO_EXIT."
-            )
+    lag_hours=(expected-latest_closed_ts).total_seconds()/3600
+    # Fail closed on stale data even when the market is closed. Weekend handling
+    # changes the expected timestamp; it must never disable the freshness gate.
+    if lag_hours>4:
+        raise RuntimeError(
+            f"{pair}: completed H4 data stale; latest_closed={latest_closed_ts.isoformat()}, "
+            f"expected={expected.isoformat()}, lag={lag_hours:.1f}h. "
+            "Exit state is UNKNOWN; do not treat this as HOLD_NO_EXIT."
+        )
     return closed
 
 def evaluate(pos):
