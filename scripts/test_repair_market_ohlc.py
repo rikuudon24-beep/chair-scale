@@ -30,6 +30,13 @@ class OHLCAuditTests(unittest.TestCase):
                "low":"0.9990", "close":"1.0010"}
         self.assertIsNone(REPAIR.analyze_row(row))
 
+    def test_trailing_zeros_do_not_shrink_effective_tick(self):
+        row = {"timestamp":"1", "open":"0.8367500000", "high":"0.8369200000",
+               "low":"0.8363000000", "close":"0.8362900000"}
+        result = REPAIR.analyze_row(row)
+        self.assertEqual(result["tick_size"], "0.00001")
+        self.assertEqual(result["repaired_low"], "0.8362900000")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
