@@ -23,6 +23,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install -r requirements.txt
+      - name: Refresh USDCAD H4 market data
+        run: python scripts/refresh_usdcad_h4_for_exit.py
       - name: Evaluate completed-H4 exits
         run: python scripts/monitor_position_exit.py
       - name: Report exit-monitor failure
