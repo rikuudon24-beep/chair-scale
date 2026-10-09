@@ -1,0 +1,45 @@
+name: AUDNZD confirmed H4 exit monitor
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 * * * *"
+  push:
+    paths:
+      - "scripts/refresh_audnzd_h4_exit.py"
+      - "scripts/monitor_audnzd_h4_exit.py"
+      - ".github/workflows/fx-audnzd-h4-exit.yml"
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements.txt
+      - name: Refresh AUDNZD H4 from hourly data
+        run: python scripts/refresh_audnzd_h4_exit.py
+      - name: Evaluate confirmed H4 exit confluence
+        run: python scripts/monitor_audnzd_h4_exit.py
+      - name: Publish new exit candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ ! -f reports/audnzd_exit_alert.md ]; then echo "No new confluence exit candidate."; exit 0; fi
+          TITLE="FX EXIT AUDNZD LONG $(date -u +%Y-%m-%dT%H)"
+          EXISTING="$(gh issue list --repo "${{ github.repository }}" --state all --search "\"$TITLE\"" --json number --jq 'length')"
+          if [ "$EXISTING" -gt 0 ]; then echo "Duplicate alert skipped."; exit 0; fi
+          gh issue create --repo "${{ github.repository }}" --title "$TITLE" --body-file reports/audnzd_exit_alert.md
+      - name: Commit fresh data and state
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/market/h4/audnzd.csv reports/audnzd_exit_state.json
+          git diff --cached --quiet || git commit -m "monitor: update AUDNZD confirmed H4 exit state"
+          git pull --rebase origin main
+          git push
