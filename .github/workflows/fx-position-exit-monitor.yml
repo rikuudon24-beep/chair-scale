@@ -165,6 +165,8 @@ jobs:
           cp reports/fx_trade_lifecycle.csv /tmp/fx-shared-state/
           cp reports/fx_notification_outbox.csv /tmp/fx-shared-state/
           git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
+          # Remove local copies after saving them so branch checkout cannot fail on dirty/untracked files.
+          rm -f reports/fx_trade_lifecycle.csv reports/fx_notification_outbox.csv
           git checkout -B fx-h1-research origin/fx-h1-research
           mkdir -p reports
           cp /tmp/fx-shared-state/fx_trade_lifecycle.csv reports/
