@@ -34,7 +34,7 @@ jobs:
         run: |
           set -euo pipefail
           for attempt in 1 2 3; do
-            if python scripts/download_market_data.py --mode incremental --end "$(date -u -d '+1 day' +%F)" && python scripts/validate_market_data.py; then
+            if python scripts/download_market_data.py --mode incremental --end "$(date -u -d '+1 day' +%F)" && python scripts/test_repair_market_ohlc.py && python scripts/repair_market_ohlc.py && python scripts/validate_market_data.py; then
               exit 0
             fi
             echo "Refresh/validation failed (attempt ${attempt}/3); retrying..."
