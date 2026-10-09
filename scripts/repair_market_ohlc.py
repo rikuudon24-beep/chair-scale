@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
+from production_market_scope import production_market_files
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = ROOT / "data" / "market"
 AUDIT = ROOT / "reports" / "market_data_ohlc_repairs.csv"
@@ -124,7 +126,7 @@ def repair_file(path: Path) -> list[dict[str, str]]:
 
 
 def main():
-    files = sorted(DATA_ROOT.glob("*/*.csv"))
+    files = production_market_files(DATA_ROOT)
     if not files:
         raise SystemExit(f"No market data CSV files found under {DATA_ROOT}")
 
