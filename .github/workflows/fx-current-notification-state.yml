@@ -2,11 +2,16 @@ name: FX Current Notification State
 
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - "data/market/**"
-      - "reports/**"
+    branches: [main]
+    paths:
+      - "scripts/download_market_data.py"
+      - "scripts/repair_market_ohlc.py"
+      - "scripts/validate_market_data.py"
+      - "scripts/production_market_scope.py"
+      - "scripts/monitor_notification_state.py"
+      - "scripts/publish_notification_issues.py"
+      - "config/market_data.json"
+      - ".github/workflows/fx-current-notification-state.yml"
   workflow_dispatch:
   schedule:
     - cron: "7 * * * *"
