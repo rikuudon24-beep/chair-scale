@@ -50,6 +50,8 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/mark_position_exit_unknown.py "${{ github.run_id }}"
+          # Discard a partial market-file refresh on a failed run; UNKNOWN must not be paired with unvalidated data.
+          git checkout -- data/market/h4/usdcad.csv
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports/current_position_exit_state.csv reports/current_exit_monitor_failure.txt
@@ -110,8 +112,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/current_position_exit_state.csv reports/current_exit_alerts.csv
-          git diff --cached --quiet || git commit -m "monitor: update FX position exit state"
+          git add reports/current_position_exit_state.csv reports/current_exit_alerts.csv data/market/h4/usdcad.csv
+          git diff --cached --quiet || git commit -m "monitor: update FX position exit state and market data"
           for attempt in 1 2 3; do
             git pull --rebase origin main
             if git push; then exit 0; fi
