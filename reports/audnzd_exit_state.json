@@ -2,11 +2,11 @@
   "pair": "AUD/NZD",
   "direction": "LONG",
   "state": "NO_EXIT_CANDIDATE",
-  "signal_candle_utc": "2026-10-09T00:00:00+00:00",
-  "signal_candle_jst": "2026-10-09T09:00:00+09:00",
-  "signal_close": 1.2414699792861938,
+  "signal_candle_utc": "2026-10-09T04:00:00+00:00",
+  "signal_candle_jst": "2026-10-09T13:00:00+09:00",
+  "signal_close": 1.2433799505233765,
   "reasons": "",
   "reason_count": 0,
-  "latest_close": 1.2414699792861938,
+  "latest_close": 1.2433799505233765,
   "data_status": "FRESH_CONFIRMED_H4"
 }
