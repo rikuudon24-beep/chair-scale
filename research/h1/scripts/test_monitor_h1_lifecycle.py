@@ -110,6 +110,44 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(alerts.iloc[0]["kind"], "EXIT_TP")
         self.assertEqual(float(alerts.iloc[0]["price"]), 101.0)
 
+    def test_confirm_1bar_success_creates_single_entry_alert(self):
+        row = {
+            "pair": "usdchf", "direction": "long",
+            "signal_time": self.times[0].isoformat(),
+            "entry_time": self.times[2].isoformat(),
+            "entry_price": float("nan"), "tp": float("nan"), "sl": float("nan"),
+            "horizon": 48, "status": "CONFIRMING",
+            "last_checked": self.times[0].isoformat(),
+        }
+        pd.DataFrame([row], columns=MONITOR.POSCOL).to_csv(MONITOR.STATE, index=False)
+        self.bars.loc[self.times[0], "high"] = 100.2
+        self.bars.loc[self.times[1], "close"] = 100.3
+        self.run_monitor()
+        positions = pd.read_csv(MONITOR.STATE)
+        alerts = pd.read_csv(MONITOR.ALERTS)
+        self.assertEqual(positions.iloc[0]["status"], "OPEN")
+        self.assertEqual(len(alerts), 1)
+        self.assertEqual(alerts.iloc[0]["kind"], "ENTRY")
+        self.assertAlmostEqual(float(alerts.iloc[0]["price"]), 100.0)
+
+    def test_confirm_1bar_failure_closes_without_entry_alert(self):
+        row = {
+            "pair": "usdchf", "direction": "long",
+            "signal_time": self.times[0].isoformat(),
+            "entry_time": self.times[2].isoformat(),
+            "entry_price": float("nan"), "tp": float("nan"), "sl": float("nan"),
+            "horizon": 48, "status": "CONFIRMING",
+            "last_checked": self.times[0].isoformat(),
+        }
+        pd.DataFrame([row], columns=MONITOR.POSCOL).to_csv(MONITOR.STATE, index=False)
+        self.bars.loc[self.times[0], "high"] = 100.2
+        self.bars.loc[self.times[1], "close"] = 100.1
+        self.run_monitor()
+        positions = pd.read_csv(MONITOR.STATE)
+        alerts = pd.read_csv(MONITOR.ALERTS)
+        self.assertEqual(positions.iloc[0]["status"], "CLOSED")
+        self.assertTrue(alerts.empty, "failed confirmation must not emit ENTRY")
+
     def test_time_exit_occurs_at_horizon_bar_close(self):
         self.seed_open_trade(horizon=2)
         self.bars.loc[self.times[2], "close"] = 100.25
