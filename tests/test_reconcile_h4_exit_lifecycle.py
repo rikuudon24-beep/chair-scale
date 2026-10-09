@@ -100,6 +100,22 @@ class H4LifecycleAdapterTests(unittest.TestCase):
         self.assertEqual(len(self.read_csv(self.trades)), 1)
         self.assertEqual(len(self.read_csv(self.outbox)), 1)
 
+    def test_reconciliation_preserves_outbox_delivery_metadata(self):
+        ADAPTER.main()
+        events = self.read_csv(self.outbox)
+        events[0]["delivery_status"] = "FAILED"
+        events[0]["attempt_count"] = "3"
+        events[0]["last_attempt_at"] = "2026-10-08T17:00:00+00:00"
+        events[0]["last_error"] = "temporary delivery failure"
+        self.write_csv(self.outbox, list(events[0]), events)
+
+        ADAPTER.main()
+        event = self.read_csv(self.outbox)[0]
+        self.assertEqual(event["delivery_status"], "FAILED")
+        self.assertEqual(event["attempt_count"], "3")
+        self.assertEqual(event["last_attempt_at"], "2026-10-08T17:00:00+00:00")
+        self.assertEqual(event["last_error"], "temporary delivery failure")
+
     def test_later_hold_does_not_erase_pending_exit(self):
         ADAPTER.main()
         self.write_state("HOLD_NO_EXIT")
