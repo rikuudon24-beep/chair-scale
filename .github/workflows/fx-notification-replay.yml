@@ -1,4 +1,6 @@
 name: FX Notification Replay Test
+permissions:
+  contents: write
 on:
   workflow_dispatch:
   push:
