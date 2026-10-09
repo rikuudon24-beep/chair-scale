@@ -148,8 +148,12 @@ def main():
         else:
             pass
 
+    # Keep closed lifecycle rows permanently in the state ledger. The alert ledger
+    # is the notification audit trail; this positions ledger must also retain the
+    # completed trade state instead of silently dropping it on the next hourly run.
     for _,p in pos.iterrows():
-        if p.pair not in touched: out.append(p.to_dict())
+        if p.pair not in touched or p.status == "CLOSED":
+            out.append(p.to_dict())
     pd.DataFrame(out,columns=POSCOL).to_csv(STATE,index=False)
     if new: alerts=pd.concat([alerts,pd.DataFrame(new,columns=ALCOL)],ignore_index=True)
     alerts.to_csv(ALERTS,index=False)
