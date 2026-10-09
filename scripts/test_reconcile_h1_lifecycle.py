@@ -68,14 +68,17 @@ class H1AdapterTests(unittest.TestCase):
             ADAPTER.ALERTS = reports / "h1_live_alerts.csv"
             ADAPTER.TRADES = reports / "fx_trade_lifecycle.csv"
             ADAPTER.OUTBOX = reports / "fx_notification_outbox.csv"
+            signal = "2026-10-09T00:00:00+00:00"
+            entry = "2026-10-09T01:00:00+00:00"
+            checked = "2026-10-09T02:00:00+00:00"
             pd.DataFrame([{
-                "pair":"eurjpy", "direction":"long", "signal_time":"s",
-                "entry_time":"e", "entry_price":160, "tp":161, "sl":159,
-                "horizon":72, "status":"OPEN", "last_checked":"t",
+                "pair":"eurjpy", "direction":"long", "signal_time":signal,
+                "entry_time":entry, "entry_price":160, "tp":161, "sl":159,
+                "horizon":72, "status":"OPEN", "last_checked":checked,
             }]).to_csv(ADAPTER.POSITIONS, index=False)
             pd.DataFrame([{
-                "alert_id":"EXIT_TP|eurjpy|s", "kind":"EXIT_TP", "pair":"eurjpy",
-                "direction":"long", "signal_time":"s", "entry_time":"e",
+                "alert_id":"EXIT_TP|eurjpy|"+signal, "kind":"EXIT_TP", "pair":"eurjpy",
+                "direction":"long", "signal_time":signal, "entry_time":entry,
                 "price":161, "tp":161, "sl":159, "message":"exit",
             }]).to_csv(ADAPTER.ALERTS, index=False)
             with self.assertRaises(RuntimeError):
