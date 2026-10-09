@@ -26,6 +26,8 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Refresh USDCAD H4 market data
         run: python scripts/refresh_usdcad_h4_for_exit.py
+      - name: Test exit-monitor freshness and weekend handling
+        run: python tests/test_monitor_position_exit_freshness.py
       - name: Evaluate completed-H4 exits
         run: python scripts/monitor_position_exit.py
       - name: Report exit-monitor failure
@@ -58,7 +60,16 @@ jobs:
           def get(url):
               req=urllib.request.Request(url,headers=headers)
               with urllib.request.urlopen(req,timeout=30) as r: return json.load(r)
-          existing=get(base+"/issues?state=all&per_page=100")
+          existing=[]
+          page=1
+          while True:
+              batch=get(base+f"/issues?state=all&per_page=100&page={page}")
+              if not batch:
+                  break
+              existing.extend(batch)
+              if len(batch)<100:
+                  break
+              page+=1
           titles={x.get("title") for x in existing if "pull_request" not in x}
           with open(p,newline="") as f:
               for r in csv.DictReader(f):
@@ -76,6 +87,7 @@ jobs:
                   )
                   req=urllib.request.Request(base+"/issues",data=json.dumps({"title":title,"body":body}).encode(),headers=headers,method="POST")
                   with urllib.request.urlopen(req,timeout=30) as resp: resp.read()
+                  titles.add(title)
           PY
       - name: Commit reports
         run: |
