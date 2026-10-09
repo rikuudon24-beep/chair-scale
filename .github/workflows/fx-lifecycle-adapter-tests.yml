@@ -12,6 +12,8 @@ on:
       - "scripts/download_h1_research_data.py"
       - "tests/test_h1_data_integrity.py"
       - "tests/test_h1_cache_fallback.py"
+      - "research/h1/scripts/download_htf_live.py"
+      - "tests/test_live_htf_resampling.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
       - "scripts/test_notification_ack_semantics.py"
       - ".github/workflows/fx-position-exit-monitor.yml"
@@ -61,3 +63,6 @@ jobs:
 
       - name: Test H1 cache fallback
         run: python tests/test_h1_cache_fallback.py
+
+      - name: Test live H4/D1 resampling
+        run: python tests/test_live_htf_resampling.py
