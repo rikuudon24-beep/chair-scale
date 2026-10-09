@@ -60,10 +60,10 @@ def evaluate(pos):
     f=d.build_features(g)
     if direction=="long":
         sig=f.price20_cross_down & f.di_spread_down3
-        reached50 = g.high.astype(float) >= float(pos["reference_entry_price"]) + 50*0.0001
+        reached50 = g.high.astype(float) >= float(pos["reference_entry_price"]) + 50*d.PIP[pair]
     else:
         sig=f.price20_cross_up & f.di_spread_up3
-        reached50 = g.low.astype(float) <= float(pos["reference_entry_price"]) - 50*0.0001
+        reached50 = g.low.astype(float) <= float(pos["reference_entry_price"]) - 50*d.PIP[pair]
     entry_ts=pd.Timestamp(pos["entry_timestamp"])
     after=g.timestamp>entry_ts
     target_hits=g.index[after & reached50]
