@@ -35,8 +35,10 @@ rows = read_ledger(path, EVENT_FIELDS)
 now = datetime.now(timezone.utc).isoformat()
 acknowledged = 0
 for row in rows:
-    if row.get("delivery_status", "").upper() in {"ISSUE_CONFIRMED", "DELIVERED"}:
+    if row.get("delivery_status", "").upper() == "ISSUE_CONFIRMED":
         continue
+    # Legacy DELIVERED meant only that a GitHub Issue existed. Re-check its title
+    # below and migrate it to ISSUE_CONFIRMED; it was never a device receipt.
     event_type = row.get("event_type", "").upper()
     if row.get("timeframe", "").upper() == "H1":
         title = f"FX H1 ALERT {row['event_id']}"
@@ -54,7 +56,8 @@ for row in rows:
 
     if title in titles:
         row["delivery_status"] = "ISSUE_CONFIRMED"
-        row["issue_confirmed_at"] = now
+        row["issue_confirmed_at"] = row.get("issue_confirmed_at") or now
+        row["delivered_at"] = ""
         # A GitHub Issue proves publication only; it is not a receipt from the
         # ChatGPT/iPhone notification channel, so delivered_at remains untouched.
         row["last_attempt_at"] = now
