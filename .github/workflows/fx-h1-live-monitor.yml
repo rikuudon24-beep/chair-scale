@@ -69,9 +69,10 @@ jobs:
 
       - name: Evaluate frozen H1 v1 candidates
         run: |
-          set +e
+          set -euo pipefail
           python -m pip install pandas pyarrow
           python research/h1/scripts/test_monitor_h1_lifecycle.py
+          set +e
           python research/h1/scripts/monitor_h1_live.py 2>&1 | tee /tmp/h1-monitor.log
           rc=${PIPESTATUS[0]}
           cp /tmp/h1-monitor.log reports/h1_monitor_last.log
