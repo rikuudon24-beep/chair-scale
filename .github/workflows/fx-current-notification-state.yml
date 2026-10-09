@@ -51,7 +51,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/market reports/current_notification_state.csv reports/current_notification_candidates.csv reports/current_notification_alerts.csv reports/market_data_ohlc_repairs.csv
+          git add data/market reports/current_notification_state.csv reports/current_notification_candidates.csv reports/current_notification_alerts.csv
+          # The append-only repair audit is created only when a repair occurs.
+          if [ -f reports/market_data_ohlc_repairs.csv ]; then
+            git add reports/market_data_ohlc_repairs.csv
+          fi
           if git diff --cached --quiet; then
             echo "No market/state changes to commit."
           else
