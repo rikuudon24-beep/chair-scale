@@ -88,20 +88,27 @@ def merge(pair, tf, fresh):
     merged = merged.drop_duplicates("timestamp", keep="last").sort_values("timestamp")
     merged.to_csv(path, index=False)
 
-    latest = pd.to_datetime(int(merged.timestamp.max()), unit="ms", utc=True)
-    # Aggregated candle timestamps label the candle OPEN, not its close.
-    # Measure freshness from the close of the latest fully formed candle.
+    # Aggregated timestamps label candle OPEN. Exclude the still-forming
+    # candle when measuring freshness; otherwise a partial current bar can
+    # make an old last-closed bar appear fresh.
     candle_duration = pd.Timedelta(hours=4 if tf == "h4" else 24)
-    latest_close = latest + candle_duration
-    age = (pd.Timestamp.now(tz="UTC") - latest_close).total_seconds() / 3600
+    now = pd.Timestamp.now(tz="UTC")
+    opens = pd.to_datetime(merged.timestamp, unit="ms", utc=True)
+    closes = opens + candle_duration
+    closed_mask = closes <= now
+    if not bool(closed_mask.any()):
+        raise RuntimeError(f"{pair} {tf}: no fully closed candle available after refresh")
+    latest_closed_open = opens[closed_mask].max()
+    latest_closed_close = latest_closed_open + candle_duration
+    age = (now - latest_closed_close).total_seconds() / 3600
     limit = MAX_AGE_H4 if tf == "h4" else MAX_AGE_D1
     print(
-        f"[OK] {pair} {tf}: latest_open={latest.isoformat()} "
-        f"latest_close={latest_close.isoformat()} age_since_close={age:.2f}h"
+        f"[OK] {pair} {tf}: latest_closed_open={latest_closed_open.isoformat()} "
+        f"latest_closed_close={latest_closed_close.isoformat()} age_since_close={age:.2f}h"
     )
     if age > limit:
         raise RuntimeError(
-            f"{pair} {tf}: live data stale after latest candle close: "
+            f"{pair} {tf}: latest fully closed candle is stale: "
             f"age_since_close={age:.2f}h (limit={limit:.2f}h)"
         )
 
