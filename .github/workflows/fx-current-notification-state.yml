@@ -16,8 +16,8 @@ permissions:
   issues: write
 
 concurrency:
-  # Serialize main-branch market/state writes with H1/H4 lifecycle writers.
-  group: fx-shared-lifecycle-state
+  # Keep current-state runs independent; reconcile main-branch pushes below.
+  group: fx-current-notification-state
   cancel-in-progress: false
 
 jobs:
@@ -61,7 +61,21 @@ jobs:
             echo "No market/state changes to commit."
           else
             git commit -m "chore: refresh FX notification state"
-            git push
+            # H4 may publish a report while this job is refreshing data. Rebase
+            # non-conflicting updates and retry pushes; abort on real conflicts.
+            for attempt in 1 2 3; do
+              if ! git pull --rebase origin main; then
+                git rebase --abort || true
+                echo "Main-state rebase conflict; refusing to overwrite concurrent data." >&2
+                exit 1
+              fi
+              if git push; then
+                exit 0
+              fi
+              sleep $((attempt * 3))
+            done
+            echo "Could not publish refreshed FX state after 3 attempts" >&2
+            exit 1
           fi
 
       - name: Publish durable alert issues
