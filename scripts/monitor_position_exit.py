@@ -94,10 +94,17 @@ def evaluate(pos):
 def main():
     cfg=json.loads(Path("config/active_positions.json").read_text())
     rows=[evaluate(p) for p in cfg["positions"] if p.get("status")=="open"]
-    out=pd.DataFrame(rows)
+    # Keep a stable schema when no positions are active; an empty portfolio is
+    # a valid state, not a monitor failure.
+    columns = [
+        "id", "pair", "direction", "entry_timestamp", "reference_entry_price",
+        "source", "status", "state", "plus50_timestamp", "exit_signal_timestamp",
+        "exit_signal_price", "exit_reason", "latest_completed_h4", "latest_close",
+    ]
+    out=pd.DataFrame(rows, columns=columns)
     Path("reports").mkdir(exist_ok=True)
     out.to_csv("reports/current_position_exit_state.csv",index=False)
-    alerts=out[out.state=="EXIT_TRIGGERED"].copy()
+    alerts=out[out["state"]=="EXIT_TRIGGERED"].copy()
     if len(alerts):
         alerts["notification_id"]=alerts.apply(lambda r:f"{r['id']}|{r['exit_signal_timestamp']}",axis=1)
     alerts.to_csv("reports/current_exit_alerts.csv",index=False)

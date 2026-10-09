@@ -94,6 +94,23 @@ class H4LifecycleAdapterTests(unittest.TestCase):
         self.assertEqual(events[0]["event_type"], "EXIT_SIGNAL")
         self.assertEqual(events[0]["price"], "1.43")
 
+    def test_user_confirmed_manual_close_closes_lifecycle_without_fake_fill(self):
+        ADAPTER.main()
+        self.pos["status"] = "closed"
+        self.pos["closure_confirmation"] = "user_confirmed"
+        self.pos["closure_confirmed_date"] = "2026-10-09"
+        self.pos["actual_exit_timestamp"] = None
+        self.pos["actual_exit_price"] = None
+        self.write_config()
+
+        ADAPTER.main()
+        trade = self.read_csv(self.trades)[0]
+        self.assertEqual(trade["status"], "CLOSED")
+        self.assertEqual(trade["exit_time"], "")
+        self.assertEqual(trade["exit_price"], "")
+        self.assertEqual(trade["exit_reason"], "user_confirmed_manual_close_fill_unknown")
+        self.assertEqual(len(self.read_csv(self.outbox)), 1)
+
     def test_outbox_first_write_recovers_if_trade_ledger_write_fails(self):
         real_upsert = ADAPTER.upsert_ledger
         failed = {"done": False}
