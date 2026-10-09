@@ -106,6 +106,7 @@ jobs:
           set -euo pipefail
           python - <<'PY'
           import csv, json, os, urllib.request
+          from datetime import datetime, timezone
           p="reports/h1_live_alerts.csv"
           if not os.path.exists(p):
               raise SystemExit(0)
@@ -136,15 +137,32 @@ jobs:
               title=f"FX H1 ALERT {row['alert_id']}"
               if title in titles:
                   continue
+              published_at = datetime.now(timezone.utc)
+              age_hours = None
+              try:
+                  signal_at = datetime.fromisoformat(row["signal_time"].replace("Z", "+00:00"))
+                  if signal_at.tzinfo is None:
+                      signal_at = signal_at.replace(tzinfo=timezone.utc)
+                  age_hours = max(0.0, (published_at - signal_at.astimezone(timezone.utc)).total_seconds() / 3600)
+              except (ValueError, TypeError):
+                  pass
+              age_text = f"{age_hours:.1f} hours" if age_hours is not None else "unavailable"
+              late_warning = (
+                  "\n⚠️ DELAYED SIGNAL: this H1 signal is over 2 hours old. Verify the current chart and position before acting.\n"
+                  if age_hours is not None and age_hours > 2 else ""
+              )
               body=("## FX H1 alert\n\n"
                     f"- Kind: {row['kind']}\n"
                     f"- Pair: {row['pair']}\n"
                     f"- Direction: {row['direction'].upper()}\n"
                     f"- Signal time: {row['signal_time']}\n"
+                    f"- Signal age at publication: {age_text}\n"
+                    f"- Published at UTC: {published_at.isoformat()}\n"
                     f"- Entry time: {row['entry_time']}\n"
                     f"- Price: {row['price']}\n"
                     f"- TP: {row['tp']}\n"
                     f"- SL: {row['sl']}\n\n"
+                    f"{late_warning}"
                     f"{row['message']}\n\n"
                     "Research/notification only. No broker order is executed.")
               payload=json.dumps({"title":title,"body":body}).encode()
