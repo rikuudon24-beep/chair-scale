@@ -11,6 +11,8 @@ OUT = ROOT / "data" / "market" / "h1"
 TMP = ROOT / ".download_tmp" / "h1"
 START = date(2021,1,1)
 END = date.today() + timedelta(days=1)
+MAX_CACHE_AGE_DAYS = 7
+MIN_CACHE_ROWS = 1000
 
 def read_valid_csv(path):
     """Reject empty, malformed, or OHLC-invalid downloads before merging."""
@@ -34,6 +36,31 @@ def read_valid_csv(path):
     if (df["low"] > df[["open", "close", "high"]].min(axis=1)).any():
         raise RuntimeError(f"invalid low envelope: {path}")
     return df[cols]
+
+
+def cached_data_is_usable(pair, now=None):
+    """Allow research to use the last good cache only when it is complete and recent."""
+    final = OUT / f"{pair}.csv"
+    if not final.exists():
+        return False, "no cached file"
+    try:
+        df = read_valid_csv(final)
+        if len(df) < MIN_CACHE_ROWS:
+            return False, f"cached rows={len(df)} below minimum {MIN_CACHE_ROWS}"
+        stamps = df["timestamp"]
+        # The repository's H1 research CSV convention is Unix milliseconds.
+        latest = pd.to_datetime(int(stamps.max()), unit="ms", utc=True)
+        current = pd.Timestamp.now(tz="UTC") if now is None else pd.Timestamp(now)
+        if current.tzinfo is None:
+            current = current.tz_localize("UTC")
+        age_days = (current - latest).total_seconds() / 86400
+        if age_days < -1:
+            return False, f"cached latest timestamp is in the future: {latest.isoformat()}"
+        if age_days > MAX_CACHE_AGE_DAYS:
+            return False, f"cached data age={age_days:.1f}d exceeds {MAX_CACHE_AGE_DAYS}d"
+        return True, f"rows={len(df)} latest={latest.isoformat()} age={age_days:.1f}d"
+    except Exception as exc:
+        return False, f"cached file invalid: {exc}"
 
 
 def merge(pair, files):
@@ -96,7 +123,11 @@ def main():
             print(f"[WARN] {pair} attempt {attempt}/3: {e}", flush=True)
             time.sleep(5*attempt)
     if not ok:
-        raise SystemExit(f"[FAIL] {pair} h1")
+        usable, reason = cached_data_is_usable(pair)
+        if usable:
+            print(f"[WARN] {pair} download failed; using last validated H1 cache ({reason})", flush=True)
+            continue
+        raise SystemExit(f"[FAIL] {pair} h1; cache fallback unavailable: {reason}")
 
 
 if __name__ == "__main__":
