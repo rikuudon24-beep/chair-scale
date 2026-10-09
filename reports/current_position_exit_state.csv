@@ -1,2 +1,2 @@
 id,pair,direction,entry_timestamp,reference_entry_price,source,status,state,exit_signal_timestamp,exit_signal_price,exit_reason,latest_completed_h4,latest_close
-usdcad-long-20260930-2000,usdcad,long,2026-09-30T20:00:00Z,1.42297,frozen_h4_entry_alert,open,UNKNOWN,,,"Monitor failed during workflow run 37870608184; exit status is UNKNOWN, not HOLD_NO_EXIT.",,
+usdcad-long-20260930-2000,usdcad,long,2026-09-30T20:00:00Z,1.42297,frozen_h4_entry_alert,open,UNKNOWN,,,"Monitor failed during workflow run 37875212349; exit status is UNKNOWN, not HOLD_NO_EXIT.",,
