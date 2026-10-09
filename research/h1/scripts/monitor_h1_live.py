@@ -49,13 +49,46 @@ def htf_prior(x,ts,tf):
     q = x.loc[eligible]
     return q.iloc[-1] if not q.empty else None
 
+def market_closed_utc(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    return (now.weekday()==4 and now.hour>=21) or now.weekday()==5 or (now.weekday()==6 and now.hour<21)
+
+def expected_last_completed_h1_open(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    days_since_friday=(now.weekday()-4)%7
+    friday=now.normalize()-pd.Timedelta(days=days_since_friday)
+    return friday+pd.Timedelta(hours=20)
+
+def validate_h1_freshness(latest, now):
+    latest=pd.Timestamp(latest)
+    now=pd.Timestamp(now)
+    if latest.tzinfo is None: latest=latest.tz_localize("UTC")
+    else: latest=latest.tz_convert("UTC")
+    if now.tzinfo is None: now=now.tz_localize("UTC")
+    else: now=now.tz_convert("UTC")
+    cutoff=now.floor("h")-pd.Timedelta(nanoseconds=1)
+    if market_closed_utc(now):
+        expected=expected_last_completed_h1_open(now)
+        if latest < expected-pd.Timedelta(hours=1):
+            raise RuntimeError(f"stale H1 data during market closure: latest_completed={latest.isoformat()} expected_last={expected.isoformat()}")
+        return
+    if latest < cutoff-pd.Timedelta(hours=2):
+        raise RuntimeError(f"stale H1 data during open market: latest_completed={latest.isoformat()} cutoff={cutoff.isoformat()}")
+
 def features(pair):
     raw=load(pair,"h1")
     cutoff=pd.Timestamp.now(tz="UTC").floor("h")-pd.Timedelta(nanoseconds=1)
     h=raw[raw.index<=cutoff].copy()
     if len(h)<210: raise RuntimeError(f"insufficient completed H1 candles: {pair}")
-    if h.index[-1] < cutoff-pd.Timedelta(hours=2):
-        raise RuntimeError(f"stale H1 data: {pair}; latest_completed={h.index[-1].isoformat()} cutoff={cutoff.isoformat()}")
+    validate_h1_freshness(h.index[-1], pd.Timestamp.now(tz="UTC"))
     c=h.close; e20=c.ewm(span=20,adjust=False).mean(); e50=c.ewm(span=50,adjust=False).mean(); e200=c.ewm(span=200,adjust=False).mean()
     atr=(pd.concat([(h.high-h.low),(h.high-c.shift()).abs(),(h.low-c.shift()).abs()],axis=1).max(axis=1).ewm(alpha=1/14,adjust=False).mean())
     rr=rsi(c); ad=adx14(h); slope=e20.pct_change()
