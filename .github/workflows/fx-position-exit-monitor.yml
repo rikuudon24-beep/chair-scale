@@ -7,6 +7,7 @@ on:
   push:
     paths:
       - "scripts/monitor_position_exit.py"
+      - "scripts/refresh_usdcad_h4_for_exit.py"
       - "config/active_positions.json"
       - ".github/workflows/fx-position-exit-monitor.yml"
 
