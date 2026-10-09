@@ -1,5 +1,5 @@
 === H1 V1 MONITOR ===
-eurjpy signal= False time= 2026-10-08 23:00:00+00:00 trend= True h4= False d1= False rsiup6= True
-usdchf signal= False time= 2026-10-08 23:00:00+00:00 trend= False h4= False d1= True rsiup6= True
-audnzd signal= False time= 2026-10-08 23:00:00+00:00 trend= False h4= False d1= True rsiup6= True
+eurjpy signal= False time= 2026-10-09 00:00:00+00:00 trend= True h4= True d1= True rsiup6= True
+usdchf signal= False time= 2026-10-09 00:00:00+00:00 trend= False h4= True d1= False rsiup6= False
+audnzd signal= False time= 2026-10-09 00:00:00+00:00 trend= False h4= False d1= False rsiup6= True
 NEW ALERTS 0
