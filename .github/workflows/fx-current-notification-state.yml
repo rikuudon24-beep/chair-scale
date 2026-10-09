@@ -16,7 +16,8 @@ permissions:
   issues: write
 
 concurrency:
-  group: fx-current-notification-state
+  # Serialize main-branch market/state writes with H1/H4 lifecycle writers.
+  group: fx-shared-lifecycle-state
   cancel-in-progress: false
 
 jobs:
