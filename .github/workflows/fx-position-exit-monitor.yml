@@ -45,6 +45,16 @@ jobs:
           gh issue create --repo "$REPO" \
             --title "FX EXIT monitor failure" \
             --body "The position exit monitor failed, so no reliable HOLD/EXIT result is available. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}. Check the logs and refresh/validate market data. No orders are executed."
+      - name: Persist UNKNOWN exit state after any failure
+        if: failure()
+        run: |
+          set -euo pipefail
+          python scripts/mark_position_exit_unknown.py "${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/current_position_exit_state.csv reports/current_exit_monitor_failure.txt
+          git diff --cached --quiet || git commit -m "monitor: mark FX exit state unknown"
+          git push
       - name: Publish exit alerts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
