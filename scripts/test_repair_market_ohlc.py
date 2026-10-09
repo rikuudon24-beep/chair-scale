@@ -20,8 +20,9 @@ class OHLCAuditTests(unittest.TestCase):
         self.assertEqual(result["tick_size"], "0.00001")
 
     def test_rejects_large_envelope_violation(self):
+        # A low above the close violates the OHLC envelope; make it exceed one tick.
         row = {"timestamp":"1", "open":"0.83675", "high":"0.83692",
-               "low":"0.8350", "close":"0.83629"}
+               "low":"0.8365", "close":"0.83629"}
         with self.assertRaises(ValueError):
             REPAIR.analyze_row(row)
 
