@@ -89,11 +89,21 @@ def merge(pair, tf, fresh):
     merged.to_csv(path, index=False)
 
     latest = pd.to_datetime(int(merged.timestamp.max()), unit="ms", utc=True)
-    age = (pd.Timestamp.now(tz="UTC") - latest).total_seconds() / 3600
+    # Aggregated candle timestamps label the candle OPEN, not its close.
+    # Measure freshness from the close of the latest fully formed candle.
+    candle_duration = pd.Timedelta(hours=4 if tf == "h4" else 24)
+    latest_close = latest + candle_duration
+    age = (pd.Timestamp.now(tz="UTC") - latest_close).total_seconds() / 3600
     limit = MAX_AGE_H4 if tf == "h4" else MAX_AGE_D1
-    print(f"[OK] {pair} {tf}: latest={latest.isoformat()} age={age:.2f}h")
+    print(
+        f"[OK] {pair} {tf}: latest_open={latest.isoformat()} "
+        f"latest_close={latest_close.isoformat()} age_since_close={age:.2f}h"
+    )
     if age > limit:
-        raise RuntimeError(f"{pair} {tf}: live data stale after refresh: {age:.2f}h")
+        raise RuntimeError(
+            f"{pair} {tf}: live data stale after latest candle close: "
+            f"age_since_close={age:.2f}h (limit={limit:.2f}h)"
+        )
 
 
 def main():
