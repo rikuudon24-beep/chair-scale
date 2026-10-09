@@ -100,6 +100,20 @@ class H4LifecycleAdapterTests(unittest.TestCase):
         self.assertEqual(len(self.read_csv(self.trades)), 1)
         self.assertEqual(len(self.read_csv(self.outbox)), 1)
 
+    def test_reconciliation_never_downgrades_delivered_exit_event(self):
+        ADAPTER.main()
+        events = self.read_csv(self.outbox)
+        events[0]["delivery_status"] = "DELIVERED"
+        events[0]["attempt_count"] = "1"
+        events[0]["delivered_at"] = "2026-10-08T17:30:00+00:00"
+        self.write_csv(self.outbox, list(events[0]), events)
+
+        ADAPTER.main()
+        event = self.read_csv(self.outbox)[0]
+        self.assertEqual(event["delivery_status"], "DELIVERED")
+        self.assertEqual(event["attempt_count"], "1")
+        self.assertEqual(event["delivered_at"], "2026-10-08T17:30:00+00:00")
+
     def test_reconciliation_preserves_outbox_delivery_metadata(self):
         ADAPTER.main()
         events = self.read_csv(self.outbox)
