@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "scripts/research_price_structure_transition.py"
+      - "scripts/test_research_timestamp_units.py"
       - ".github/workflows/fx-price-structure-transition-research.yml"
       - "data/market/w1/**"
 
@@ -24,6 +25,8 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Test timestamp normalization
+        run: python scripts/test_research_timestamp_units.py
       - name: Run causal price-structure study
         run: python scripts/research_price_structure_transition.py
       - name: Commit reports
