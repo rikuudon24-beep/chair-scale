@@ -1,0 +1,1 @@
+event_id,trade_id,event_type,event_time,pair,timeframe,direction,price,reason,tp,sl,strategy_id,delivery_status,attempt_count,last_attempt_at,delivered_at,last_error

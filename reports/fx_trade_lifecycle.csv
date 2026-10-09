@@ -1,0 +1,1 @@
+trade_id,strategy_id,strategy_version,pair,timeframe,direction,signal_time,entry_time,entry_price,initial_sl,initial_tp,exit_policy,time_limit,status,last_checked_bar_time,data_source,exit_time,exit_price,exit_reason,gross_pips,net_pips,created_at,updated_at,closed_at
