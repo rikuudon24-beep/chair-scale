@@ -101,6 +101,7 @@ jobs:
         run: |
           python - <<'PY'
           import csv, os, urllib.request, json
+          from datetime import datetime, timezone
           p="reports/current_exit_alerts.csv"
           if not os.path.exists(p): raise SystemExit(0)
           token=os.environ["GITHUB_TOKEN"]; repo=os.environ["GITHUB_REPOSITORY"]
@@ -125,13 +126,30 @@ jobs:
                   title=f"FX EXIT {r['pair']} {r['direction']} {r['exit_signal_timestamp']}"
                   if title in titles:
                       continue
+                  published_at = datetime.now(timezone.utc)
+                  age_hours = None
+                  try:
+                    signal_at = datetime.fromisoformat(r["exit_signal_timestamp"].replace("Z", "+00:00"))
+                    if signal_at.tzinfo is None:
+                      signal_at = signal_at.replace(tzinfo=timezone.utc)
+                    age_hours = max(0.0, (published_at - signal_at.astimezone(timezone.utc)).total_seconds() / 3600)
+                  except (ValueError, TypeError):
+                    pass
+                  age_text = f"{age_hours:.1f} hours" if age_hours is not None else "unavailable"
+                  late_warning = (
+                    "\n⚠️ DELAYED SIGNAL: this H4 signal is over 6 hours old. Verify the current chart and position before acting.\n"
+                    if age_hours is not None and age_hours > 6 else ""
+                  )
                   body=(
                     "## FX exit alert\n\n"
                     f"- Pair: {r['pair']}\n"
                     f"- Position: {r['direction'].upper()}\n"
                     f"- Confirmed H4 exit signal: {r['exit_signal_timestamp']}\n"
+                    f"- Signal age at publication: {age_text}\n"
+                    f"- Published at UTC: {published_at.isoformat()}\n"
                     f"- Signal close: {r['exit_signal_price']}\n"
-                    f"- Condition: {r['exit_reason']}\n\n"
+                    f"- Condition: {r['exit_reason']}\n"
+                    f"{late_warning}\n"
                     "This is a notification only. No order is executed."
                   )
                   req=urllib.request.Request(base+"/issues",data=json.dumps({"title":title,"body":body}).encode(),headers=headers,method="POST")
