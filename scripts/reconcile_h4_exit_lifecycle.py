@@ -148,9 +148,7 @@ def main() -> None:
         if row.get("status", "").upper() == "CLOSED" and tid not in current_ids:
             trade_rows.append(row)
 
-    upsert_ledger(TRADES, TRADE_FIELDS, trade_rows, "trade_id")
-    upsert_ledger(OUTBOX, EVENT_FIELDS, outbox_rows, "event_id")
-    print(f"H4 lifecycle reconciliation: {len(trade_rows)} trade rows; {len(outbox_rows)} exit events")
+    # Persist the durable notification intent first. If the subsequent trade-ledger\n    # write fails, the next run can reconstruct the trade from the same stable event.\n    upsert_ledger(OUTBOX, EVENT_FIELDS, outbox_rows, "event_id")\n    upsert_ledger(TRADES, TRADE_FIELDS, trade_rows, "trade_id")\n    print(f"H4 lifecycle reconciliation: {len(trade_rows)} trade rows; {len(outbox_rows)} exit events")
 
 
 if __name__ == "__main__":
