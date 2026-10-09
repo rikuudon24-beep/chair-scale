@@ -1,1 +1,1 @@
-id,pair,direction,entry_timestamp,reference_entry_price,source,status,state,exit_signal_timestamp,exit_signal_price,exit_reason,latest_completed_h4,latest_close
+id,pair,direction,entry_timestamp,reference_entry_price,source,status,state,plus50_timestamp,exit_signal_timestamp,exit_signal_price,exit_reason,latest_completed_h4,latest_close
