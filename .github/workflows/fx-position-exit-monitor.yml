@@ -5,6 +5,7 @@ on:
   schedule:
     - cron: "17 * * * *"
   push:
+    branches: [main]
     paths:
       - "scripts/monitor_position_exit.py"
       - "scripts/refresh_usdcad_h4_for_exit.py"
