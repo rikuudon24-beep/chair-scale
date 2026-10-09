@@ -122,6 +122,9 @@ class LifecycleTests(unittest.TestCase):
         pd.DataFrame([row], columns=MONITOR.POSCOL).to_csv(MONITOR.STATE, index=False)
         self.bars.loc[self.times[0], "high"] = 100.2
         self.bars.loc[self.times[1], "close"] = 100.3
+        # Keep post-entry bars inside the USDCHF 40-pip TP/SL envelope.
+        for ts in self.times[2:]:
+            self.bars.loc[ts, ["open", "high", "low", "close"]] = [100.0, 100.001, 99.999, 100.0005]
         self.run_monitor()
         positions = pd.read_csv(MONITOR.STATE)
         alerts = pd.read_csv(MONITOR.ALERTS)
