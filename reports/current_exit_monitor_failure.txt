@@ -1,1 +1,1 @@
-Exit monitor state marked UNKNOWN because the persisted report's latest completed H4 timestamp was 2026-10-02 and freshness was not verified on 2026-10-09. Do not interpret the previous HOLD_NO_EXIT as a current decision. The scheduled monitor and regression test must complete successfully before current exit status can be trusted.
+Monitor failed during workflow run 37870608184; exit status is UNKNOWN, not HOLD_NO_EXIT.
