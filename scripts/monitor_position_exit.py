@@ -28,11 +28,15 @@ def expected_latest_h4_open(now):
         return friday+pd.Timedelta(hours=16)
     return now.floor("4h")-H4
 
-def completed_market(pair):
+def completed_market(pair,now=None):
     g=d.load_market("h4",pair).sort_values("timestamp").reset_index(drop=True)
     if g.empty:
         raise RuntimeError(f"{pair}: H4 market data is empty; exit state is UNKNOWN")
-    now=pd.Timestamp.now(tz="UTC")
+    now=pd.Timestamp.now(tz="UTC") if now is None else pd.Timestamp(now)
+    if now.tzinfo is None:
+        now=now.tz_localize("UTC")
+    else:
+        now=now.tz_convert("UTC")
     expected=expected_latest_h4_open(now)
     # Do not include a nominal 20:00 H4 candle over the weekend: it may be a
     # truncated session candle, not a completed four-hour candle.
