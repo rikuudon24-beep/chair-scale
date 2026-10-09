@@ -25,6 +25,5 @@ for pos in config.get("positions",[]):
     })
 Path("reports").mkdir(exist_ok=True)
 pd.DataFrame(rows,columns=state_columns).to_csv("reports/current_position_exit_state.csv",index=False)
-pd.DataFrame(columns=state_columns).to_csv("reports/current_exit_alerts.csv",index=False)
 Path("reports/current_exit_monitor_failure.txt").write_text(reason+"\n",encoding="utf-8")
 print(reason)
