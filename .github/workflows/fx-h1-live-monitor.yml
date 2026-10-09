@@ -3,6 +3,17 @@ name: FX H1 Live Monitor
 on:
   push:
     branches: [main]
+    paths:
+      - "research/h1/scripts/download_h1_live.py"
+      - "research/h1/scripts/download_htf_live.py"
+      - "research/h1/scripts/monitor_h1_live.py"
+      - "scripts/validate_h1_monitor_inputs.py"
+      - "scripts/fx_lifecycle_contract.py"
+      - "scripts/reconcile_h1_lifecycle.py"
+      - "scripts/reconcile_h4_exit_lifecycle.py"
+      - "scripts/acknowledge_fx_notification_outbox.py"
+      - "config/active_positions.json"
+      - ".github/workflows/fx-h1-live-monitor.yml"
   schedule:
     - cron: "11 * * * *"
   workflow_dispatch:
