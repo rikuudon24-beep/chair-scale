@@ -8,6 +8,10 @@ on:
     paths:
       - "scripts/monitor_position_exit.py"
       - "scripts/refresh_usdcad_h4_for_exit.py"
+      - "scripts/reconcile_h4_exit_lifecycle.py"
+      - "scripts/acknowledge_fx_notification_outbox.py"
+      - "scripts/fx_lifecycle_contract.py"
+      - "tests/test_reconcile_h4_exit_lifecycle.py"
       - "config/active_positions.json"
       - ".github/workflows/fx-position-exit-monitor.yml"
 
