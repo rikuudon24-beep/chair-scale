@@ -59,6 +59,12 @@ def main() -> None:
         alert_by_id[key] = row.to_dict()
 
     existing_trades = {r["trade_id"]: r for r in read_ledger(TRADES, TRADE_FIELDS)}
+    # Preserve exit intent across UNKNOWN/degraded runs as well as repeated EXIT_TRIGGERED runs.
+    existing_outbox = read_ledger(OUTBOX, EVENT_FIELDS)
+    exit_signal_trade_ids = {
+        r["trade_id"] for r in existing_outbox
+        if r.get("event_type", "").upper() == "EXIT_SIGNAL"
+    }
     trade_rows = []
     outbox_rows = []
     now = datetime.now(timezone.utc).isoformat()
@@ -90,7 +96,9 @@ def main() -> None:
         else:
             # A prior exit signal remains pending until an external/manual close
             # is confirmed; a later HOLD result must not erase that signal.
-            status = "EXIT_PENDING" if prior_status == "EXIT_PENDING" else "OPEN"
+            status = "EXIT_PENDING" if (
+                prior_status == "EXIT_PENDING" or trade_id in exit_signal_trade_ids
+            ) else "OPEN"
 
         trade_rows.append({
             "trade_id": trade_id, "strategy_id": STRATEGY_ID, "strategy_version": "v1",
