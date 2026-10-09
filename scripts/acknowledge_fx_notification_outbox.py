@@ -35,7 +35,7 @@ rows = read_ledger(path, EVENT_FIELDS)
 now = datetime.now(timezone.utc).isoformat()
 acknowledged = 0
 for row in rows:
-    if row.get("delivery_status") == "DELIVERED":
+    if row.get("delivery_status", "").upper() in {"ISSUE_CONFIRMED", "DELIVERED"}:
         continue
     event_type = row.get("event_type", "").upper()
     if row.get("timeframe", "").upper() == "H1":
@@ -53,11 +53,13 @@ for row in rows:
         continue
 
     if title in titles:
-        row["delivery_status"] = "DELIVERED"
-        row["delivered_at"] = now
+        row["delivery_status"] = "ISSUE_CONFIRMED"
+        row["issue_confirmed_at"] = now
+        # A GitHub Issue proves publication only; it is not a receipt from the
+        # ChatGPT/iPhone notification channel, so delivered_at remains untouched.
         row["last_attempt_at"] = now
         row["attempt_count"] = str(int(row.get("attempt_count") or "0") + 1)
-        row["last_error"] = ""
+        row["last_error"] = "GitHub Issue exists; end-user/device push delivery is not verified by this workflow."
         acknowledged += 1
     else:
         row["delivery_status"] = "PENDING"
@@ -65,4 +67,4 @@ for row in rows:
         row["attempt_count"] = str(int(row.get("attempt_count") or "0") + 1)
         row["last_error"] = f"Durable Issue not found yet for title: {title}; will retry on next scheduled run."
 upsert_ledger(path, EVENT_FIELDS, rows, "event_id")
-print(f"Outbox delivery acknowledgements: {acknowledged}/{len(rows)} events confirmed in GitHub Issues")
+print(f"Outbox issue confirmations: {acknowledged}/{len(rows)} events confirmed in GitHub Issues; device delivery is not verified")

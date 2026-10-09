@@ -12,6 +12,7 @@ on:
       - "scripts/download_h1_research_data.py"
       - "tests/test_h1_data_integrity.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
+      - "scripts/test_notification_ack_semantics.py"
       - ".github/workflows/fx-position-exit-monitor.yml"
       - ".github/workflows/fx-h1-live-monitor.yml"
       - ".github/workflows/fx-lifecycle-adapter-tests.yml"
@@ -47,6 +48,9 @@ jobs:
 
       - name: Test shared lifecycle contract
         run: python scripts/test_fx_lifecycle_contract.py
+
+      - name: Test notification acknowledgement semantics
+        run: python scripts/test_notification_ack_semantics.py
 
       - name: Test H4 lifecycle adapter
         run: python tests/test_reconcile_h4_exit_lifecycle.py

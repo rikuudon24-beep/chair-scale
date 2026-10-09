@@ -38,7 +38,7 @@ TRADE_FIELDS = [
 EVENT_FIELDS = [
     "event_id", "trade_id", "event_type", "event_time", "pair", "timeframe",
     "direction", "price", "reason", "tp", "sl", "strategy_id",
-    "delivery_status", "attempt_count", "last_attempt_at", "delivered_at",
+    "delivery_status", "attempt_count", "last_attempt_at", "issue_confirmed_at", "delivered_at",
     "last_error",
 ]
 EVENT_TYPES = {
@@ -46,7 +46,7 @@ EVENT_TYPES = {
     "EXIT_SIGNAL", "EXIT_TIME", "EXIT_MANUAL", "MONITORING_DEGRADED",
     "MONITORING_RECOVERED",
 }
-DELIVERY_STATES = {"PENDING", "DELIVERING", "DELIVERED", "FAILED"}
+DELIVERY_STATES = {"PENDING", "DELIVERING", "ISSUE_CONFIRMED", "DELIVERED", "FAILED"}
 
 
 def _stable_id(prefix: str, *parts: object) -> str:
@@ -120,9 +120,14 @@ def upsert_ledger(path: str | Path, fields: list[str], rows: Iterable[Mapping[st
                 if old_status in TERMINAL_STATES and new_status != old_status:
                     raise ValueError(f"terminal trade cannot change state: {old_status} -> {new_status} ({key})")
                 validate_transition(old_status, new_status)
-            # Preserve an acknowledged delivery; never downgrade DELIVERED to PENDING.
-            if old.get("delivery_status") == "DELIVERED" and row.get("delivery_status") != "DELIVERED":
-                row["delivery_status"] = "DELIVERED"
+            # Preserve confirmed publication states across stale retries. ISSUE_CONFIRMED
+            # means a durable GitHub Issue exists; DELIVERED is reserved for an actual
+            # end-user delivery receipt from a channel/device provider.
+            old_delivery = old.get("delivery_status", "").upper()
+            new_delivery = row.get("delivery_status", "").upper()
+            if old_delivery in {"ISSUE_CONFIRMED", "DELIVERED"} and new_delivery not in {"ISSUE_CONFIRMED", "DELIVERED"}:
+                row["delivery_status"] = old_delivery
+                row["issue_confirmed_at"] = old.get("issue_confirmed_at", "")
                 row["delivered_at"] = old.get("delivered_at", "")
             by_key[key] = row
         else:
