@@ -8,8 +8,17 @@ on:
     paths:
       - "scripts/monitor_position_exit.py"
       - "scripts/refresh_usdcad_h4_for_exit.py"
+      - "scripts/reconcile_h4_exit_lifecycle.py"
+      - "scripts/acknowledge_fx_notification_outbox.py"
+      - "scripts/fx_lifecycle_contract.py"
+      - "tests/test_reconcile_h4_exit_lifecycle.py"
       - "config/active_positions.json"
       - ".github/workflows/fx-position-exit-monitor.yml"
+
+# H1 and H4 serialize access to the shared lifecycle branch and outbox.
+concurrency:
+  group: fx-shared-lifecycle-state
+  cancel-in-progress: false
 
 jobs:
   monitor:
@@ -30,6 +39,25 @@ jobs:
         run: python tests/test_monitor_position_exit_freshness.py
       - name: Evaluate completed-H4 exits
         run: python scripts/monitor_position_exit.py
+
+      - name: Restore common lifecycle ledgers
+        run: |
+          set -euo pipefail
+          git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
+          for path in reports/fx_trade_lifecycle.csv reports/fx_notification_outbox.csv; do
+            if git cat-file -e "origin/fx-h1-research:$path" 2>/dev/null; then
+              git show "origin/fx-h1-research:$path" > "$path"
+              echo "[OK] Restored $path from fx-h1-research"
+            else
+              echo "[WARN] No persisted $path found; adapter will initialize it"
+            fi
+          done
+
+      - name: Reconcile H4 exit signals into common lifecycle
+        run: |
+          python scripts/test_fx_lifecycle_contract.py
+          python tests/test_reconcile_h4_exit_lifecycle.py
+          python scripts/reconcile_h4_exit_lifecycle.py
       - name: Report exit-monitor failure
         if: failure()
         env:
@@ -65,6 +93,7 @@ jobs:
           echo "Could not push UNKNOWN exit state after 3 attempts" >&2
           exit 1
       - name: Publish exit alerts
+        if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
@@ -108,6 +137,13 @@ jobs:
                   with urllib.request.urlopen(req,timeout=30) as resp: resp.read()
                   titles.add(title)
           PY
+      - name: Acknowledge common outbox delivery
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/acknowledge_fx_notification_outbox.py
+
       - name: Commit reports
         run: |
           git config user.name "github-actions[bot]"
@@ -120,4 +156,34 @@ jobs:
             sleep $((attempt * 3))
           done
           echo "Could not push exit reports after 3 attempts" >&2
+          exit 1
+
+      - name: Persist common lifecycle ledgers
+        if: success()
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/fx-shared-state
+          cp reports/fx_trade_lifecycle.csv /tmp/fx-shared-state/
+          cp reports/fx_notification_outbox.csv /tmp/fx-shared-state/
+          git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
+          # Remove local copies after saving them so branch checkout cannot fail on dirty/untracked files.
+          rm -f reports/fx_trade_lifecycle.csv reports/fx_notification_outbox.csv
+          git checkout -B fx-h1-research origin/fx-h1-research
+          mkdir -p reports
+          cp /tmp/fx-shared-state/fx_trade_lifecycle.csv reports/
+          cp /tmp/fx-shared-state/fx_notification_outbox.csv reports/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports/fx_trade_lifecycle.csv reports/fx_notification_outbox.csv
+          if git diff --cached --quiet; then
+            echo "Common lifecycle ledgers unchanged."
+            exit 0
+          fi
+          git commit -m "h4bot: persist common FX lifecycle state"
+          for attempt in 1 2 3; do
+            git pull --rebase origin fx-h1-research
+            if git push origin HEAD:fx-h1-research; then exit 0; fi
+            sleep $((attempt * 3))
+          done
+          echo "Could not persist common lifecycle ledgers after 3 attempts" >&2
           exit 1
