@@ -94,6 +94,30 @@ class H4LifecycleAdapterTests(unittest.TestCase):
         self.assertEqual(events[0]["event_type"], "EXIT_SIGNAL")
         self.assertEqual(events[0]["price"], "1.43")
 
+    def test_outbox_first_write_recovers_if_trade_ledger_write_fails(self):
+        real_upsert = ADAPTER.upsert_ledger
+        failed = {"done": False}
+
+        def fail_trade_write_once(path, fields, rows, key_field):
+            if Path(path) == self.trades and not failed["done"]:
+                failed["done"] = True
+                raise OSError("simulated trade-ledger write failure")
+            return real_upsert(path, fields, rows, key_field)
+
+        with patch.object(ADAPTER, "upsert_ledger", side_effect=fail_trade_write_once):
+            with self.assertRaisesRegex(OSError, "simulated trade-ledger"):
+                ADAPTER.main()
+
+        # Durable notification intent exists even though the trade-ledger write failed.
+        self.assertEqual(len(self.read_csv(self.outbox)), 1)
+        self.assertFalse(self.trades.exists())
+
+        # A retry is idempotent and completes the missing trade row.
+        ADAPTER.main()
+        self.assertEqual(len(self.read_csv(self.outbox)), 1)
+        self.assertEqual(len(self.read_csv(self.trades)), 1)
+        self.assertEqual(self.read_csv(self.trades)[0]["status"], "EXIT_PENDING")
+
     def test_repeated_run_does_not_duplicate_exit_event(self):
         ADAPTER.main()
         ADAPTER.main()
