@@ -11,6 +11,7 @@ on:
       - "research/h1/scripts/download_h1_live.py"
       - "scripts/download_h1_research_data.py"
       - "tests/test_h1_data_integrity.py"
+      - "tests/test_h1_cache_fallback.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
       - "scripts/test_notification_ack_semantics.py"
       - ".github/workflows/fx-position-exit-monitor.yml"
@@ -57,3 +58,6 @@ jobs:
 
       - name: Test H1 data integrity guards
         run: python tests/test_h1_data_integrity.py
+
+      - name: Test H1 cache fallback
+        run: python tests/test_h1_cache_fallback.py
