@@ -14,6 +14,8 @@ on:
       - "tests/test_h1_cache_fallback.py"
       - "research/h1/scripts/download_htf_live.py"
       - "tests/test_live_htf_resampling.py"
+      - "research/h1/scripts/download_htf_live.py"
+      - "tests/test_live_htf_resampling.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
       - "scripts/test_notification_ack_semantics.py"
       - ".github/workflows/fx-position-exit-monitor.yml"
