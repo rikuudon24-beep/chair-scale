@@ -58,6 +58,18 @@ class SharedLifecycleContractTests(unittest.TestCase):
         for field in ("trade_id", "entry_price", "status", "exit_time", "exit_price", "exit_reason"):
             self.assertIn(field, TRADE_FIELDS)
 
+    def test_terminal_trade_cannot_be_reopened_by_stale_state(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "trades.csv"
+            closed = {field: "" for field in TRADE_FIELDS}
+            closed.update(trade_id="t1", status="CLOSED", exit_reason="EXIT_SL")
+            upsert_ledger(path, TRADE_FIELDS, [closed], "trade_id")
+            stale_open = {**closed, "status": "OPEN", "exit_reason": ""}
+            with self.assertRaises(ValueError):
+                upsert_ledger(path, TRADE_FIELDS, [stale_open], "trade_id")
+
+
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
