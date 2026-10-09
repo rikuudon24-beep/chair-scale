@@ -40,9 +40,14 @@ def adx14(x):
     dx=100*(pdi-mdi).abs()/(pdi+mdi).replace(0,np.nan)
     return dx.ewm(alpha=1/14,adjust=False).mean()
 
-def htf_prior(x,ts):
-    q=x[x.index<=ts]
-    return q.iloc[-2] if len(q)>=2 else None
+def htf_prior(x,ts,tf):
+    # HTF indexes label candle OPEN. Select the latest candle whose CLOSE is
+    # no later than the H1 signal candle timestamp. Do not assume a still-forming
+    # HTF candle exists in the file: aggregation may omit it early in the period.
+    duration = pd.Timedelta(hours=4 if tf == "h4" else 24)
+    eligible = x.index + duration <= pd.Timestamp(ts)
+    q = x.loc[eligible]
+    return q.iloc[-1] if not q.empty else None
 
 def features(pair):
     raw=load(pair,"h1")
@@ -55,7 +60,7 @@ def features(pair):
     atr=(pd.concat([(h.high-h.low),(h.high-c.shift()).abs(),(h.low-c.shift()).abs()],axis=1).max(axis=1).ewm(alpha=1/14,adjust=False).mean())
     rr=rsi(c); ad=adx14(h); slope=e20.pct_change()
     i=len(h)-1; ts=h.index[i]
-    h4=htf_prior(load(pair,"h4"),ts); d1=htf_prior(load(pair,"d1"),ts)
+    h4=htf_prior(load(pair,"h4"),ts,"h4"); d1=htf_prior(load(pair,"d1"),ts,"d1")
     if h4 is None or d1 is None: raise RuntimeError(f"missing HTF context: {pair}")
     body_range=abs(h.open-h.close)/(h.high-h.low).replace(0,np.nan)
     dist=(c-e20)/atr
