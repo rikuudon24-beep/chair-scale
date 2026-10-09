@@ -188,3 +188,11 @@ H1は**部分実装済み（3ペアの凍結ルール、独立Workflow、永続I
 
 注意: 上記はコード保存の記録であり、テスト成功や最新Workflowの正常完了を意味しない。GitHub Actionsの最新実行結果を確認し、失敗時はログを見て修正する。スマートフォンへの通知到達も未確認のまま。
 
+## 2026-10-09 follow-up: exit-monitor data fallback and persistence
+
+- Observed run `37876018541`: Dukascopy returned an empty CSV on all three attempts. Added Yahoo Finance 60-minute chart fallback to `scripts/refresh_usdcad_h4_for_exit.py`, aggregating only four consecutive hourly candles into complete UTC H4 bars and rejecting stale output. The run successfully fetched 57 complete USDCAD H4 bars; latest H4 open was `2026-10-08T20:00:00Z`.
+- Regression tests passed in that run: `test_open_market_stale_data_returns_unknown_not_hold`, `test_weekend_does_not_allow_week_old_market_data`, and `test_weekend_uses_friday_last_completed_h4_and_excludes_20utc_partial` (3 tests, OK).
+- Exit evaluation successfully detected a USDCAD long exit signal at `2026-10-06T12:00:00Z`, close approximately `1.42200`, condition `price20_cross_down+di_spread_down3`. GitHub Issue #49 was created. This is a delayed detection from refreshed historical data, not proof that a real-time alert was delivered on Oct 6; no order was executed.
+- The same run's report commit failed due concurrent updates. Updated workflow to stage the refreshed H4 data with successful reports, discard a partial refresh on failed runs, and retry report pushes after rebasing. Previous rebase retry was itself blocked by an unstaged market-data file; the revised workflow addresses this by committing the data on success and discarding it on failure.
+- Manually persisted current exit state as `EXIT_TRIGGERED` and the corresponding alert CSV based on the successful evaluation, while leaving position `status=open` because the monitor does not execute orders.
+- Latest verification still pending at audit time: workflow run `37876189451` is executing the revised report-persistence flow. Do not declare the end-to-end monitor complete until this run succeeds and the updated report/data commits are visible on main. Phone push delivery through the GitHub app/notification settings is still not independently verified.
