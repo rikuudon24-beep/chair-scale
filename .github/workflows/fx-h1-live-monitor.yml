@@ -284,7 +284,13 @@ jobs:
             tail -n 120 "$log"
             echo '```'
           } > /tmp/h1-failure.md
-          gh issue create --title "FX H1 monitor failure ${{ github.run_id }}" --body-file /tmp/h1-failure.md || true
+          REPO="${{ github.repository }}"
+          EXISTING="$(gh issue list --repo "$REPO" --state open --search 'FX H1 monitor failure in:title' --json number --jq '.[0].number // empty')"
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$REPO" --body-file /tmp/h1-failure.md || true
+          else
+            gh issue create --repo "$REPO" --title "FX H1 monitor failure" --body-file /tmp/h1-failure.md || true
+          fi
 
       - uses: actions/upload-artifact@v4
         if: always()
