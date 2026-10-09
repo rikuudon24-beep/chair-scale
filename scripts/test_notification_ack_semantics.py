@@ -36,5 +36,24 @@ class NotificationAckSemanticsTests(unittest.TestCase):
             self.assertEqual(final[0]["delivered_at"], "")
 
 
+    def test_legacy_delivered_state_can_be_migrated_to_issue_confirmed(self):
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "outbox.csv"
+            legacy = {field: "" for field in EVENT_FIELDS}
+            legacy.update(
+                event_id="e2", trade_id="t2", event_type="EXIT_SIGNAL",
+                event_time="2026-10-09T12:00:00Z", pair="AUDNZD",
+                strategy_id="h4_v1", delivery_status="DELIVERED",
+                delivered_at="2026-10-09T12:05:00Z",
+            )
+            upsert_ledger(path, EVENT_FIELDS, [legacy], "event_id")
+            migrated = {**legacy, "delivery_status": "ISSUE_CONFIRMED",
+                        "issue_confirmed_at": "2026-10-09T12:06:00Z", "delivered_at": ""}
+            final = upsert_ledger(path, EVENT_FIELDS, [migrated], "event_id")
+            self.assertEqual(final[0]["delivery_status"], "ISSUE_CONFIRMED")
+            self.assertEqual(final[0]["issue_confirmed_at"], "2026-10-09T12:06:00Z")
+            self.assertEqual(final[0]["delivered_at"], "")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
