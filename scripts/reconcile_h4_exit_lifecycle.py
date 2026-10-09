@@ -123,13 +123,21 @@ def main() -> None:
             if not match:
                 raise RuntimeError(f"EXIT_TRIGGERED state has no matching alert row: {pid} {ts}")
             event_id = make_event_id(trade_id, "EXIT_SIGNAL", ts)
+            prior_event = next(
+                (row for row in existing_outbox if row.get("event_id") == event_id), {}
+            )
             event = {
                 "event_id": event_id, "trade_id": trade_id, "event_type": "EXIT_SIGNAL",
                 "event_time": ts, "pair": pair.upper(), "timeframe": "H4",
                 "direction": direction.upper(), "price": str(match.get("exit_signal_price", "")),
                 "reason": str(match.get("exit_reason", "")), "tp": "", "sl": "",
-                "strategy_id": STRATEGY_ID, "delivery_status": "PENDING",
-                "attempt_count": "0", "last_attempt_at": "", "delivered_at": "", "last_error": "",
+                "strategy_id": STRATEGY_ID,
+                # Reconciliation must not reset retry/delivery state for a stable event.
+                "delivery_status": prior_event.get("delivery_status") or "PENDING",
+                "attempt_count": prior_event.get("attempt_count") or "0",
+                "last_attempt_at": prior_event.get("last_attempt_at", ""),
+                "delivered_at": prior_event.get("delivered_at", ""),
+                "last_error": prior_event.get("last_error", ""),
             }
             validate_event(event)
             outbox_rows.append(event)
