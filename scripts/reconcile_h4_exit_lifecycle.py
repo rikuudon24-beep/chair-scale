@@ -147,32 +147,6 @@ def main() -> None:
             validate_event(event)
             outbox_rows.append(event)
 
-    # A user-confirmed manual close is a terminal lifecycle state, but never
-    # invent broker fill time/price or P&L when those details were not supplied.
-    for pos in user_confirmed_closed:
-        pair = str(pos.get("pair", "")).lower()
-        entry_time = iso(pos.get("entry_timestamp", ""))
-        if not pair or not entry_time:
-            raise RuntimeError(f"incomplete user-confirmed closed H4 position: {pos!r}")
-        trade_id = make_trade_id(STRATEGY_ID, pair, entry_time)
-        prior = existing_trades.get(trade_id)
-        if not prior:
-            # No lifecycle record exists yet; there is nothing to close in the ledger.
-            continue
-        prior_status = str(prior.get("status", "")).upper()
-        if prior_status not in ("CLOSED", "EXIT_PENDING", "OPEN", "UNKNOWN", "ERROR"):
-            raise RuntimeError(f"cannot reconcile user-confirmed close from {prior_status!r}: {trade_id}")
-        closed = dict(prior)
-        closed["status"] = "CLOSED"
-        closed["exit_time"] = ""
-        closed["exit_price"] = ""
-        closed["exit_reason"] = "user_confirmed_closed; actual_exit_time_price_unknown"
-        closed["gross_pips"] = ""
-        closed["net_pips"] = ""
-        closed["closed_at"] = ""
-        closed["updated_at"] = now
-        trade_rows.append(closed)
-
     # User-confirmed manual closures are terminal lifecycle states, but never
     # invent broker fill time/price. Only apply to an existing registered trade.
     for pos in user_confirmed_closed:
