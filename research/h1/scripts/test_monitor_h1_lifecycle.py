@@ -59,6 +59,31 @@ class LifecycleTests(unittest.TestCase):
              patch.object(MONITOR, "signal", return_value=False):
             MONITOR.main()
 
+    def test_htf_prior_uses_latest_candle_closed_by_signal_time(self):
+        # H4 candle timestamps label OPEN. At 11:00, the 08:00 candle is
+        # still forming, so the 04:00 candle is the latest completed one.
+        h4_index = pd.to_datetime([
+            "2026-10-09T00:00:00Z",
+            "2026-10-09T04:00:00Z",
+            "2026-10-09T08:00:00Z",
+        ], utc=True)
+        h4 = pd.DataFrame({"open": [1, 2, 3], "close": [2, 3, 4]}, index=h4_index)
+        before_close = MONITOR.htf_prior(h4, pd.Timestamp("2026-10-09T11:00:00Z"), "h4")
+        at_close = MONITOR.htf_prior(h4, pd.Timestamp("2026-10-09T12:00:00Z"), "h4")
+        self.assertEqual(float(before_close["open"]), 2.0)
+        self.assertEqual(float(at_close["open"]), 3.0)
+
+    def test_d1_prior_does_not_depend_on_partial_daily_row_existing(self):
+        # If aggregation omits the current partial D1 row, yesterday's fully
+        # completed candle must still be selected rather than skipped.
+        d1_index = pd.to_datetime([
+            "2026-10-07T00:00:00Z",
+            "2026-10-08T00:00:00Z",
+        ], utc=True)
+        d1 = pd.DataFrame({"open": [1, 2], "close": [2, 3]}, index=d1_index)
+        prior = MONITOR.htf_prior(d1, pd.Timestamp("2026-10-09T08:00:00Z"), "d1")
+        self.assertEqual(float(prior["open"]), 2.0)
+
     def test_same_bar_tp_sl_uses_sl_and_closed_trade_persists(self):
         self.seed_open_trade()
         self.bars.loc[self.times[1], "high"] = 101.2
