@@ -7,7 +7,11 @@
       "entry_timestamp": "2026-09-30T20:00:00Z",
       "reference_entry_price": 1.42297,
       "source": "frozen_h4_entry_alert",
-      "status": "open"
+      "status": "closed",
+      "closure_confirmation": "user_confirmed",
+      "closure_confirmed_date": "2026-10-09",
+      "actual_exit_timestamp": null,
+      "actual_exit_price": null
     }
   ]
 }
