@@ -30,7 +30,7 @@ def decimal_places(raw: str) -> int:
     return len(value.split(".", 1)[1].rstrip("0")) if "." in value else 0
 
 
-def analyze_row(row: dict[str, str]):
+def analyze_row(row: dict[str, str], pair: str | None = None):
     try:
         values = {key: Decimal(row[key]) for key in ("open", "high", "low", "close")}
     except (KeyError, InvalidOperation) as exc:
@@ -45,6 +45,10 @@ def analyze_row(row: dict[str, str]):
     low_violation = max(Decimal("0"), l - required_low)
     violation = max(high_violation, low_violation)
     decimals = max(decimal_places(row[k]) for k in ("open", "high", "low", "close"))
+    # Use a conservative minimum FX quote precision so trailing-zero formatting
+    # cannot make a one-pip quote look like a fractional-tick anomaly.
+    minimum_decimals = 3 if pair and "jpy" in pair.lower() else 5
+    decimals = max(decimals, minimum_decimals)
     tick = Decimal(1).scaleb(-decimals)
 
     if violation == 0:
@@ -135,13 +139,13 @@ def main():
                 continue
             all_rows[path] = list(reader)
             for row in all_rows[path]:
-                analyze_row(row)  # Raises on any violation larger than one displayed tick.
+                analyze_row(row, path.stem)  # Raises on any violation larger than one quote tick.
 
     changes = []
     for path, rows in all_rows.items():
         changed = []
         for row in rows:
-            result = analyze_row(row)
+            result = analyze_row(row, path.stem)
             if result is not None:
                 changed.append({
                     "file": str(path.relative_to(ROOT)),
