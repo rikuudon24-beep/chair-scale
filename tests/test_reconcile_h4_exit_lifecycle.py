@@ -108,6 +108,16 @@ class H4LifecycleAdapterTests(unittest.TestCase):
         self.assertEqual(trades[0]["status"], "EXIT_PENDING")
         self.assertEqual(len(self.read_csv(self.outbox)), 1)
 
+    def test_unknown_then_hold_does_not_erase_exit_intent(self):
+        ADAPTER.main()
+        self.write_state("UNKNOWN")
+        ADAPTER.main()
+        self.write_state("HOLD_NO_EXIT")
+        ADAPTER.main()
+        trades = self.read_csv(self.trades)
+        self.assertEqual(trades[0]["status"], "EXIT_PENDING")
+        self.assertEqual(len(self.read_csv(self.outbox)), 1)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
