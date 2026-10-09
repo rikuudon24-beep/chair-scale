@@ -25,6 +25,21 @@ jobs:
       - run: pip install -r requirements.txt
       - name: Evaluate completed-H4 exits
         run: python scripts/monitor_position_exit.py
+      - name: Report exit-monitor failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          EXISTING="$(gh issue list --repo "$REPO" --state open --search 'FX EXIT monitor failure in:title' --json number --jq 'length')"
+          if [ "$EXISTING" -gt 0 ]; then
+            echo "An open FX EXIT monitor failure issue already exists; avoiding duplicate alerts."
+            exit 0
+          fi
+          gh issue create --repo "$REPO" \
+            --title "FX EXIT monitor failure" \
+            --body "The position exit monitor failed, so no reliable HOLD/EXIT result is available. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}. Check the logs and refresh/validate market data. No orders are executed."
       - name: Publish exit alerts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
