@@ -20,13 +20,25 @@ SYMBOLS = {
     "usdchf": "CHF=X",
     "audnzd": "AUDNZD=X",
 }
-
 PIP = {"eurjpy": 0.01, "usdchf": 0.0001, "audnzd": 0.0001}
 RANGE = "14d"
 MAX_AGE_HOURS = 2.0
 OVERLAP_HOURS = 72
 MEDIAN_MAX_PIPS = 3.0
 P95_MAX_PIPS = 10.0
+
+
+def normalize_ohlc(df):
+    """Repair only the OHLC envelope; preserve open/close and source precision."""
+    out = df.copy()
+    high = out[["open", "high", "low", "close"]].max(axis=1)
+    low = out[["open", "high", "low", "close"]].min(axis=1)
+    repaired = ((out["high"] < high) | (out["low"] > low)).sum()
+    out["high"] = high
+    out["low"] = low
+    if repaired:
+        print(f"[REPAIR] normalized {int(repaired)} rounded OHLC envelope rows", flush=True)
+    return out
 
 
 def fetch(symbol):
@@ -59,7 +71,7 @@ def fetch(symbol):
         })
     if not rows:
         raise RuntimeError(f"Yahoo returned no usable H1 rows for {symbol}")
-    return pd.DataFrame(rows).drop_duplicates("timestamp").sort_values("timestamp")
+    return normalize_ohlc(pd.DataFrame(rows).drop_duplicates("timestamp").sort_values("timestamp"))
 
 
 def read_existing(path):
@@ -96,6 +108,7 @@ def merge(pair, fresh):
     else:
         merged = pd.concat([old, fresh], ignore_index=True)
         merged = merged.drop_duplicates("timestamp", keep="last").sort_values("timestamp")
+    merged = normalize_ohlc(merged)
     merged[["timestamp", "open", "high", "low", "close", "volume"]].to_csv(path, index=False)
     latest = pd.to_datetime(int(merged.timestamp.max()), unit="ms", utc=True)
     age = (pd.Timestamp.now(tz="UTC") - latest).total_seconds() / 3600
