@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "scripts/fx_lifecycle_contract.py"
+      - "scripts/fx_notification_lag.py"
       - "scripts/reconcile_h4_exit_lifecycle.py"
       - "scripts/reconcile_audnzd_manual_position.py"
       - "scripts/persist_fx_shared_state.py"
@@ -58,7 +59,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Compile lifecycle scripts
-        run: python -m py_compile scripts/fx_lifecycle_contract.py scripts/reconcile_h4_exit_lifecycle.py scripts/reconcile_audnzd_manual_position.py scripts/persist_fx_shared_state.py scripts/fx_notification_titles.py scripts/acknowledge_fx_notification_outbox.py
+        run: python -m py_compile scripts/fx_notification_lag.py scripts/fx_lifecycle_contract.py scripts/reconcile_h4_exit_lifecycle.py scripts/reconcile_audnzd_manual_position.py scripts/persist_fx_shared_state.py scripts/fx_notification_titles.py scripts/acknowledge_fx_notification_outbox.py
 
       - name: Test shared lifecycle contract
         run: python scripts/test_fx_lifecycle_contract.py

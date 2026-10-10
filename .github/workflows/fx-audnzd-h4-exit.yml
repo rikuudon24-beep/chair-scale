@@ -12,6 +12,7 @@ on:
       - "scripts/reconcile_audnzd_manual_position.py"
       - "scripts/persist_fx_shared_state.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
+      - "scripts/fx_notification_lag.py"
       - "scripts/fx_notification_titles.py"
       - "scripts/test_notification_ack_semantics.py"
       - "tests/test_reconcile_audnzd_manual_position.py"
