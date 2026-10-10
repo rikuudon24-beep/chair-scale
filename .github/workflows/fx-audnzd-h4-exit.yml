@@ -4,6 +4,7 @@ on:
   schedule:
     - cron: "23 * * * *"
   push:
+    branches: [main]
     paths:
       - "scripts/refresh_audnzd_h4_exit.py"
       - "scripts/monitor_audnzd_h4_exit.py"

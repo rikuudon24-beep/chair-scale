@@ -5,6 +5,42 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/"data/market/h4/audnzd.csv"
+
+
+def market_closed_utc(now):
+    now = now.astimezone(timezone.utc)
+    return (now.weekday() == 4 and now.hour >= 21) or now.weekday() == 5 or (now.weekday() == 6 and now.hour < 21)
+
+
+def expected_last_completed_h4_open(now):
+    now = now.astimezone(timezone.utc)
+    days_since_friday = (now.weekday() - 4) % 7
+    friday = (now.replace(hour=0, minute=0, second=0, microsecond=0)
+              - timedelta(days=days_since_friday))
+    return friday.replace(hour=16)
+
+
+def validate_freshness(latest, now):
+    """Reject stale H4 data in-session; accept Friday's final complete bar on weekends."""
+    latest = latest.astimezone(timezone.utc)
+    now = now.astimezone(timezone.utc)
+    age = (now - latest).total_seconds() / 3600
+    if market_closed_utc(now):
+        expected = expected_last_completed_h4_open(now)
+        if latest < expected:
+            raise RuntimeError(
+                f"Latest complete AUDNZD H4 candle predates weekly close: "
+                f"latest={latest.isoformat()} expected_last={expected.isoformat()}"
+            )
+        print(
+            f"[OK-CLOSED] latest={latest.isoformat()} expected_last={expected.isoformat()} "
+            f"age={age:.1f}h; weekly closure freshness rule applied"
+        )
+        return
+    if age > 8:
+        raise RuntimeError(f"Latest complete AUDNZD H4 candle too old during open market: {age:.1f}h")
+
+
 def main():
     now=datetime.now(timezone.utc)
     q=urllib.parse.urlencode({"period1":int((now-timedelta(days=60)).timestamp()),"period2":int(now.timestamp()),"interval":"60m","events":"history","includeAdjustedClose":"false"})
@@ -43,7 +79,7 @@ def main():
         for k in sorted(rows): w.writerow({x:rows[k].get(x,"") for x in fields})
     tmp.replace(OUT)
     latest=max(int(x["timestamp"]) for x in fresh)
-    age=(now_ts-latest//1000)/3600
-    if age>8: raise RuntimeError(f"Latest complete AUDNZD H4 candle too old: {age:.1f}h")
-    print(f"Updated AUDNZD complete H4 candles: {len(fresh)}; latest={datetime.fromtimestamp(latest/1000,timezone.utc).isoformat()}")
+    latest_dt=datetime.fromtimestamp(latest/1000,timezone.utc)
+    validate_freshness(latest_dt, now)
+    print(f"Updated AUDNZD complete H4 candles: {len(fresh)}; latest={latest_dt.isoformat()}")
 if __name__=="__main__": main()
