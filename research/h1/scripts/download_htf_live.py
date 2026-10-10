@@ -21,6 +21,81 @@ MEDIAN_MAX_PIPS = 3.0
 P95_MAX_PIPS = 10.0
 
 
+def market_closed_utc(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    return (now.weekday() == 4 and now.hour >= 21) or now.weekday() == 5 or (now.weekday() == 6 and now.hour < 21)
+
+
+def expected_last_completed_h1_open(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    days_since_friday = (now.weekday() - 4) % 7
+    return now.normalize() - pd.Timedelta(days=days_since_friday) + pd.Timedelta(hours=20)
+
+
+def expected_last_completed_h4_open(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    days_since_friday = (now.weekday() - 4) % 7
+    return now.normalize() - pd.Timedelta(days=days_since_friday) + pd.Timedelta(hours=16)
+
+
+def validate_h1_source_freshness(pair, latest, now):
+    latest = pd.Timestamp(latest)
+    now = pd.Timestamp(now)
+    if latest.tzinfo is None:
+        latest = latest.tz_localize("UTC")
+    else:
+        latest = latest.tz_convert("UTC")
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    age = (now - latest).total_seconds() / 3600
+    if market_closed_utc(now):
+        expected = expected_last_completed_h1_open(now)
+        if latest < expected - pd.Timedelta(hours=1):
+            raise RuntimeError(f"{pair}: live H1 source stale during weekly closure: latest={latest.isoformat()} expected_last={expected.isoformat()}")
+        print(f"[OK-CLOSED] {pair}: H1 source latest={latest.isoformat()} expected_last={expected.isoformat()} age={age:.2f}h")
+        return
+    if age > 2.0:
+        raise RuntimeError(f"{pair}: live H1 source stale before HTF aggregation: {age:.2f}h")
+
+
+def validate_htf_freshness(pair, tf, latest_closed_open, now):
+    latest_closed_open = pd.Timestamp(latest_closed_open)
+    now = pd.Timestamp(now)
+    if latest_closed_open.tzinfo is None:
+        latest_closed_open = latest_closed_open.tz_localize("UTC")
+    else:
+        latest_closed_open = latest_closed_open.tz_convert("UTC")
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    candle_duration = pd.Timedelta(hours=4 if tf == "h4" else 24)
+    age = (now - (latest_closed_open + candle_duration)).total_seconds() / 3600
+    limit = MAX_AGE_H4 if tf == "h4" else MAX_AGE_D1
+    if tf == "h4" and market_closed_utc(now):
+        expected = expected_last_completed_h4_open(now)
+        if latest_closed_open < expected:
+            raise RuntimeError(f"{pair} h4: latest completed candle predates weekly close: latest={latest_closed_open.isoformat()} expected_last={expected.isoformat()}")
+        print(f"[OK-CLOSED] {pair} h4: latest_closed_open={latest_closed_open.isoformat()} expected_last={expected.isoformat()} age_since_close={age:.2f}h")
+        return
+    if age > limit:
+        raise RuntimeError(f"{pair} {tf}: latest fully closed candle is stale: age_since_close={age:.2f}h (limit={limit:.2f}h)")
+
+
 def existing(pair, tf):
     p = OUT / tf / f"{pair}.csv"
     if not p.exists():
@@ -86,7 +161,6 @@ def merge(pair, tf, fresh):
 
     merged = fresh if old.empty else pd.concat([old.reset_index(drop=True), fresh], ignore_index=True)
     merged = merged.drop_duplicates("timestamp", keep="last").sort_values("timestamp")
-    merged.to_csv(path, index=False)
 
     # Aggregated timestamps label candle OPEN. Exclude the still-forming
     # candle when measuring freshness; otherwise a partial current bar can
@@ -101,16 +175,13 @@ def merge(pair, tf, fresh):
     latest_closed_open = opens[closed_mask].max()
     latest_closed_close = latest_closed_open + candle_duration
     age = (now - latest_closed_close).total_seconds() / 3600
-    limit = MAX_AGE_H4 if tf == "h4" else MAX_AGE_D1
     print(
         f"[OK] {pair} {tf}: latest_closed_open={latest_closed_open.isoformat()} "
         f"latest_closed_close={latest_closed_close.isoformat()} age_since_close={age:.2f}h"
     )
-    if age > limit:
-        raise RuntimeError(
-            f"{pair} {tf}: latest fully closed candle is stale: "
-            f"age_since_close={age:.2f}h (limit={limit:.2f}h)"
-        )
+    validate_htf_freshness(pair, tf, latest_closed_open, now)
+    # Do not persist a stale aggregation when validation fails.
+    merged.to_csv(path, index=False)
 
 
 def main():
@@ -127,10 +198,10 @@ def main():
         h1["dt"] = pd.to_datetime(h1.timestamp, unit="ms", utc=True)
         h1 = h1.set_index("dt").sort_index()
         latest_h1 = h1.index.max()
-        h1_age = (pd.Timestamp.now(tz="UTC") - latest_h1).total_seconds() / 3600
+        now = pd.Timestamp.now(tz="UTC")
+        h1_age = (now - latest_h1).total_seconds() / 3600
         print(f"[H1->HTF] {pair}: h1_latest={latest_h1.isoformat()} age={h1_age:.2f}h")
-        if h1_age > 2.0:
-            raise RuntimeError(f"{pair}: live H1 source stale before HTF aggregation: {h1_age:.2f}h")
+        validate_h1_source_freshness(pair, latest_h1, now)
         for tf in ("h4", "d1"):
             fresh = aggregate(h1, tf)
             if fresh.empty:

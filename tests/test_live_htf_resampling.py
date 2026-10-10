@@ -24,6 +24,41 @@ class LiveHTFResampleTests(unittest.TestCase):
             "volume": [10.0] * len(idx),
         }, index=idx)
 
+
+    def test_weekend_h1_source_accepts_friday_close(self):
+        now = pd.Timestamp("2026-10-10T04:00:00Z")
+        latest = pd.Timestamp("2026-10-09T20:00:00Z")
+        MODULE.validate_h1_source_freshness("audnzd", latest, now)
+
+    def test_weekend_h1_source_rejects_data_too_old_for_friday_close(self):
+        now = pd.Timestamp("2026-10-10T04:00:00Z")
+        latest = pd.Timestamp("2026-10-09T18:00:00Z")
+        with self.assertRaisesRegex(RuntimeError, "stale during weekly closure"):
+            MODULE.validate_h1_source_freshness("audnzd", latest, now)
+
+    def test_open_market_h1_source_still_rejects_stale_data(self):
+        now = pd.Timestamp("2026-10-08T12:30:00Z")
+        latest = pd.Timestamp("2026-10-08T09:00:00Z")
+        with self.assertRaisesRegex(RuntimeError, "stale before HTF aggregation"):
+            MODULE.validate_h1_source_freshness("audnzd", latest, now)
+
+    def test_weekend_h4_accepts_fridays_last_completed_candle(self):
+        now = pd.Timestamp("2026-10-10T04:00:00Z")
+        latest = pd.Timestamp("2026-10-09T16:00:00Z")
+        MODULE.validate_htf_freshness("audnzd", "h4", latest, now)
+
+    def test_weekend_h4_rejects_candle_older_than_fridays_last_complete(self):
+        now = pd.Timestamp("2026-10-10T04:00:00Z")
+        latest = pd.Timestamp("2026-10-09T12:00:00Z")
+        with self.assertRaisesRegex(RuntimeError, "predates weekly close"):
+            MODULE.validate_htf_freshness("audnzd", "h4", latest, now)
+
+    def test_open_market_h4_still_rejects_stale_data(self):
+        now = pd.Timestamp("2026-10-12T12:00:00Z")
+        latest = pd.Timestamp("2026-10-09T16:00:00Z")
+        with self.assertRaisesRegex(RuntimeError, "latest fully closed candle is stale"):
+            MODULE.validate_htf_freshness("audnzd", "h4", latest, now)
+
     def test_daily_resampling_has_no_ineffective_offset_warnings(self):
         with warnings.catch_warnings(record=True) as caught:
             warnings.simplefilter("always")
