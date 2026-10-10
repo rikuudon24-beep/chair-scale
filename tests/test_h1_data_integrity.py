@@ -25,6 +25,32 @@ DATA = load_module("download_h1_research_data_test", DATA_PATH)
 
 
 class H1OverlapTests(unittest.TestCase):
+    def test_weekend_freshness_accepts_last_completed_friday_candle(self):
+        now = pd.Timestamp("2026-10-10T00:00:00Z")  # Saturday UTC
+        latest = pd.Timestamp("2026-10-09T20:00:00Z")
+        LIVE.validate_freshness(latest, now=now)
+
+    def test_weekend_freshness_rejects_data_older_than_session_close(self):
+        now = pd.Timestamp("2026-10-10T00:00:00Z")
+        latest = pd.Timestamp("2026-10-09T18:00:00Z")
+        with self.assertRaisesRegex(RuntimeError, "stale during market closure"):
+            LIVE.validate_freshness(latest, now=now)
+
+    def test_open_market_freshness_still_rejects_stale_data(self):
+        now = pd.Timestamp("2026-10-08T12:30:00Z")  # Thursday UTC
+        latest = pd.Timestamp("2026-10-08T09:00:00Z")
+        with self.assertRaisesRegex(RuntimeError, "stale during open market"):
+            LIVE.validate_freshness(latest, now=now)
+
+    def test_monitor_weekend_freshness_accepts_friday_close(self):
+        monitor = load_module("monitor_h1_live_test", ROOT / "research" / "h1" / "scripts" / "monitor_h1_live.py")
+        monitor.validate_h1_freshness(pd.Timestamp("2026-10-09T20:00:00Z"), pd.Timestamp("2026-10-10T00:00:00Z"))
+
+    def test_monitor_open_market_still_rejects_stale_data(self):
+        monitor = load_module("monitor_h1_live_test_open", ROOT / "research" / "h1" / "scripts" / "monitor_h1_live.py")
+        with self.assertRaisesRegex(RuntimeError, "stale H1 data during open market"):
+            monitor.validate_h1_freshness(pd.Timestamp("2026-10-08T09:00:00Z"), pd.Timestamp("2026-10-08T12:30:00Z"))
+
     def test_no_overlap_fails_closed(self):
         now_ms = int(pd.Timestamp.now(tz="UTC").timestamp() * 1000)
         old = pd.DataFrame({"timestamp": [now_ms - 30 * 24 * 3600 * 1000], "close": [1.0]})

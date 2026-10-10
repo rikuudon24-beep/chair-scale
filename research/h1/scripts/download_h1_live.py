@@ -18,6 +18,51 @@ SYMBOLS = {"eurjpy": "EURJPY=X", "usdchf": "CHF=X", "audnzd": "AUDNZD=X"}
 PIP = {"eurjpy": 0.01, "usdchf": 0.0001, "audnzd": 0.0001}
 RANGE = "14d"
 MAX_AGE_HOURS = 2.0
+
+
+def market_closed_utc(now):
+    """Approximate the weekly FX closure in UTC; DST is handled by UTC market hours."""
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    return (now.weekday() == 4 and now.hour >= 21) or now.weekday() == 5 or (now.weekday() == 6 and now.hour < 21)
+
+
+def expected_last_completed_h1_open(now):
+    """Expected last H1 candle OPEN timestamp during the weekly FX closure."""
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    days_since_friday = (now.weekday() - 4) % 7
+    friday = now.normalize() - pd.Timedelta(days=days_since_friday)
+    return friday + pd.Timedelta(hours=20)
+
+
+def validate_freshness(latest, now=None):
+    """Reject stale data in-session; use the last completed session candle on weekends."""
+    now = pd.Timestamp.now(tz="UTC") if now is None else pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    latest = pd.Timestamp(latest)
+    if latest.tzinfo is None:
+        latest = latest.tz_localize("UTC")
+    else:
+        latest = latest.tz_convert("UTC")
+    age = (now - latest).total_seconds() / 3600
+    if market_closed_utc(now):
+        expected = expected_last_completed_h1_open(now)
+        if latest < expected - pd.Timedelta(hours=1):
+            raise RuntimeError(f"live H1 data stale during market closure: latest={latest.isoformat()} expected_last={expected.isoformat()}")
+        print(f"[OK-CLOSED] latest={latest.isoformat()} expected_last={expected.isoformat()} age={age:.2f}h; weekly closure freshness rule applied", flush=True)
+        return
+    if age > MAX_AGE_HOURS:
+        raise RuntimeError(f"live H1 data stale during open market: age={age:.2f}h")
 OVERLAP_HOURS = 168
 MIN_OVERLAP_BARS = 18
 MEDIAN_MAX_PIPS = 3.0
@@ -94,10 +139,10 @@ def merge(pair, fresh):
     merged = normalize_ohlc(merged)
     merged[["timestamp", "open", "high", "low", "close", "volume"]].to_csv(path, index=False)
     latest = pd.to_datetime(int(merged.timestamp.max()), unit="ms", utc=True)
-    age = (pd.Timestamp.now(tz="UTC") - latest).total_seconds() / 3600
+    now = pd.Timestamp.now(tz="UTC")
+    age = (now - latest).total_seconds() / 3600
     print(f"[OK] {pair}: rows={len(merged)} latest={latest.isoformat()} age={age:.2f}h")
-    if age > MAX_AGE_HOURS:
-        raise RuntimeError(f"{pair}: live H1 data stale after refresh: age={age:.2f}h")
+    validate_freshness(latest, now=now)
 
 
 def main():
