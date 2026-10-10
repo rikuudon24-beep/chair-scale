@@ -8,6 +8,7 @@ on:
     paths:
       - "scripts/refresh_audnzd_h4_exit.py"
       - "scripts/monitor_audnzd_h4_exit.py"
+      - "scripts/audnzd_h4_exit_notifications.py"
       - ".github/workflows/fx-audnzd-h4-exit.yml"
 jobs:
   monitor:
@@ -31,7 +32,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ ! -f reports/audnzd_exit_alert.md ]; then echo "No new confluence exit candidate."; exit 0; fi
-          TITLE="FX EXIT AUDNZD LONG $(date -u +%Y-%m-%dT%H)"
+          TITLE="$(python scripts/audnzd_h4_exit_notifications.py reports/audnzd_exit_state.json)"
           EXISTING="$(gh issue list --repo "${{ github.repository }}" --state all --search "\"$TITLE\"" --json number --jq 'length')"
           if [ "$EXISTING" -gt 0 ]; then echo "Duplicate alert skipped."; exit 0; fi
           gh issue create --repo "${{ github.repository }}" --title "$TITLE" --body-file reports/audnzd_exit_alert.md
