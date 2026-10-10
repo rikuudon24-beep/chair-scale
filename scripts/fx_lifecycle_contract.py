@@ -38,8 +38,8 @@ TRADE_FIELDS = [
 EVENT_FIELDS = [
     "event_id", "trade_id", "event_type", "event_time", "pair", "timeframe",
     "direction", "price", "reason", "tp", "sl", "strategy_id",
-    "delivery_status", "attempt_count", "last_attempt_at", "issue_confirmed_at", "delivered_at",
-    "last_error",
+    "delivery_status", "attempt_count", "last_attempt_at", "issue_confirmed_at", "issue_created_at",
+    "signal_to_issue_seconds", "signal_to_issue_status", "delivered_at", "last_error",
 ]
 EVENT_TYPES = {
     "ENTRY_CONFIRMED", "ENTRY_REJECTED", "EXIT_TP", "EXIT_SL",
@@ -127,8 +127,8 @@ def upsert_ledger(path: str | Path, fields: list[str], rows: Iterable[Mapping[st
             new_delivery = row.get("delivery_status", "").upper()
             if old_delivery in {"ISSUE_CONFIRMED", "DELIVERED"} and new_delivery not in {"ISSUE_CONFIRMED", "DELIVERED"}:
                 row["delivery_status"] = old_delivery
-                row["issue_confirmed_at"] = old.get("issue_confirmed_at", "")
-                row["delivered_at"] = old.get("delivered_at", "")
+                for preserve_field in ("issue_confirmed_at", "issue_created_at", "signal_to_issue_seconds", "signal_to_issue_status", "delivered_at"):
+                    row[preserve_field] = old.get(preserve_field, "")
             by_key[key] = row
         else:
             by_key[key] = row
