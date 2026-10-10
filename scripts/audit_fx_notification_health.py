@@ -15,8 +15,8 @@ from pathlib import Path
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-REPO = os.environ["GITHUB_REPOSITORY"]
-TOKEN = os.environ["GITHUB_TOKEN"]
+REPO = os.environ.get("GITHUB_REPOSITORY", "local/test")
+TOKEN = os.environ.get("GITHUB_TOKEN", "")
 OUTBOX_PATH = Path(os.environ.get("FX_OUTBOX_PATH", "/tmp/fx_notification_outbox.csv"))
 NOW = datetime.now(timezone.utc)
 BASE = f"https://api.github.com/repos/{REPO}"
