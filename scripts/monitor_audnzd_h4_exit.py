@@ -7,6 +7,46 @@ import numpy as np
 import importlib.util
 spec=importlib.util.spec_from_file_location("features","scripts/research_50pip_direct_entry.py")
 d=importlib.util.module_from_spec(spec); spec.loader.exec_module(d)
+def market_closed_utc(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    return (now.weekday() == 4 and now.hour >= 21) or now.weekday() == 5 or (now.weekday() == 6 and now.hour < 21)
+
+
+def expected_last_completed_h4_open(now):
+    now = pd.Timestamp(now)
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    days_since_friday = (now.weekday() - 4) % 7
+    return now.normalize() - pd.Timedelta(days=days_since_friday) + pd.Timedelta(hours=16)
+
+
+def validate_h4_freshness(latest, now):
+    latest = pd.Timestamp(latest)
+    now = pd.Timestamp(now)
+    if latest.tzinfo is None:
+        latest = latest.tz_localize("UTC")
+    else:
+        latest = latest.tz_convert("UTC")
+    if now.tzinfo is None:
+        now = now.tz_localize("UTC")
+    else:
+        now = now.tz_convert("UTC")
+    if market_closed_utc(now):
+        expected_last = expected_last_completed_h4_open(now)
+        if latest < expected_last:
+            raise RuntimeError(f"AUDNZD H4 data predates weekly close: latest={latest.isoformat()} expected_last={expected_last.isoformat()}; EXIT state UNKNOWN")
+        print(f"[OK-CLOSED] AUDNZD H4 latest={latest.isoformat()} expected_last={expected_last.isoformat()}; weekly closure freshness rule applied")
+        return
+    expected = now.floor("4h") - pd.Timedelta(hours=4)
+    if (expected - latest).total_seconds() > 8 * 3600:
+        raise RuntimeError(f"AUDNZD H4 data stale ({latest.isoformat()}); EXIT state UNKNOWN")
+
 def main():
     df=d.load_market("h4","audnzd")
     if len(df)<220: raise RuntimeError("AUDNZD H4 history insufficient; EXIT state UNKNOWN")
@@ -16,7 +56,7 @@ def main():
     closed=df[pd.to_datetime(df.timestamp,utc=True)<=expected].copy().reset_index(drop=True)
     if len(closed)<220: raise RuntimeError("Not enough completed AUDNZD H4 candles; EXIT state UNKNOWN")
     latest=pd.to_datetime(closed.timestamp.iloc[-1],utc=True)
-    if (expected-latest).total_seconds()>8*3600: raise RuntimeError(f"AUDNZD H4 data stale ({latest.isoformat()}); EXIT state UNKNOWN")
+    validate_h4_freshness(latest, now)
     f=d.build_features(closed)
     c=closed.close.astype(float); h=closed.high.astype(float); l=closed.low.astype(float)
     ema10=c.ewm(span=10,adjust=False).mean(); ema20=c.ewm(span=20,adjust=False).mean()
