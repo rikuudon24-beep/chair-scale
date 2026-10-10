@@ -1,0 +1,48 @@
+name: FX Notification Health Audit
+
+on:
+  schedule:
+    - cron: "43 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/audit_fx_notification_health.py"
+      - ".github/workflows/fx-notification-health-audit.yml"
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+concurrency:
+  group: fx-notification-health-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Restore shared notification outbox
+        run: |
+          set -euo pipefail
+          git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
+          git show origin/fx-h1-research:reports/fx_notification_outbox.csv > /tmp/fx_notification_outbox.csv
+      - name: Audit scheduled monitors and pending notification events
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          FX_OUTBOX_PATH: /tmp/fx_notification_outbox.csv
+        run: python scripts/audit_fx_notification_health.py
+      - name: Upload health report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fx-notification-health-report
+          path: reports/fx_notification_health.json
+          if-no-files-found: warn

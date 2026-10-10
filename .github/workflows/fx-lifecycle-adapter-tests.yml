@@ -6,6 +6,9 @@ on:
     paths:
       - "scripts/fx_lifecycle_contract.py"
       - "scripts/fx_notification_lag.py"
+      - "scripts/audit_fx_notification_health.py"
+      - "scripts/test_fx_notification_health.py"
+      - ".github/workflows/fx-notification-health-audit.yml"
       - "scripts/reconcile_h4_exit_lifecycle.py"
       - "scripts/reconcile_audnzd_manual_position.py"
       - "scripts/persist_fx_shared_state.py"
@@ -60,6 +63,9 @@ jobs:
 
       - name: Compile lifecycle scripts
         run: python -m py_compile scripts/fx_notification_lag.py scripts/fx_lifecycle_contract.py scripts/reconcile_h4_exit_lifecycle.py scripts/reconcile_audnzd_manual_position.py scripts/persist_fx_shared_state.py scripts/fx_notification_titles.py scripts/acknowledge_fx_notification_outbox.py
+
+      - name: Test FX notification health audit
+        run: python scripts/test_fx_notification_health.py
 
       - name: Test shared lifecycle contract
         run: python scripts/test_fx_lifecycle_contract.py
