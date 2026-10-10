@@ -6,9 +6,15 @@ on:
     paths:
       - "scripts/fx_lifecycle_contract.py"
       - "scripts/reconcile_h4_exit_lifecycle.py"
+      - "scripts/reconcile_audnzd_manual_position.py"
+      - "scripts/persist_fx_shared_state.py"
+      - "scripts/fx_notification_titles.py"
       - "scripts/test_fx_lifecycle_contract.py"
+      - "scripts/test_notification_ack_semantics.py"
       - "tests/test_reconcile_h4_exit_lifecycle.py"
+      - "tests/test_reconcile_audnzd_manual_position.py"
       - "scripts/refresh_audnzd_h4_exit.py"
+      - "scripts/monitor_audnzd_h4_exit.py"
       - "scripts/audnzd_h4_exit_notifications.py"
       - "tests/test_audnzd_h4_refresh_freshness.py"
       - "tests/test_audnzd_h4_monitor_freshness.py"
@@ -19,12 +25,10 @@ on:
       - "tests/test_h1_cache_fallback.py"
       - "research/h1/scripts/download_htf_live.py"
       - "tests/test_live_htf_resampling.py"
-      - "research/h1/scripts/download_htf_live.py"
-      - "tests/test_live_htf_resampling.py"
       - "scripts/acknowledge_fx_notification_outbox.py"
-      - "scripts/test_notification_ack_semantics.py"
       - ".github/workflows/fx-position-exit-monitor.yml"
       - ".github/workflows/fx-h1-live-monitor.yml"
+      - ".github/workflows/fx-audnzd-h4-exit.yml"
       - ".github/workflows/fx-lifecycle-adapter-tests.yml"
   workflow_dispatch:
 
@@ -54,7 +58,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Compile lifecycle scripts
-        run: python -m py_compile scripts/fx_lifecycle_contract.py scripts/reconcile_h4_exit_lifecycle.py scripts/acknowledge_fx_notification_outbox.py
+        run: python -m py_compile scripts/fx_lifecycle_contract.py scripts/reconcile_h4_exit_lifecycle.py scripts/reconcile_audnzd_manual_position.py scripts/persist_fx_shared_state.py scripts/fx_notification_titles.py scripts/acknowledge_fx_notification_outbox.py
 
       - name: Test shared lifecycle contract
         run: python scripts/test_fx_lifecycle_contract.py
@@ -64,6 +68,9 @@ jobs:
 
       - name: Test H4 lifecycle adapter
         run: python tests/test_reconcile_h4_exit_lifecycle.py
+
+      - name: Test AUD/NZD manual lifecycle adapter
+        run: python tests/test_reconcile_audnzd_manual_position.py
 
       - name: Test H1 data integrity guards
         run: python tests/test_h1_data_integrity.py

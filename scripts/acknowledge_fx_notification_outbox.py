@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Acknowledge outbox events only after their durable GitHub Issue exists.
 
-H1 entry alerts use the deterministic event ID title. H4 exit alerts retain the
-legacy title format so integration does not create duplicate issues for old signals.
+ISSUE_CONFIRMED means repository publication only, never confirmed device delivery.
 """
 from __future__ import annotations
 
@@ -12,6 +11,7 @@ from datetime import datetime, timezone
 from urllib.request import Request, urlopen
 
 from fx_lifecycle_contract import EVENT_FIELDS, read_ledger, upsert_ledger
+from fx_notification_titles import issue_title_candidates
 
 path = "reports/fx_notification_outbox.csv"
 if not os.path.exists(path):
@@ -39,22 +39,15 @@ for row in rows:
         continue
     # Legacy DELIVERED meant only that a GitHub Issue existed. Re-check its title
     # below and migrate it to ISSUE_CONFIRMED; it was never a device receipt.
-    event_type = row.get("event_type", "").upper()
-    if row.get("timeframe", "").upper() == "H1":
-        title = f"FX H1 ALERT {row['event_id']}"
-    elif event_type == "EXIT_SIGNAL" and row.get("timeframe", "").upper() == "H4":
-        # Match the existing H4 publisher's title to avoid duplicate issues during migration.
-        title = (
-            f"FX EXIT {row.get('pair', '').lower()} "
-            f"{row.get('direction', '').lower()} {row.get('event_time', '')}"
-        )
-    else:
-        # Unknown event/channel mapping must remain pending rather than falsely delivered.
+    candidates = issue_title_candidates(row)
+    if not candidates:
+        event_type = row.get("event_type", "").upper()
         row["delivery_status"] = "PENDING"
         row["last_error"] = f"No issue-title mapping for event type/timeframe: {event_type}/{row.get('timeframe', '')}"
         continue
 
-    if title in titles:
+    matched_title = next((title for title in candidates if title in titles), "")
+    if matched_title:
         row["delivery_status"] = "ISSUE_CONFIRMED"
         row["issue_confirmed_at"] = row.get("issue_confirmed_at") or now
         row["delivered_at"] = ""
@@ -68,6 +61,6 @@ for row in rows:
         row["delivery_status"] = "PENDING"
         row["last_attempt_at"] = now
         row["attempt_count"] = str(int(row.get("attempt_count") or "0") + 1)
-        row["last_error"] = f"Durable Issue not found yet for title: {title}; will retry on next scheduled run."
+        row["last_error"] = f"Durable Issue not found for any supported title: {' | '.join(candidates)}; will retry on next scheduled run."
 upsert_ledger(path, EVENT_FIELDS, rows, "event_id")
 print(f"Outbox issue confirmations: {acknowledged}/{len(rows)} events confirmed in GitHub Issues; device delivery is not verified")
