@@ -9,11 +9,23 @@ on:
       - "scripts/refresh_audnzd_h4_exit.py"
       - "scripts/monitor_audnzd_h4_exit.py"
       - "scripts/audnzd_h4_exit_notifications.py"
+      - "scripts/reconcile_audnzd_manual_position.py"
+      - "scripts/persist_fx_shared_state.py"
+      - "scripts/acknowledge_fx_notification_outbox.py"
+      - "scripts/fx_notification_titles.py"
+      - "scripts/test_notification_ack_semantics.py"
+      - "tests/test_reconcile_audnzd_manual_position.py"
       - ".github/workflows/fx-audnzd-h4-exit.yml"
+
+# Serialize access to the shared lifecycle branch with the H1 and generic H4 monitors.
+concurrency:
+  group: fx-shared-lifecycle-state
+  cancel-in-progress: false
+
 jobs:
   monitor:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     permissions:
       contents: write
       issues: write
@@ -26,6 +38,23 @@ jobs:
         run: python scripts/refresh_audnzd_h4_exit.py
       - name: Evaluate confirmed H4 exit confluence
         run: python scripts/monitor_audnzd_h4_exit.py
+      - name: Restore common lifecycle ledgers
+        run: |
+          set -euo pipefail
+          git fetch origin fx-h1-research:refs/remotes/origin/fx-h1-research
+          for path in reports/fx_trade_lifecycle.csv reports/fx_notification_outbox.csv; do
+            if git cat-file -e "origin/fx-h1-research:$path" 2>/dev/null; then
+              git show "origin/fx-h1-research:$path" > "$path"
+              echo "[OK] Restored $path from fx-h1-research"
+            else
+              echo "[WARN] No persisted $path found; adapter will initialize it"
+            fi
+          done
+      - name: Reconcile AUD/NZD manual position into shared lifecycle
+        run: |
+          python scripts/test_fx_lifecycle_contract.py
+          python tests/test_reconcile_audnzd_manual_position.py
+          python scripts/reconcile_audnzd_manual_position.py
       - name: Publish new exit candidate
         env:
           GH_TOKEN: ${{ github.token }}
@@ -36,6 +65,18 @@ jobs:
           EXISTING="$(gh issue list --repo "${{ github.repository }}" --state all --search "\"$TITLE\"" --json number --jq 'length')"
           if [ "$EXISTING" -gt 0 ]; then echo "Duplicate alert skipped."; exit 0; fi
           gh issue create --repo "${{ github.repository }}" --title "$TITLE" --body-file reports/audnzd_exit_alert.md
+      - name: Acknowledge Issue publication in outbox
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/acknowledge_fx_notification_outbox.py
+      - name: Persist common lifecycle and outbox to shared branch
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: python scripts/persist_fx_shared_state.py
       - name: Commit fresh data and state
         if: success()
         run: |
@@ -45,3 +86,27 @@ jobs:
           git diff --cached --quiet || git commit -m "monitor: update AUDNZD confirmed H4 exit state"
           git pull --rebase origin main
           git push
+      - name: Report AUD/NZD monitor failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          EXISTING="$(gh issue list --repo "$REPO" --state open --search 'FX AUDNZD monitor failure in:title' --json number --jq '.[0].number // empty')"
+          BODY="AUD/NZD H4 monitor or lifecycle publication failed. No reliable exit status or delivery confirmation should be assumed. Workflow run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}. No broker orders are executed."
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --repo "$REPO" --body "$BODY"
+          else
+            gh issue create --repo "$REPO" --title "FX AUDNZD monitor failure" --body "$BODY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audnzd-h4-exit-state
+          path: |
+            reports/audnzd_exit_state.json
+            reports/audnzd_exit_alert.md
+            reports/fx_trade_lifecycle.csv
+            reports/fx_notification_outbox.csv
+          if-no-files-found: warn
