@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
-import scripts.audit_fx_notification_health as health
+import audit_fx_notification_health as health
 
 
 class FxNotificationHealthTests(unittest.TestCase):
