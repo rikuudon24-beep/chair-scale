@@ -26,10 +26,13 @@ HEADERS = {
     "Content-Type": "application/json",
     "X-GitHub-Api-Version": "2022-11-28",
 }
+# (workflow file, max age for a completed successful run, expected runtime)
+# Runtime limits include a 10-minute grace period below, so normal active runs
+# are not misclassified as failures by the hourly audit.
 WORKFLOWS = {
-    "H1 live monitor": ("fx-h1-live-monitor.yml", 120),
-    "AUD/NZD H4 exit monitor": ("fx-audnzd-h4-exit.yml", 120),
-    "generic H4 exit monitor": ("fx-position-exit-monitor.yml", 120),
+    "H1 live monitor": ("fx-h1-live-monitor.yml", 120, 45),
+    "AUD/NZD H4 exit monitor": ("fx-audnzd-h4-exit.yml", 120, 15),
+    "generic H4 exit monitor": ("fx-position-exit-monitor.yml", 120, 15),
 }
 
 
@@ -57,7 +60,7 @@ def age_minutes(value: str) -> float:
 
 
 def audit_schedules(findings: list[str], details: list[dict]) -> None:
-    for label, (filename, max_age_minutes) in WORKFLOWS.items():
+    for label, (filename, max_age_minutes, expected_runtime_minutes) in WORKFLOWS.items():
         path = "/actions/workflows/" + filename + "/runs?branch=main&event=schedule&per_page=10"
         payload = api("GET", path)
         runs = payload.get("workflow_runs", [])
@@ -66,6 +69,7 @@ def audit_schedules(findings: list[str], details: list[dict]) -> None:
             findings.append(f"{label}: no scheduled run is recorded")
             details.append({"workflow": label, "status": "NO_SCHEDULED_RUN"})
             continue
+        status = latest.get("status") or "unknown"
         started = latest.get("run_started_at") or latest.get("created_at") or ""
         try:
             age = age_minutes(started)
@@ -73,16 +77,30 @@ def audit_schedules(findings: list[str], details: list[dict]) -> None:
             findings.append(f"{label}: latest scheduled run has invalid timestamp ({exc})")
             details.append({"workflow": label, "status": "INVALID_TIMESTAMP", "run_url": latest.get("html_url")})
             continue
-        conclusion = latest.get("conclusion") or latest.get("status") or "unknown"
+        conclusion = latest.get("conclusion") or status
         item = {
             "workflow": label, "run_id": latest.get("id"), "run_url": latest.get("html_url"),
-            "started_at": started, "age_minutes": round(age, 1), "conclusion": conclusion,
+            "started_at": started, "age_minutes": round(age, 1), "status": status,
+            "conclusion": conclusion,
         }
         details.append(item)
-        if age > max_age_minutes:
-            findings.append(f"{label}: last scheduled run is {age:.0f} minutes old (limit {max_age_minutes})")
-        elif latest.get("status") != "completed" or latest.get("conclusion") != "success":
-            findings.append(f"{label}: latest scheduled run is {conclusion} ({latest.get('html_url', 'URL unavailable')})")
+
+        # A scheduled run may legitimately still be active when this audit runs.
+        # Do not report it as failed until its expected runtime plus grace expires.
+        if status == "completed":
+            if age > max_age_minutes:
+                findings.append(f"{label}: last completed scheduled run is {age:.0f} minutes old (limit {max_age_minutes})")
+            elif latest.get("conclusion") != "success":
+                findings.append(f"{label}: latest scheduled run failed/cancelled ({latest.get('html_url', 'URL unavailable')})")
+        elif status == "in_progress":
+            runtime_limit = expected_runtime_minutes + 10
+            if age > runtime_limit:
+                findings.append(f"{label}: scheduled run has been in progress for {age:.0f} minutes (runtime limit {runtime_limit})")
+        elif status in ("queued", "waiting", "requested", "pending"):
+            if age > 15:
+                findings.append(f"{label}: scheduled run has been {status} for {age:.0f} minutes (queue limit 15)")
+        else:
+            findings.append(f"{label}: latest scheduled run has unexpected status {status!r} ({latest.get('html_url', 'URL unavailable')})")
 
 
 def audit_outbox(findings: list[str], details: list[dict]) -> None:
