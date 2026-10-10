@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Tests for idempotent AUD/NZD H4 exit Issue identity."""
+import sys
 import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 from scripts.audnzd_h4_exit_notifications import issue_title
 
