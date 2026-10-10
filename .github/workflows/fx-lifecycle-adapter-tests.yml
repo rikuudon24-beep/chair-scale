@@ -10,6 +10,7 @@ on:
       - "tests/test_reconcile_h4_exit_lifecycle.py"
       - "scripts/refresh_audnzd_h4_exit.py"
       - "tests/test_audnzd_h4_refresh_freshness.py"
+      - "tests/test_audnzd_h4_monitor_freshness.py"
       - "research/h1/scripts/download_h1_live.py"
       - "scripts/download_h1_research_data.py"
       - "tests/test_h1_data_integrity.py"
@@ -67,6 +68,9 @@ jobs:
 
       - name: Test AUDNZD H4 weekend freshness
         run: python tests/test_audnzd_h4_refresh_freshness.py
+
+      - name: Test AUDNZD H4 monitor freshness
+        run: python tests/test_audnzd_h4_monitor_freshness.py
 
       - name: Test H1 cache fallback
         run: python tests/test_h1_cache_fallback.py
